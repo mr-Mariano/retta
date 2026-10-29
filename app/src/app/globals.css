@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+/*
+  Design tokens mirror the Figma "Color" collection (modes Oscuro / Claro).
+  Dark is the primary mode; light applies when the OS prefers it.
+*/
+:root {
+  --color-bg-base: #181818;
+  --color-bg-surface: #212121;
+  --color-bg-elevated: #2a2a2a;
+  --color-border-default: #303030;
+  --color-text-primary: #ececec;
+  --color-text-secondary: #a3a3a3;
+  --color-action-bg: #ececec;
+  --color-action-fg: #181818;
+  --color-overlay-scrim: rgb(10 10 10 / 0.6);
+  --color-overlay-fg: #ffffff;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-bg-base: #ffffff;
+    --color-bg-surface: #f4f4f4;
+    --color-bg-elevated: #ffffff;
+    --color-border-default: #e3e3e3;
+    --color-text-primary: #0d0d0d;
+    --color-text-secondary: #5d5d5d;
+    --color-action-bg: #0d0d0d;
+    --color-action-fg: #ffffff;
+    color-scheme: light;
+  }
+}
+
+@theme inline {
+  --color-base: var(--color-bg-base);
+  --color-surface: var(--color-bg-surface);
+  --color-elevated: var(--color-bg-elevated);
+  --color-line: var(--color-border-default);
+  --color-ink: var(--color-text-primary);
+  --color-muted: var(--color-text-secondary);
+  --color-action: var(--color-action-bg);
+  --color-on-action: var(--color-action-fg);
+  --color-scrim: var(--color-overlay-scrim);
+  --font-sans: var(--font-geist);
+  --font-display: var(--font-big-shoulders);
+}
+
+body {
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-geist), system-ui, sans-serif;
+}
