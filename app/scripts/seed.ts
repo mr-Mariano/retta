@@ -32,6 +32,9 @@ interface MatchSpec {
   min: number;
   max: number;
   pricePesos: number;
+  format: "fut5" | "fut7" | "fut11";
+  level: "beginner" | "intermediate" | "advanced";
+  type: "men" | "women" | "mixed";
   signUps?: string[];
   dropOuts?: string[];
   cancelNote?: string;
@@ -70,18 +73,24 @@ const FIELDS = [
   {
     name: "Cancha La Estancia",
     address: "Av. Guadalupe 1450, Chapalita, Guadalajara",
+    area: "Chapalita",
+    hasChangingRooms: false,
     notes: "Pasto sintético · Estacionamiento gratis",
     manager: "cancha1",
   },
   {
     name: "Fut 7 Providencia",
     address: "Calle Rubén Darío 820, Providencia, Guadalajara",
-    notes: "Vestidores y regaderas",
+    area: "Providencia",
+    hasChangingRooms: true,
+    notes: "Regaderas",
     manager: "cancha1",
   },
   {
     name: "Deportivo Tlaquepaque",
     address: "Av. Niños Héroes 300, Centro, San Pedro Tlaquepaque",
+    area: "Tlaquepaque",
+    hasChangingRooms: true,
     notes: null,
     manager: "cancha2",
   },
@@ -90,16 +99,16 @@ const FIELDS = [
 /** jugador1 (Ana) is the main demo player: upcoming match, drop-out, cancellation and credit. */
 const MATCHES: MatchSpec[] = [
   // Pending and closest to its minimum: the "Se está armando" card.
-  { field: 0, day: 1, time: "20:00", organizer: "organizador1", title: "Reta nocturna", min: 10, max: 14, pricePesos: 80, signUps: players(2, 9) },
-  { field: 1, day: 1, time: "21:00", organizer: "organizador2", min: 8, max: 12, pricePesos: 70, signUps: players(1, 10), dropOuts: ["jugador10"] },
+  { field: 0, day: 1, time: "20:00", organizer: "organizador1", title: "Reta nocturna", min: 10, max: 14, pricePesos: 80, format: "fut7", level: "intermediate", type: "mixed", signUps: players(2, 9) },
+  { field: 1, day: 1, time: "21:00", organizer: "organizador2", min: 8, max: 12, pricePesos: 70, format: "fut7", level: "advanced", type: "men", signUps: players(1, 10), dropOuts: ["jugador10"] },
   // Full.
-  { field: 0, day: 2, time: "19:00", organizer: "organizador1", min: 6, max: 10, pricePesos: 60, signUps: players(2, 11) },
-  { field: 2, day: 2, time: "20:00", organizer: "organizador2", title: "Reta gratis", description: "Trae playera clara y oscura.", min: 4, max: 10, pricePesos: 0, signUps: ["jugador3", "jugador5", "jugador7"] },
-  { field: 1, day: 3, time: "20:00", organizer: "organizador1", min: 10, max: 14, pricePesos: 80 },
-  { field: 0, day: 3, time: "21:00", organizer: "organizador2", min: 8, max: 12, pricePesos: 90, signUps: ["jugador1", "jugador4", "jugador6", "jugador8", "jugador12"], cancelNote: "La cancha está en mantenimiento" },
-  { field: 2, day: 4, time: "19:00", organizer: "organizador1", min: 6, max: 12, pricePesos: 50, signUps: ["jugador1", "jugador13", "jugador14"], dropOuts: ["jugador1"] },
-  { field: 1, day: 5, time: "19:00", organizer: "organizador2", min: 10, max: 16, pricePesos: 70, signUps: players(2, 6) },
-  { field: 2, day: 6, time: "20:00", organizer: "organizador1", min: 8, max: 12, pricePesos: 80 },
+  { field: 0, day: 2, time: "19:00", organizer: "organizador1", min: 6, max: 10, pricePesos: 60, format: "fut5", level: "beginner", type: "mixed", signUps: players(2, 11) },
+  { field: 2, day: 2, time: "20:00", organizer: "organizador2", title: "Reta gratis", description: "Trae playera clara y oscura.", min: 4, max: 10, pricePesos: 0, format: "fut5", level: "beginner", type: "mixed", signUps: ["jugador3", "jugador5", "jugador7"] },
+  { field: 1, day: 3, time: "20:00", organizer: "organizador1", min: 10, max: 14, pricePesos: 80, format: "fut7", level: "intermediate", type: "women" },
+  { field: 0, day: 3, time: "21:00", organizer: "organizador2", min: 8, max: 12, pricePesos: 90, format: "fut7", level: "advanced", type: "mixed", signUps: ["jugador1", "jugador4", "jugador6", "jugador8", "jugador12"], cancelNote: "La cancha está en mantenimiento" },
+  { field: 2, day: 4, time: "19:00", organizer: "organizador1", min: 6, max: 12, pricePesos: 50, format: "fut5", level: "intermediate", type: "mixed", signUps: ["jugador1", "jugador13", "jugador14"], dropOuts: ["jugador1"] },
+  { field: 1, day: 5, time: "19:00", organizer: "organizador2", min: 10, max: 16, pricePesos: 70, format: "fut7", level: "beginner", type: "mixed", signUps: players(2, 6) },
+  { field: 2, day: 6, time: "20:00", organizer: "organizador1", min: 16, max: 22, pricePesos: 80, format: "fut11", level: "advanced", type: "men" },
 ];
 
 function players(from: number, to: number): string[] {
@@ -162,7 +171,7 @@ async function main() {
 
   for (const [i, account] of ACCOUNTS.entries()) {
     const email = emailFor(account.key);
-    const phone = `33${String(10000000 + i)}`;
+    const phone = `+5233${String(10000000 + i)}`;
     const metadata = { full_name: account.fullName, phone };
     const existing = users.find((user) => user.email === email);
 
@@ -189,6 +198,8 @@ async function main() {
         id: fieldIds[i],
         name: field.name,
         address: field.address,
+        area: field.area,
+        has_changing_rooms: field.hasChangingRooms,
         notes: field.notes,
         manager_id: userIds.get(field.manager),
       })),
@@ -251,6 +262,9 @@ async function main() {
         min_players: spec.min,
         max_players: spec.max,
         price_cents: spec.pricePesos * 100,
+        format: spec.format,
+        level: spec.level,
+        type: spec.type,
       }),
       "Insert match",
     );
