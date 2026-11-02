@@ -132,3 +132,28 @@ Canvas: Claude Design "Retta · Identidad base". Figma: `01 · Fundamentos` (var
 | 2026-10-25 | Empty states use the waiting mascot plus a message and an action | |
 | 2026-10-25 | Profile: initials avatar, editable name and phone, sign out | Password recovery out of MVP scope |
 | 2026-10-25 | Schedule: only player screens get a full visual proposal; organizer, field manager and admin screens are built directly in code with the existing components | Implementation starts 2026-10-26 in parallel with player design approval |
+
+## Session 6 — Player screens review (2026-11-02)
+
+Canvas: Claude Design "Retta · Identidad base", page Jugador. Boards marked "final" are the approved versions; variant boards stay for reference.
+
+| Date | Decision | Notes |
+|---|---|---|
+| 2026-11-02 | Welcome screen: cover photo with a live match card ("Faltan 2 para que se arme"), "Continuar con Google" and "Registrarme con correo" | The card shows the pending match closest to its minimum. Carousel onboarding discarded |
+| 2026-11-02 | Sign-in methods for the demo: Google and email/password | Apple deferred (needs an Apple Developer account) |
+| 2026-11-02 | After Google sign-in, a "Completa tu perfil" step asks for the phone before entering | **Changes session 3**: a profile can exist without a phone until this step is done |
+| 2026-11-02 | Phone field has a country selector (default MX +52, detected from the browser); numbers stored in international format | **Changes session 3** (10-digit Mexican only). Validate per country (e.g. libphonenumber); also feeds the WhatsApp link |
+| 2026-11-02 | Sign-in screen: Google button, then email and password with "Mostrar"; no mascot | Mascot stays out of forms (session 4) |
+| 2026-11-02 | Form errors: inline under each field, color `#FF8A7A` plus icon and text | First status color outside the neutral palette |
+| 2026-11-02 | Passwords need at least 8 characters | Supabase default is 6 |
+| 2026-11-02 | Match detail location: field name and area, plus a round map button that opens Maps | Full address removed from the screen. Area comes from the field (new short field or derived from the address) |
+| 2026-11-02 | Match detail info as icon chips: format, level, type, changing rooms, plus one short organizer note | **Changes session 2** (no format field): adds `format`, `level` and `type` to matches; changing rooms belong to the field |
+| 2026-11-02 | Level shown as 1–3 bars: green Principiante, yellow Intermedio, red Avanzado | Bar count also encodes the level, so it does not rely on color. Exception to "mascot is the only colored element" (session 4) |
+| 2026-11-02 | Match type: Varonil (blue), Femenil (pink), Mixto (both) | Always shown with its label |
+| 2026-11-02 | Toast: single line, close button, thin progress line that empties before it disappears | |
+
+### Open items
+- Toast duration (proposed 5 s, paused while touched)
+- Whether "Avanzado" red is too close to the error color (alternative: orange)
+- Migrations for the model changes above: nullable phone until profile completion, international phone format, `format`/`level`/`type` on matches, area and changing rooms on fields
+- Move approved screens to Figma
