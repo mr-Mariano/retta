@@ -156,4 +156,4 @@ Canvas: Claude Design "Retta · Identidad base", page Jugador. Boards marked "fi
 - Toast duration (proposed 5 s, paused while touched)
 - Whether "Avanzado" red is too close to the error color (alternative: orange)
 - Migrations for the model changes above: nullable phone until profile completion, international phone format, `format`/`level`/`type` on matches, area and changing rooms on fields
-- Move approved screens to Figma
+- Link the final Figma screens (page 03 · Jugador) to the 01 · Fundamentos components; they were imported as plain layers
