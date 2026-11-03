@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { GoogleButton } from "@/components/google-button";
 import { createClient } from "@/lib/supabase/server";
 
 interface FeaturedMatch {
@@ -98,9 +97,11 @@ export default async function Welcome() {
         </div>
 
         <div className="mt-auto flex flex-col gap-2.5">
-          <GoogleButton />
-          <Link href="/registro" className="flex h-12 items-center justify-center text-[15px] font-semibold">
-            Registrarme con correo
+          <Link
+            href="/registro"
+            className="flex h-[52px] items-center justify-center rounded-full bg-action text-base font-bold text-on-action"
+          >
+            Crear cuenta
           </Link>
           <p className="text-center text-[15px] text-muted">
             ¿Ya tienes cuenta?{" "}

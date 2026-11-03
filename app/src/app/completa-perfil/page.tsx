@@ -24,7 +24,6 @@ export default async function CompletaPerfil() {
 
   const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
   const name = profile?.full_name ?? user.email ?? "";
-  const provider = user.app_metadata.provider === "google" ? "Conectado con Google" : "Tu cuenta";
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-7 px-5 pt-13 pb-8">
@@ -40,7 +39,7 @@ export default async function CompletaPerfil() {
         <h1 className="font-display text-[44px] leading-[0.95] font-extrabold">¿A qué número te avisamos?</h1>
         <p className="text-[15px] leading-normal text-muted">El organizador lo usa para recordarte la reta por WhatsApp.</p>
       </div>
-      <PerfilForm account={{ initials: initials(name), label: `${provider} · ${user.email ?? ""}` }} />
+      <PerfilForm account={{ initials: initials(name), label: `Tu cuenta · ${user.email ?? ""}` }} />
     </main>
   );
 }

@@ -151,6 +151,7 @@ Canvas: Claude Design "Retta · Identidad base", page Jugador. Boards marked "fi
 | 2026-11-02 | Level shown as 1–3 bars: green Principiante, yellow Intermedio, red Avanzado | Bar count also encodes the level, so it does not rely on color. Exception to "mascot is the only colored element" (session 4) |
 | 2026-11-02 | Match type: Varonil (blue), Femenil (pink), Mixto (both) | Always shown with its label |
 | 2026-11-02 | Toast: single line, close button, thin progress line that empties before it disappears | |
+| 2026-11-03 | Google sign-in and sign-up out of the initial scope: email/password only. Welcome CTA is "Crear cuenta"; sign-in screen drops the Google button | **Changes the 2026-11-02 sign-in decisions.** "Completa tu perfil" stays as a fallback for accounts without a phone |
 
 ### Open items
 - Toast duration (proposed 5 s, paused while touched)

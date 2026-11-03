@@ -25,22 +25,12 @@ export interface ProfileState {
   values?: { phone: string; country: string };
 }
 
-/** Public origin of this request, for OAuth and email redirect URLs. */
+/** Public origin of this request, for email redirect URLs. */
 async function requestOrigin() {
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host");
   const proto = h.get("x-forwarded-proto") ?? "http";
   return `${proto}://${host}`;
-}
-
-export async function signInWithGoogle() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: { redirectTo: `${await requestOrigin()}/auth/callback` },
-  });
-  if (error || !data.url) redirect("/entrar?error=google");
-  redirect(data.url);
 }
 
 export async function signUpWithEmail(_prev: SignUpState, formData: FormData): Promise<SignUpState> {
