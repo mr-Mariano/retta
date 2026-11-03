@@ -131,12 +131,12 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
           <span className="text-[15px] text-muted">Hola{firstName ? `, ${firstName}` : ""}</span>
           <Link
             href="/saldo"
-            className="flex h-11 shrink-0 items-center rounded-full border border-line bg-surface px-3 text-sm font-bold text-ink"
+            className="flex h-9 shrink-0 items-center rounded-full border border-line bg-surface px-2.5 text-[13px] font-bold text-ink"
           >
             Saldo ${balance}
           </Link>
         </div>
-        <h1 className="font-display text-4xl leading-none font-extrabold">Retas cerca de ti</h1>
+        <h1 className="font-display text-[32px] leading-none font-medium">Retas cerca de ti</h1>
       </div>
 
       <nav aria-label="Filtrar retas" className="-mx-4 overflow-x-auto px-4 [scrollbar-width:none]">
@@ -148,7 +148,7 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
                 <Link
                   href={item.key ? `/explorar?f=${item.key}` : "/explorar"}
                   aria-current={active ? "page" : undefined}
-                  className={`flex h-10 items-center rounded-full px-4 text-[15px] ${
+                  className={`flex h-9 items-center rounded-full px-[13px] text-sm ${
                     active ? "bg-action font-bold text-on-action" : "bg-surface font-semibold text-muted"
                   }`}
                 >
@@ -166,11 +166,11 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
           className="relative block h-[220px] overflow-hidden rounded-[22px] bg-elevated text-white"
         >
           <Image src={highlight.cover} alt="" fill priority sizes="448px" className="object-cover object-[center_60%]" />
-          <span className="absolute top-3.5 left-3.5 rounded-full bg-action px-3 py-1.5 text-xs font-semibold tracking-[0.06em] text-on-action uppercase">
+          <span className="absolute top-3.5 left-3.5 rounded-full bg-action px-2.5 py-1 text-[11px] font-semibold tracking-[0.06em] text-on-action uppercase">
             {highlight.pending ? "Se está armando" : "Ya se armó"}
           </span>
           <span className="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-scrim px-4 py-3.5 text-white">
-            <span className="font-display text-[26px] leading-none font-extrabold">{highlight.title}</span>
+            <span className="font-display text-[23px] leading-none font-medium">{highlight.title}</span>
             <span className="text-sm">
               {formatDay(highlight.startsAt, now)} · {formatTime(highlight.startsAt)} · {highlight.active}/{highlight.max} ·{" "}
               {progressNote(highlight)} · {highlight.price}
@@ -179,7 +179,7 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
         </Link>
       )}
 
-      <h2 className="mt-1 font-display text-2xl font-extrabold">{highlight ? "Próximas" : filter.label}</h2>
+      <h2 className="mt-1 font-display text-[21px] font-medium">{highlight ? "Próximas" : filter.label}</h2>
 
       {list.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-6 text-center">
@@ -221,8 +221,8 @@ function MatchCard({ match, now }: { match: Match; now: Date }) {
         <span className="truncate text-[13px] text-muted">{match.fieldName}</span>
       </span>
       <span className="flex flex-col items-end gap-1.5 pr-1.5">
-        <span className="font-display text-[22px] leading-none font-extrabold">{match.price}</span>
-        <span className="rounded-full bg-elevated px-2 py-[3px] text-xs font-semibold text-muted">
+        <span className="font-display text-[20px] leading-none font-medium">{match.price}</span>
+        <span className="rounded-full bg-elevated px-[7px] py-0.5 text-[11px] font-semibold text-muted">
           {full ? "Llena" : `${match.active}/${match.max}`}
         </span>
       </span>

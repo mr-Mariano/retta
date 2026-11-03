@@ -14,7 +14,7 @@ export default async function Entrar({ searchParams }: { searchParams: Promise<{
         <Image src="/retta-wordmark.svg" alt="" width={68} height={30} className="h-[30px] w-auto" />
       </Link>
       <div className="flex flex-col gap-2">
-        <h1 className="font-display text-[44px] leading-[0.95] font-extrabold">Hola de nuevo</h1>
+        <h1 className="font-display text-[38px] leading-none font-medium">Hola de nuevo</h1>
         <p className="text-[15px] leading-normal text-muted">Entra para ver tus retas y tu saldo.</p>
       </div>
       <EntrarForm initialError={error === "link" ? "El enlace ya no es válido. Inicia sesión con tu correo." : undefined} />

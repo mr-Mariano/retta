@@ -13,7 +13,7 @@ export function RegistroForm() {
   if (state.checkEmail) {
     return (
       <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-5" role="status">
-        <h2 className="font-display text-3xl leading-none font-extrabold">Revisa tu correo</h2>
+        <h2 className="font-display text-[26px] leading-none font-medium">Revisa tu correo</h2>
         <p className="text-[15px] leading-normal text-muted">
           Te mandamos un enlace a <span className="font-semibold text-ink">{values?.email}</span> para confirmar tu cuenta. Ábrelo desde este dispositivo.
         </p>

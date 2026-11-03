@@ -55,7 +55,7 @@ export default async function Welcome() {
           <div className="mt-[150px] flex items-center gap-3 rounded-[18px] border border-line bg-base/80 p-3 backdrop-blur-sm">
             <span className="flex size-[52px] shrink-0 flex-col items-center justify-center rounded-xl bg-elevated">
               <span className="text-[11px] font-bold text-muted">{dayLabel(startsAt)}</span>
-              <span className="font-display text-xl leading-none font-extrabold">
+              <span className="font-display text-[18px] leading-none font-medium">
                 {formatTime(startsAt)}
               </span>
             </span>
@@ -71,7 +71,7 @@ export default async function Welcome() {
                   className="relative h-1.5 flex-1 rounded-full bg-line"
                 >
                   <span
-                    className="absolute inset-y-0 left-0 rounded-full bg-ink"
+                    className="absolute inset-y-0 left-0 rounded-full bg-action"
                     style={{ width: `${(match.active_count / match.max_players) * 100}%` }}
                   />
                 </span>
@@ -84,7 +84,7 @@ export default async function Welcome() {
         )}
 
         <div className={`flex flex-col gap-2 ${match ? "" : "mt-[230px]"}`}>
-          <h1 className="font-display text-5xl leading-[0.92] font-extrabold">{headline(match)}</h1>
+          <h1 className="font-display text-[42px] leading-none font-medium">{headline(match)}</h1>
           <p className="text-[15px] leading-normal text-muted">
             {match ? "Únete en un minuto y aparta tu lugar." : "Inscríbete solo, sin armar equipo. Paga y juega."}
           </p>

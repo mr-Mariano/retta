@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 /*
-  Design tokens mirror the Figma "Color" collection (modes Oscuro / Claro).
+  Design tokens: palette "negro y azul silbato" (session 7).
   Dark is the primary mode; light applies when the OS prefers it.
 */
 :root {
-  --color-bg-base: #181818;
-  --color-bg-surface: #212121;
-  --color-bg-elevated: #2a2a2a;
-  --color-border-default: #303030;
-  --color-text-primary: #ececec;
-  --color-text-secondary: #a3a3a3;
-  --color-action-bg: #ececec;
-  --color-action-fg: #181818;
+  --color-bg-base: #0b0c0e;
+  --color-bg-surface: #141518;
+  --color-bg-elevated: #1b1d21;
+  --color-border-default: #24262b;
+  --color-text-primary: #edeef0;
+  --color-text-secondary: #8f9298;
+  --color-action-bg: #3d6bff;
+  --color-action-fg: #ffffff;
   --color-overlay-scrim: rgb(10 10 10 / 0.6);
   --color-overlay-fg: #ffffff;
   /* Form errors (session 6): always paired with an icon and text. */
@@ -22,13 +22,13 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --color-bg-base: #ffffff;
-    --color-bg-surface: #f4f4f4;
-    --color-bg-elevated: #ffffff;
-    --color-border-default: #e3e3e3;
-    --color-text-primary: #0d0d0d;
-    --color-text-secondary: #5d5d5d;
-    --color-action-bg: #0d0d0d;
+    --color-bg-base: #f7f7f8;
+    --color-bg-surface: #ffffff;
+    --color-bg-elevated: #eeeff2;
+    --color-border-default: #e2e3e7;
+    --color-text-primary: #0e0f12;
+    --color-text-secondary: #5e626a;
+    --color-action-bg: #2f5bff;
     --color-action-fg: #ffffff;
     --color-status-danger: #b42318;
     color-scheme: light;
@@ -46,12 +46,18 @@
   --color-on-action: var(--color-action-fg);
   --color-scrim: var(--color-overlay-scrim);
   --color-danger: var(--color-status-danger);
-  --font-sans: var(--font-geist);
-  --font-display: var(--font-big-shoulders);
+  --font-sans: var(--font-alegreya-sans);
+  --font-display: var(--font-alegreya-sans);
+}
+
+html {
+  background: var(--color-bg-base);
+  /* No pull-down bounce at the top: nothing shows behind the page. */
+  overscroll-behavior-y: none;
 }
 
 body {
   background: var(--color-bg-base);
   color: var(--color-text-primary);
-  font-family: var(--font-geist), system-ui, sans-serif;
+  font-family: var(--font-alegreya-sans), system-ui, sans-serif;
 }

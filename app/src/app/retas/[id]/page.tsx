@@ -128,10 +128,20 @@ export default async function MatchDetailPage({
     dayKey(deadline) === dayKey(startsAt)
       ? `las ${formatTime(deadline)}`
       : `el ${formatDay(deadline, now).toLowerCase()} a las ${formatTime(deadline)}`;
+  const missing = match.min_players - active;
+  const left = match.max_players - active;
+  const capacityHeadline =
+    match.status === "pending"
+      ? missing === 1
+        ? "Falta 1 para que se arme"
+        : `Faltan ${missing} para que se arme`
+      : left === 0
+        ? "Llena"
+        : `Ya se armó: ${left === 1 ? "queda 1 lugar" : `quedan ${left} lugares`}`;
   const capacityNote =
     match.status === "pending"
-      ? `Si no llegan ${match.min_players} antes de ${deadlineWhen}, la reta se cancela y te devolvemos el pago como saldo.`
-      : "Ya se armó: la reta va.";
+      ? `Mínimo ${match.min_players}. Si no llegan antes de ${deadlineWhen}, la reta se cancela y te devolvemos el pago como saldo.`
+      : null;
 
   return (
     <main className="relative mx-auto min-h-dvh max-w-md pb-32">
@@ -153,8 +163,8 @@ export default async function MatchDetailPage({
 
       <div className="relative -mt-7 flex flex-col gap-4 rounded-t-3xl bg-base px-5 pt-5">
         <div className="flex flex-col gap-2">
-          <span className="self-start rounded-full bg-elevated px-3 py-[5px] text-[13px] font-semibold">{statusLabel}</span>
-          <h1 className="font-display text-[38px] leading-none font-extrabold">{title}</h1>
+          <span className="self-start rounded-full bg-elevated px-2.5 py-1 text-xs font-semibold">{statusLabel}</span>
+          <h1 className="font-display text-[33px] leading-none font-medium">{title}</h1>
           <span className="text-[16px] font-semibold">
             {formatLongDay(startsAt)} · {formatTime(startsAt)}–{formatTime(endsAt)}
           </span>
@@ -181,28 +191,14 @@ export default async function MatchDetailPage({
 
         {!isCancelled && (
           <div className="flex flex-col gap-2.5 rounded-2xl border border-line bg-surface p-3.5">
-            <div className="flex items-baseline justify-between">
-              <span className="font-display text-[30px] leading-none font-extrabold">
-                {active}/{match.max_players}
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="text-[18px] font-semibold">{capacityHeadline}</span>
+              <span className="shrink-0 text-sm text-muted">
+                {active} de {match.max_players}
               </span>
-              <span className="text-sm text-muted">mínimo {match.min_players} para jugar</span>
             </div>
-            <div
-              role="progressbar"
-              aria-label="Lugares ocupados"
-              aria-valuemin={0}
-              aria-valuemax={match.max_players}
-              aria-valuenow={active}
-              className="relative h-2 rounded bg-line"
-            >
-              <div className="h-2 rounded bg-ink" style={{ width: `${(active / match.max_players) * 100}%` }} />
-              <div
-                aria-hidden="true"
-                className="absolute -top-1 h-4 w-0.5 bg-muted"
-                style={{ left: `${(match.min_players / match.max_players) * 100}%` }}
-              />
-            </div>
-            {!isPast && <span className="text-sm leading-[1.45] text-muted">{capacityNote}</span>}
+            <CapacitySlots active={active} min={match.min_players} max={match.max_players} />
+            {!isPast && capacityNote && <span className="text-sm leading-[1.45] text-muted">{capacityNote}</span>}
           </div>
         )}
 
@@ -290,7 +286,7 @@ function ActionBar({
       ) : (
         <>
           <div className="flex flex-col">
-            <span className="font-display text-[30px] leading-none font-extrabold">{price}</span>
+            <span className="font-display text-[27px] leading-none font-medium">{price}</span>
             <span className="text-xs text-muted">por persona</span>
           </div>
           {state === "full" ? (
@@ -340,7 +336,7 @@ function PaymentSheet({
         className="absolute inset-x-0 bottom-0 flex flex-col gap-[18px] rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
       >
         <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
-        <h2 id="pago-titulo" className="font-display text-[32px] leading-none font-extrabold">
+        <h2 id="pago-titulo" className="font-display text-[28px] leading-none font-medium">
           Confirma tu inscripción
         </h2>
         <div className="flex items-center gap-3">
@@ -366,7 +362,7 @@ function PaymentSheet({
           <div aria-hidden="true" className="h-px bg-line" />
           <div className="flex items-baseline justify-between">
             <dt className="font-semibold">Total a pagar</dt>
-            <dd className="font-display text-[32px] leading-none font-extrabold">${total}</dd>
+            <dd className="font-display text-[28px] leading-none font-medium">${total}</dd>
           </div>
         </dl>
         {total > 0 && (
@@ -383,9 +379,39 @@ function PaymentSheet({
   );
 }
 
+/** One numbered slot per place (session 7); the ones still missing for the minimum are outlined. */
+function CapacitySlots({ active, min, max }: { active: number; min: number; max: number }) {
+  return (
+    <ol
+      aria-label={`${active} de ${max} lugares ocupados, mínimo ${min}`}
+      className="grid grid-cols-6 gap-[5px]"
+    >
+      {Array.from({ length: max }, (_, i) => {
+        const taken = i < active;
+        const neededForMin = !taken && i < min;
+        return (
+          <li
+            key={i}
+            aria-hidden="true"
+            className={`flex h-[30px] items-center justify-center rounded-md text-[13px] font-semibold ${
+              taken
+                ? "bg-action text-on-action"
+                : neededForMin
+                  ? "bg-elevated text-muted ring-[1.5px] ring-action ring-inset"
+                  : "bg-elevated text-muted ring-1 ring-line ring-inset"
+            }`}
+          >
+            {i + 1}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 function Chip({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
-    <li className="flex h-8 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-sm font-semibold">
+    <li className="flex h-7 items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 text-[13px] font-semibold">
       {icon}
       {children}
     </li>

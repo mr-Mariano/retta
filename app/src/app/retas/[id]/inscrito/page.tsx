@@ -62,7 +62,7 @@ export default async function SignedUp({
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center gap-[18px] px-6 pt-[72px] pb-8 text-center">
       <Image src="/mascota/celebra.png" alt="" width={230} height={230} priority />
-      <h1 className="font-display text-[52px] leading-[0.95] font-extrabold">
+      <h1 className="font-display text-[45px] leading-none font-medium">
         {justConfirmed ? "¡Ya se armó la reta!" : "¡Estás dentro!"}
       </h1>
       <p className="max-w-[320px] text-[16px] leading-normal text-muted">

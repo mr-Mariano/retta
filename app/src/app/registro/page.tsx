@@ -13,7 +13,7 @@ export default function Registro() {
       </Link>
       <div className="flex items-end justify-between gap-2">
         <div className="flex flex-col gap-2">
-          <h1 className="font-display text-[44px] leading-[0.95] font-extrabold">Encuentra tu reta</h1>
+          <h1 className="font-display text-[38px] leading-none font-medium">Encuentra tu reta</h1>
           <p className="text-[15px] leading-normal text-muted">Inscríbete solo, sin armar equipo. Paga y juega.</p>
         </div>
         <Image src="/mascota/saluda.png" alt="Silbato saludando" width={120} height={120} className="shrink-0" />

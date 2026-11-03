@@ -36,7 +36,7 @@ export default async function CompletaPerfil() {
         </form>
       </div>
       <div className="flex flex-col gap-2.5">
-        <h1 className="font-display text-[44px] leading-[0.95] font-extrabold">¿A qué número te avisamos?</h1>
+        <h1 className="font-display text-[38px] leading-none font-medium">¿A qué número te avisamos?</h1>
         <p className="text-[15px] leading-normal text-muted">El organizador lo usa para recordarte la reta por WhatsApp.</p>
       </div>
       <PerfilForm account={{ initials: initials(name), label: `Tu cuenta · ${user.email ?? ""}` }} />

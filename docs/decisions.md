@@ -159,3 +159,22 @@ Canvas: Claude Design "Retta · Identidad base", page Jugador. Boards marked "fi
 - Whether "Avanzado" red is too close to the error color (alternative: orange)
 - Migrations for the model changes above: nullable phone until profile completion, international phone format, `format`/`level`/`type` on matches, area and changing rooms on fields
 - Link the final Figma screens (page 03 · Jugador) to the 01 · Fundamentos components; they were imported as plain layers
+
+## Session 7 — Visual refresh (2026-11-03)
+
+Canvas: Claude Design "Retta · Jugador · Diseño final", page Direcciones visuales, row "Propuesta final". Goal: stop looking like a generic AI-built app (Codex greys, Geist, a pill on everything).
+
+| Date | Decision | Notes |
+|---|---|---|
+| 2026-11-03 | Typography: Alegreya Sans for everything; titles and numbers at weight 500, body bold at 600 | **Changes session 4** (Big Shoulders + Geist). Chosen over 11 other pairings for a lighter, less geometric feel |
+| 2026-11-03 | Palette "negro y azul silbato". Dark: bg `#0B0C0E`, surface `#141518`, elevated `#1B1D21`, border `#24262B`, text `#EDEEF0`, secondary `#8F9298`, accent `#3D6BFF` | **Changes session 4** (Codex-like neutrals, no brand color). The accent is the mascot's blue |
+| 2026-11-03 | Light: bg `#F7F7F8`, surface `#FFFFFF`, elevated `#EEEFF2`, border `#E2E3E7`, text `#0E0F12`, secondary `#5E626A`, accent `#2F5BFF` | Darker blue so white button text keeps contrast |
+| 2026-11-03 | Primary actions, active nav section, active filter and capacity fill use the accent with white text | **Changes session 4** (inverted text color) |
+| 2026-11-03 | Bottom nav: 312 × 48 px; hides while scrolling down and comes back on scroll up | |
+| 2026-11-03 | Pills (filters, status, info chips) one step smaller | |
+| 2026-11-03 | Match capacity: one numbered slot per place, like shirt numbers; taken slots filled, the ones still missing for the minimum outlined | Replaces the bar with a minimum marker in the match detail |
+| 2026-11-03 | No pull-down bounce at the top of the page | |
+
+### Open items
+- Apply the new style to the remaining canvas screens (sign-up, sign-in, payment, success, my matches, drop-out, balance, profile, empty state)
+- Replace stadium photos with amateur field photos

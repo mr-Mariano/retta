@@ -1,17 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Big_Shoulders, Geist } from "next/font/google";
+import { Alegreya_Sans } from "next/font/google";
 import "./globals.css";
 
-const geist = Geist({
-  variable: "--font-geist",
+// One family for titles and body (session 7); 500 for titles, 700 stands in for 600.
+const alegreyaSans = Alegreya_Sans({
+  variable: "--font-alegreya-sans",
   subsets: ["latin"],
-});
-
-// Big Shoulders with the optical-size axis: large sizes render as the Display cut.
-const bigShoulders = Big_Shoulders({
-  variable: "--font-big-shoulders",
-  subsets: ["latin"],
-  axes: ["opsz"],
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -20,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#181818",
+  themeColor: "#0b0c0e",
 };
 
 export default function RootLayout({
@@ -30,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${geist.variable} ${bigShoulders.variable} antialiased`}>
+      <body className={`${alegreyaSans.variable} antialiased`}>
         {children}
       </body>
     </html>

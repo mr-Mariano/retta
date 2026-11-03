@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 const ICON_PATHS = {
   explorar: (
@@ -37,14 +38,40 @@ const SECTIONS = [
   { href: "/perfil", label: "Perfil", icon: ICON_PATHS.perfil },
 ];
 
+// Scroll distance that counts as a direction change, so small jitters don't toggle the nav.
+const SCROLL_THRESHOLD = 8;
+
+/** Hidden while the page scrolls down, shown again on scroll up or near the top (session 7). */
+function useHideOnScrollDown() {
+  const [hidden, setHidden] = useState(false);
+  const lastY = useRef(0);
+
+  useEffect(() => {
+    function onScroll() {
+      const y = window.scrollY;
+      const delta = y - lastY.current;
+      if (Math.abs(delta) < SCROLL_THRESHOLD) return;
+      setHidden(delta > 0 && y > 64);
+      lastY.current = y;
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return hidden;
+}
+
 /** Floating player nav (session 4): the active section expands into a labeled pill. */
 export function BottomNav() {
   const pathname = usePathname();
+  const hidden = useHideOnScrollDown();
 
   return (
     <nav
       aria-label="Navegación principal"
-      className="fixed inset-x-4 bottom-6 z-10 mx-auto flex h-14 max-w-[358px] items-center justify-between rounded-full border border-line bg-elevated p-1"
+      className={`fixed inset-x-4 bottom-6 z-10 mx-auto flex h-12 max-w-[312px] items-center justify-between rounded-full border border-line bg-elevated p-1 transition-transform duration-300 motion-reduce:transition-none ${
+        hidden ? "translate-y-[calc(100%+2rem)]" : ""
+      }`}
     >
       {SECTIONS.map((section) => {
         const active = pathname === section.href || pathname.startsWith(`${section.href}/`);
@@ -56,14 +83,14 @@ export function BottomNav() {
             aria-current={active ? "page" : undefined}
             className={
               active
-                ? "flex h-[46px] items-center gap-2 rounded-full bg-action px-4 text-[15px] font-bold text-on-action"
-                : "flex size-[46px] items-center justify-center text-muted"
+                ? "flex h-10 items-center gap-2 rounded-full bg-action px-3.5 text-sm font-bold text-on-action"
+                : "flex size-10 items-center justify-center text-muted"
             }
           >
             <svg
               aria-hidden="true"
-              width={active ? 20 : 22}
-              height={active ? 20 : 22}
+              width={active ? 18 : 20}
+              height={active ? 18 : 20}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
