@@ -25,12 +25,12 @@ export function DropOutSheet({ info, closeHref }: { info: DropOutInfo; closeHref
   const credit = info.paidCents / 100;
   return (
     <div className="fixed inset-0 z-30 mx-auto max-w-md">
-      <Link href={closeHref} scroll={false} aria-label="Cerrar" className="absolute inset-0 bg-black/60" />
+      <Link href={closeHref} scroll={false} aria-label="Cerrar" className="absolute inset-0 animate-fade-in bg-black/60" />
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="baja-titulo"
-        className="absolute inset-x-0 bottom-0 flex flex-col gap-4 rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex animate-sheet-up flex-col gap-4 rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
       >
         <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
         <div className="flex flex-col gap-1">

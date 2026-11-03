@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { BottomNav } from "@/components/bottom-nav";
 import { createClient } from "@/lib/supabase/server";
 import { formatDay, formatTime, isThisWeekend, relativeDay } from "@/lib/time";
 import { MatchCard, type Match } from "./match-card";
@@ -206,7 +205,6 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
         </ul>
       )}
 
-      <BottomNav />
     </main>
   );
 }

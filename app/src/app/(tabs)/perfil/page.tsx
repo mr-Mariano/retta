@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { signOut } from "@/app/auth/actions";
-import { BottomNav } from "@/components/bottom-nav";
 import { Sheet } from "@/components/sheet";
 import { FacebookIcon, InstagramIcon } from "@/components/social-icons";
 import { ToastStack } from "@/components/toast-stack";
@@ -113,7 +112,6 @@ export default async function Perfil({ searchParams }: { searchParams: Promise<{
         toasts={aviso === "guardado" ? [{ id: "guardado", message: "Cambios guardados" }] : []}
         clearParams={["aviso"]}
       />
-      <BottomNav />
     </main>
   );
 }

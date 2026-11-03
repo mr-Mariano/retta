@@ -47,7 +47,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
   return (
     <div
       role="status"
-      className="pointer-events-auto relative flex h-[52px] items-center gap-2.5 overflow-hidden rounded-2xl bg-ink pr-1 pl-3.5 text-[15px] font-semibold text-[var(--color-bg-base)] shadow-[0_12px_32px_rgb(0_0_0/0.45)]"
+      className="pointer-events-auto relative flex h-[52px] animate-toast-in items-center gap-2.5 overflow-hidden rounded-2xl bg-ink pr-1 pl-3.5 text-[15px] font-semibold text-[var(--color-bg-base)] shadow-[0_12px_32px_rgb(0_0_0/0.45)]"
     >
       <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" className="shrink-0">
         <circle cx="12" cy="12" r="10" className="fill-action" />

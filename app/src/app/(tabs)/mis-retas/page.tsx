@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { BottomNav } from "@/components/bottom-nav";
 import { DropOutSheet } from "@/components/drop-out-sheet";
 import { ToastStack } from "@/components/toast-stack";
 import { createClient } from "@/lib/supabase/server";
@@ -222,7 +221,6 @@ export default async function MisRetas({
 
       {/* Keyed so a redirect back to this same page starts a fresh stack. */}
       <ToastStack key={`${aviso}-${saldo}`} toasts={toasts} clearParams={["aviso", "saldo"]} />
-      <BottomNav />
     </main>
   );
 }

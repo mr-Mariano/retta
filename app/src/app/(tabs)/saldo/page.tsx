@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { BottomNav } from "@/components/bottom-nav";
 import { createClient } from "@/lib/supabase/server";
 import { TIME_ZONE } from "@/lib/time";
 
@@ -112,7 +111,6 @@ export default async function Saldo() {
         </ol>
       )}
 
-      <BottomNav />
     </main>
   );
 }

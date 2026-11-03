@@ -182,6 +182,8 @@ Canvas: Claude Design "Retta · Jugador · Diseño final", page Direcciones visu
 | 2026-11-03 | Balance screen: amount in a compact card and the history as a vertical timeline (blue dots for credits, grey for uses and test payments), each entry naming what happened and the match | Variant C of three |
 | 2026-11-03 | Profile screen: player card (initials, name, "Jugador desde…", matches played, attendance, balance), then a settings list (name, phone, email) where each row opens its own edit, then "Cerrar sesión" | Variant A of three |
 | 2026-11-03 | Players can link Instagram and Facebook from their profile; other players see them only if they shared at least one match, from a player card opened in the sign-up list or history | New scope. Links open the social app; Retta stores only the usernames |
+| 2026-11-03 | Motion: switching tabs slides the page in from the side of the previous tab (nav order); sheets rise from the bottom over a fading backdrop; toasts rise in; buttons and links shrink slightly when pressed. All quick (200–300 ms), no bounce, off with reduced motion | The bottom nav stays fixed while pages change |
+| 2026-11-03 | Every tab and the match detail show a loading skeleton right away while their data loads | |
 
 ### Open items
 - Apply the new style to the remaining canvas screens (sign-up, sign-in, payment, success, my matches, drop-out, balance, profile, empty state)

@@ -31,6 +31,8 @@ const ICON_PATHS = {
   ),
 };
 
+export const TAB_PATHS = ["/explorar", "/mis-retas", "/saldo", "/perfil"];
+
 const SECTIONS = [
   { href: "/explorar", label: "Explorar", icon: ICON_PATHS.explorar },
   { href: "/mis-retas", label: "Mis retas", icon: ICON_PATHS.misRetas },

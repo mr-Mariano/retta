@@ -378,12 +378,12 @@ function PaymentSheet({
   const total = (priceCents - creditCents) / 100;
   return (
     <div className="fixed inset-0 z-20 mx-auto max-w-md">
-      <Link href={`/retas/${matchId}`} scroll={false} aria-label="Cerrar" className="absolute inset-0 bg-black/60" />
+      <Link href={`/retas/${matchId}`} scroll={false} aria-label="Cerrar" className="absolute inset-0 animate-fade-in bg-black/60" />
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="pago-titulo"
-        className="absolute inset-x-0 bottom-0 flex flex-col gap-[18px] rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex animate-sheet-up flex-col gap-[18px] rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
       >
         <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
         <h2 id="pago-titulo" className="font-display text-[28px] leading-none font-medium">

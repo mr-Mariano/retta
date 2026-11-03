@@ -66,12 +66,12 @@ function MapSheet({ field, onClose }: { field: Field; onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-30 mx-auto max-w-md">
-      <button type="button" aria-label="Cerrar mapa" onClick={onClose} className="absolute inset-0 bg-black/60" />
+      <button type="button" aria-label="Cerrar mapa" onClick={onClose} className="absolute inset-0 animate-fade-in bg-black/60" />
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="mapa-titulo"
-        className="absolute inset-x-0 bottom-0 flex flex-col gap-4 rounded-t-3xl border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex animate-sheet-up flex-col gap-4 rounded-t-3xl border-t border-line bg-surface px-5 pt-3 pb-8"
       >
         <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
         <div className="flex items-start justify-between gap-3">
