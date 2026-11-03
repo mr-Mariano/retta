@@ -15,6 +15,8 @@
   --color-action-fg: #181818;
   --color-overlay-scrim: rgb(10 10 10 / 0.6);
   --color-overlay-fg: #ffffff;
+  /* Form errors (session 6): always paired with an icon and text. */
+  --color-status-danger: #ff8a7a;
   color-scheme: dark;
 }
 
@@ -28,6 +30,7 @@
     --color-text-secondary: #5d5d5d;
     --color-action-bg: #0d0d0d;
     --color-action-fg: #ffffff;
+    --color-status-danger: #b42318;
     color-scheme: light;
   }
 }
@@ -42,6 +45,7 @@
   --color-action: var(--color-action-bg);
   --color-on-action: var(--color-action-fg);
   --color-scrim: var(--color-overlay-scrim);
+  --color-danger: var(--color-status-danger);
   --font-sans: var(--font-geist);
   --font-display: var(--font-big-shoulders);
 }
