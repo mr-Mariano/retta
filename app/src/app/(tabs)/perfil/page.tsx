@@ -85,9 +85,14 @@ export default async function Perfil({ searchParams }: { searchParams: Promise<{
         <SocialRow icon={<FacebookIcon />} name="Facebook" value={facebook} />
       </Section>
 
-      {(profile?.role === "organizer" || profile?.role === "admin") && (
+      {profile?.role && profile.role !== "player" && (
         <Section title="Herramientas">
-          <Row href="/perfil/organizar" label="Organizar retas" value="Tus retas" />
+          {(profile.role === "organizer" || profile.role === "admin") && (
+            <Row href="/perfil/organizar" label="Organizar retas" value="Tus retas" />
+          )}
+          {(profile.role === "field_manager" || profile.role === "admin") && (
+            <Row href="/perfil/canchas" label="Horarios de cancha" value="Tus canchas" />
+          )}
         </Section>
       )}
 

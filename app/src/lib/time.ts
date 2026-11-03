@@ -47,3 +47,16 @@ export function formatLongDay(date: Date) {
   const text = date.toLocaleDateString("es-MX", { timeZone: TIME_ZONE, weekday: "long", day: "numeric", month: "long" });
   return `${text.charAt(0).toUpperCase()}${text.slice(1)}`.replace(",", "");
 }
+
+/** Mexico City has no daylight saving since 2022, so its offset is fixed. */
+const MX_OFFSET = "-06:00";
+
+/** A wall-clock time in Mexico City ("2026-11-04", "20:00") as a Date. */
+export function mxDate(day: string, time: string) {
+  return new Date(`${day}T${time}:00${MX_OFFSET}`);
+}
+
+/** Day of the week (0 = Sunday) of a "YYYY-MM-DD" day in Mexico City. */
+export function weekdayOf(day: string) {
+  return mxDate(day, "12:00").getUTCDay();
+}

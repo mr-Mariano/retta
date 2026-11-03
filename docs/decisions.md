@@ -187,6 +187,8 @@ Canvas: Claude Design "Retta · Jugador · Diseño final", page Direcciones visu
 | 2026-11-03 | Organizer tools live under Perfil → Herramientas → "Tus retas" (Próximas / Pasadas); cards lead with the status ("Faltan 2 para que se arme") | Card variant 4 of five |
 | 2026-11-03 | Create match: pick field, day and a free slot, then one question per screen (players, price with a keypad, format/level/type) and a review with "Editar" per row; title and note are optional at the end | Variant A of three. Closing options: 3, 2 or 1 h before start, only those the database accepts |
 | 2026-11-03 | Manage match: capacity, sign-ups with a WhatsApp icon per player and "Recordar a todos" (opens WhatsApp with the message ready to send to the match group); cancel needs a reason | A web app cannot message several WhatsApp contacts at once without the paid Business API |
+| 2026-11-03 | Field managers reach "Tus canchas" from Perfil → Herramientas; each field has a 14-day agenda with free slots (removable) and booked ones (match, organizer, sign-ups) | |
+| 2026-11-03 | Slots are published in bulk: weekdays × start hours, duration 1 h / 1 h 30 / 2 h, for 1, 2 or 4 weeks; past times and overlaps are skipped | |
 
 ### Open items
 - Apply the new style to the remaining canvas screens (sign-up, sign-in, payment, success, my matches, drop-out, balance, profile, empty state)
