@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { TIME_ZONE, formatTime, relativeDay } from "@/lib/time";
 
 interface FeaturedMatch {
   title: string;
@@ -12,19 +13,12 @@ interface FeaturedMatch {
   status: "pending" | "confirmed";
 }
 
-const TIME_ZONE = "America/Mexico_City";
-
 /** "HOY", "MAÑANA" or the short weekday, in Mexico City time. */
 function dayLabel(startsAt: Date) {
-  const day = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: TIME_ZONE });
-  const today = new Date();
-  const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
-  if (day(startsAt) === day(today)) return "HOY";
-  if (day(startsAt) === day(tomorrow)) return "MAÑANA";
-  return startsAt
-    .toLocaleDateString("es-MX", { timeZone: TIME_ZONE, weekday: "short" })
-    .replace(".", "")
-    .toUpperCase();
+  return (
+    relativeDay(startsAt) ??
+    startsAt.toLocaleDateString("es-MX", { timeZone: TIME_ZONE, weekday: "short" }).replace(".", "")
+  ).toUpperCase();
 }
 
 function headline(match: FeaturedMatch | null) {
@@ -62,7 +56,7 @@ export default async function Welcome() {
             <span className="flex size-[52px] shrink-0 flex-col items-center justify-center rounded-xl bg-elevated">
               <span className="text-[11px] font-bold text-muted">{dayLabel(startsAt)}</span>
               <span className="font-display text-xl leading-none font-extrabold">
-                {startsAt.toLocaleTimeString("es-MX", { timeZone: TIME_ZONE, hour: "2-digit", minute: "2-digit", hour12: false })}
+                {formatTime(startsAt)}
               </span>
             </span>
             <span className="flex min-w-0 flex-1 flex-col gap-1.5">
@@ -99,7 +93,7 @@ export default async function Welcome() {
         <div className="mt-auto flex flex-col gap-2.5">
           <Link
             href="/registro"
-            className="flex h-[52px] items-center justify-center rounded-full bg-action text-base font-bold text-on-action"
+            className="flex h-[52px] items-center justify-center rounded-full bg-action text-[16px] font-bold text-on-action"
           >
             Crear cuenta
           </Link>

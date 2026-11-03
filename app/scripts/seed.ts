@@ -72,6 +72,7 @@ const ACCOUNTS: Account[] = [
 const FIELDS = [
   {
     name: "Cancha La Estancia",
+    coverImage: "foto-3",
     address: "Av. Guadalupe 1450, Chapalita, Guadalajara",
     area: "Chapalita",
     hasChangingRooms: false,
@@ -80,6 +81,7 @@ const FIELDS = [
   },
   {
     name: "Fut 7 Providencia",
+    coverImage: "foto-1",
     address: "Calle Rubén Darío 820, Providencia, Guadalajara",
     area: "Providencia",
     hasChangingRooms: true,
@@ -88,6 +90,7 @@ const FIELDS = [
   },
   {
     name: "Deportivo Tlaquepaque",
+    coverImage: "foto-5",
     address: "Av. Niños Héroes 300, Centro, San Pedro Tlaquepaque",
     area: "Tlaquepaque",
     hasChangingRooms: true,
@@ -200,6 +203,7 @@ async function main() {
         address: field.address,
         area: field.area,
         has_changing_rooms: field.hasChangingRooms,
+        cover_image: field.coverImage,
         notes: field.notes,
         manager_id: userIds.get(field.manager),
       })),

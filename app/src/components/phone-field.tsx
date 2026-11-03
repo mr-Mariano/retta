@@ -65,7 +65,7 @@ export function PhoneField({ label = "Teléfono", hint, defaultValue, defaultCou
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? "phone-error" : hint ? "phone-hint" : undefined}
           className={`h-full min-w-0 flex-1 bg-transparent px-3.5 text-ink focus:outline-none ${
-            large ? "text-[22px] font-semibold tracking-wide" : "text-base"
+            large ? "text-[22px] font-semibold tracking-wide" : "text-[16px]"
           }`}
         />
       </div>

@@ -152,6 +152,7 @@ Canvas: Claude Design "Retta · Identidad base", page Jugador. Boards marked "fi
 | 2026-11-02 | Match type: Varonil (blue), Femenil (pink), Mixto (both) | Always shown with its label |
 | 2026-11-02 | Toast: single line, close button, thin progress line that empties before it disappears | |
 | 2026-11-03 | Google sign-in and sign-up out of the initial scope: email/password only. Welcome CTA is "Crear cuenta"; sign-in screen drops the Google button | **Changes the 2026-11-02 sign-in decisions.** "Completa tu perfil" stays as a fallback for accounts without a phone |
+| 2026-11-03 | Explore: the featured card shows only under "Todas" and is left out of the list below it; filters live in the URL (`?f=hoy`) | Balance pill sits on the greeting row so the title fits on one line at 375 px |
 
 ### Open items
 - Toast duration (proposed 5 s, paused while touched)

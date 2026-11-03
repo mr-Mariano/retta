@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 
 const inputBox =
-  "h-[50px] w-full rounded-[14px] border bg-surface px-4 text-base text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-ink/40";
+  "h-[50px] w-full rounded-[14px] border bg-surface px-4 text-[16px] text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-ink/40";
 
 export function FieldError({ id, children }: { id: string; children?: ReactNode }) {
   if (!children) return null;
