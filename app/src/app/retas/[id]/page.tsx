@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import { DropOutSheet } from "@/components/drop-out-sheet";
 import { createClient } from "@/lib/supabase/server";
 import { dayKey, formatDay, formatLongDay, formatTime } from "@/lib/time";
 import { MapButton } from "./map-sheet";
@@ -77,9 +78,9 @@ export default async function MatchDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ pago?: string }>;
+  searchParams: Promise<{ pago?: string; baja?: string }>;
 }) {
-  const [{ id }, { pago }] = await Promise.all([params, searchParams]);
+  const [{ id }, { pago, baja }] = await Promise.all([params, searchParams]);
   const supabase = await createClient();
   const {
     data: { user },
@@ -130,6 +131,21 @@ export default async function MatchDetailPage({
   // Payment sheet (J04) over the detail; free matches skip it (session 5).
   const showSheet = pago === "1" && actionState === "open" && pesos > 0;
   const { data: balanceCents } = showSheet ? await supabase.rpc("my_balance") : { data: 0 };
+  // Drop-out sheet (J07): only while the player can still drop out.
+  const showDropOut = baja === "1" && actionState === "signedUp";
+  const { data: myRegistration } = showDropOut
+    ? await supabase
+        .from("registrations")
+        .select("transactions(type, amount_cents)")
+        .eq("match_id", match.id)
+        .eq("player_id", user!.id)
+        .eq("status", "active")
+        .returns<{ transactions: { type: string; amount_cents: number }[] }[]>()
+        .maybeSingle()
+    : { data: null };
+  const paidCents = (myRegistration?.transactions ?? [])
+    .filter((t) => t.type === "charge" || t.type === "credit_used")
+    .reduce((total, t) => total + t.amount_cents, 0);
 
   const statusLabel = isCancelled ? "Cancelada" : isPast ? "Jugada" : match.status === "confirmed" ? "Confirmada" : "Por confirmar";
   const closes =
@@ -236,6 +252,21 @@ export default async function MatchDetailPage({
 
       <ActionBar matchId={match.id} deadline={formatTime(deadline)} price={priceLabel} isFree={pesos === 0} state={actionState} />
 
+      {showDropOut && (
+        <DropOutSheet
+          closeHref={`/retas/${match.id}`}
+          info={{
+            matchId: match.id,
+            title: title,
+            paidCents,
+            active,
+            min: match.min_players,
+            max: match.max_players,
+            confirmed: match.status === "confirmed",
+          }}
+        />
+      )}
+
       {showSheet && (
         <PaymentSheet
           matchId={match.id}
@@ -280,7 +311,8 @@ function ActionBar({
           </div>
           {state === "signedUp" && (
             <Link
-              href={`/retas/${matchId}/baja`}
+              href={`/retas/${matchId}?baja=1`}
+              scroll={false}
               className="flex h-[52px] items-center justify-center rounded-full border border-line px-5 text-[16px] font-bold text-ink"
             >
               Darme de baja

@@ -71,3 +71,13 @@ body {
   color: var(--color-text-primary);
   font-family: var(--font-alegreya-sans), system-ui, sans-serif;
 }
+
+/* Toast progress line: empties over the toast's 5 s lifetime (session 6). */
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
