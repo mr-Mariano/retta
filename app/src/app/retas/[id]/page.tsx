@@ -124,24 +124,19 @@ export default async function MatchDetailPage({
   const { data: balanceCents } = showSheet ? await supabase.rpc("my_balance") : { data: 0 };
 
   const statusLabel = isCancelled ? "Cancelada" : isPast ? "Jugada" : match.status === "confirmed" ? "Confirmada" : "Por confirmar";
-  const deadlineWhen =
+  const closes =
     dayKey(deadline) === dayKey(startsAt)
-      ? `las ${formatTime(deadline)}`
-      : `el ${formatDay(deadline, now).toLowerCase()} a las ${formatTime(deadline)}`;
+      ? `cierra a las ${formatTime(deadline)}`
+      : `cierra el ${formatDay(deadline, now).toLowerCase()} a las ${formatTime(deadline)}`;
   const missing = match.min_players - active;
   const left = match.max_players - active;
-  const capacityHeadline =
+  // "Faltan 2" stands out; the rest of the line is secondary.
+  const [capacityLead, capacityRest] =
     match.status === "pending"
-      ? missing === 1
-        ? "Falta 1 para que se arme"
-        : `Faltan ${missing} para que se arme`
+      ? [missing === 1 ? "Falta 1" : `Faltan ${missing}`, ` para que se arme · ${closes}`]
       : left === 0
-        ? "Llena"
-        : `Ya se armó: ${left === 1 ? "queda 1 lugar" : `quedan ${left} lugares`}`;
-  const capacityNote =
-    match.status === "pending"
-      ? `Mínimo ${match.min_players}. Si no llegan antes de ${deadlineWhen}, la reta se cancela y te devolvemos el pago como saldo.`
-      : null;
+        ? ["Llena", ""]
+        : ["Ya se armó", ` · ${left === 1 ? "queda 1 lugar" : `quedan ${left} lugares`}`];
 
   return (
     <main className="relative mx-auto min-h-dvh max-w-md pb-32">
@@ -191,14 +186,21 @@ export default async function MatchDetailPage({
 
         {!isCancelled && (
           <div className="flex flex-col gap-2.5 rounded-2xl border border-line bg-surface p-3.5">
-            <div className="flex items-baseline justify-between gap-3">
-              <span className="text-[18px] font-semibold">{capacityHeadline}</span>
+            <div className="flex items-center justify-between gap-3">
+              <CapacityDots active={active} min={match.min_players} max={match.max_players} />
               <span className="shrink-0 text-sm text-muted">
-                {active} de {match.max_players}
+                {active}/{match.max_players}
               </span>
             </div>
-            <CapacitySlots active={active} min={match.min_players} max={match.max_players} />
-            {!isPast && capacityNote && <span className="text-sm leading-[1.45] text-muted">{capacityNote}</span>}
+            <span className="text-[16px]">
+              <span className="font-semibold">{capacityLead}</span>
+              <span className="text-muted">{capacityRest}</span>
+            </span>
+            {!isPast && match.status === "pending" && (
+              <span className="text-[13px] leading-[1.45] text-muted">
+                Si no se arma, la reta se cancela y te devolvemos el pago como saldo.
+              </span>
+            )}
           </div>
         )}
 
@@ -379,32 +381,19 @@ function PaymentSheet({
   );
 }
 
-/** One numbered slot per place (session 7); the ones still missing for the minimum are outlined. */
-function CapacitySlots({ active, min, max }: { active: number; min: number; max: number }) {
+/** One dot per place (session 7): taken ones filled, the ones still missing for the minimum outlined in the accent. */
+function CapacityDots({ active, min, max }: { active: number; min: number; max: number }) {
   return (
-    <ol
-      aria-label={`${active} de ${max} lugares ocupados, mínimo ${min}`}
-      className="grid grid-cols-6 gap-[5px]"
-    >
-      {Array.from({ length: max }, (_, i) => {
-        const taken = i < active;
-        const neededForMin = !taken && i < min;
-        return (
-          <li
-            key={i}
-            aria-hidden="true"
-            className={`flex h-[30px] items-center justify-center rounded-md text-[13px] font-semibold ${
-              taken
-                ? "bg-action text-on-action"
-                : neededForMin
-                  ? "bg-elevated text-muted ring-[1.5px] ring-action ring-inset"
-                  : "bg-elevated text-muted ring-1 ring-line ring-inset"
-            }`}
-          >
-            {i + 1}
-          </li>
-        );
-      })}
+    <ol aria-label={`${active} de ${max} lugares ocupados, mínimo ${min}`} className="flex flex-wrap gap-1.5">
+      {Array.from({ length: max }, (_, i) => (
+        <li
+          key={i}
+          aria-hidden="true"
+          className={`size-4 rounded-full ${
+            i < active ? "bg-action" : i < min ? "border-[1.5px] border-action" : "border-[1.5px] border-muted/40"
+          }`}
+        />
+      ))}
     </ol>
   );
 }

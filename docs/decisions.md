@@ -172,7 +172,7 @@ Canvas: Claude Design "Retta · Jugador · Diseño final", page Direcciones visu
 | 2026-11-03 | Primary actions, active nav section, active filter and capacity fill use the accent with white text | **Changes session 4** (inverted text color) |
 | 2026-11-03 | Bottom nav: 312 × 48 px; hides while scrolling down and comes back on scroll up | |
 | 2026-11-03 | Pills (filters, status, info chips) one step smaller | |
-| 2026-11-03 | Match capacity: one numbered slot per place, like shirt numbers; taken slots filled, the ones still missing for the minimum outlined | Replaces the bar with a minimum marker in the match detail |
+| 2026-11-03 | Match capacity: one dot per place; taken dots filled, the ones still missing for the minimum outlined in the accent, plus "Faltan 2 para que se arme · cierra 17:00" | Replaces the bar with a minimum marker in the match detail |
 | 2026-11-03 | No pull-down bounce at the top of the page | |
 
 ### Open items
