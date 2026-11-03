@@ -4,11 +4,14 @@ import type { Metadata } from "next";
 import { BottomNav } from "@/components/bottom-nav";
 import { createClient } from "@/lib/supabase/server";
 import { formatDay, formatTime, isThisWeekend, relativeDay } from "@/lib/time";
+import { MatchCard, type Match } from "./match-card";
+import { NearMeList } from "./near-me-list";
 
 export const metadata: Metadata = { title: "Explorar · Retta" };
 
 const FILTERS = [
   { key: undefined, label: "Todas", empty: "No hay retas próximas" },
+  { key: "cerca", label: "Cerca de mí", empty: "No hay retas próximas" },
   { key: "hoy", label: "Hoy", empty: "No hay retas hoy" },
   { key: "manana", label: "Mañana", empty: "No hay retas mañana" },
   { key: "finde", label: "Este fin", empty: "No hay retas este fin" },
@@ -25,22 +28,11 @@ interface MatchRow {
   max_players: number;
   status: "pending" | "confirmed";
   confirmation_deadline: string;
-  slot: { starts_at: string; field: { name: string; area: string | null; cover_image: string } };
+  slot: {
+    starts_at: string;
+    field: { name: string; area: string | null; cover_image: string; latitude: number | null; longitude: number | null };
+  };
   registrations: { count: number }[];
-}
-
-interface Match {
-  id: string;
-  title: string;
-  fieldName: string;
-  cover: string;
-  startsAt: Date;
-  price: string;
-  isFree: boolean;
-  active: number;
-  min: number;
-  max: number;
-  pending: boolean;
 }
 
 function toMatch(row: MatchRow): Match {
@@ -57,6 +49,10 @@ function toMatch(row: MatchRow): Match {
     min: row.min_players,
     max: row.max_players,
     pending: row.status === "pending",
+    coords:
+      row.slot.field.latitude !== null && row.slot.field.longitude !== null
+        ? { lat: row.slot.field.latitude, lng: row.slot.field.longitude }
+        : null,
   };
 }
 
@@ -102,7 +98,7 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
     supabase
       .from("matches")
       .select(
-        "id, title, price_cents, min_players, max_players, status, confirmation_deadline, slot:slots!inner(starts_at, field:fields!inner(name, area, cover_image)), registrations(count)",
+        "id, title, price_cents, min_players, max_players, status, confirmation_deadline, slot:slots!inner(starts_at, field:fields!inner(name, area, cover_image, latitude, longitude)), registrations(count)",
       )
       .neq("status", "cancelled")
       .gt("slots.starts_at", now.toISOString())
@@ -148,10 +144,15 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
                 <Link
                   href={item.key ? `/explorar?f=${item.key}` : "/explorar"}
                   aria-current={active ? "page" : undefined}
-                  className={`flex h-9 items-center rounded-full px-[13px] text-sm ${
+                  className={`flex h-9 items-center gap-1.5 rounded-full px-[13px] text-sm ${
                     active ? "bg-action font-bold text-on-action" : "bg-surface font-semibold text-muted"
                   }`}
                 >
+                  {item.key === "cerca" && (
+                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 11l18-8-8 18-2-8z" />
+                    </svg>
+                  )}
                   {item.label}
                 </Link>
               </li>
@@ -179,9 +180,13 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
         </Link>
       )}
 
-      <h2 className="mt-1 font-display text-[21px] font-medium">{highlight ? "Próximas" : filter.label}</h2>
+      <h2 className="mt-1 font-display text-[21px] font-medium">
+        {highlight ? "Próximas" : filter.key === "cerca" ? "Más cerca de ti" : filter.label}
+      </h2>
 
-      {list.length === 0 ? (
+      {filter.key === "cerca" ? (
+        <NearMeList matches={list.map((match) => ({ ...match, startsAt: match.startsAt.toISOString() }))} />
+      ) : list.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-6 text-center">
           <Image src="/mascota/espera.png" alt="" width={120} height={120} />
           <p className="text-[15px] text-muted">{filter.empty}</p>
@@ -203,44 +208,5 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
 
       <BottomNav />
     </main>
-  );
-}
-
-function MatchCard({ match, now }: { match: Match; now: Date }) {
-  const full = match.active >= match.max;
-  const content = (
-    <>
-      <span className="relative size-[84px] shrink-0 overflow-hidden rounded-xl bg-elevated">
-        <Image src={match.cover} alt="" fill sizes="84px" className="object-cover" />
-      </span>
-      <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
-        <span className="truncate text-[16px] font-bold">{match.title}</span>
-        <span className="text-sm font-semibold">
-          {formatDay(match.startsAt, now)} · {formatTime(match.startsAt)}
-        </span>
-        <span className="truncate text-[13px] text-muted">{match.fieldName}</span>
-      </span>
-      <span className="flex flex-col items-end gap-1.5 pr-1.5">
-        <span className="font-display text-[20px] leading-none font-medium">{match.price}</span>
-        <span className="rounded-full bg-elevated px-[7px] py-0.5 text-[11px] font-semibold text-muted">
-          {full ? "Llena" : `${match.active}/${match.max}`}
-        </span>
-      </span>
-    </>
-  );
-  const className = "flex items-center gap-3 rounded-[18px] border border-line bg-surface p-2 text-ink";
-
-  // Full matches stay visible but cannot be opened (session 5).
-  if (full) {
-    return (
-      <div aria-disabled="true" className={`${className} opacity-55`}>
-        {content}
-      </div>
-    );
-  }
-  return (
-    <Link href={`/retas/${match.id}`} className={className}>
-      {content}
-    </Link>
   );
 }

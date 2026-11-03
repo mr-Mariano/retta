@@ -174,6 +174,10 @@ Canvas: Claude Design "Retta · Jugador · Diseño final", page Direcciones visu
 | 2026-11-03 | Pills (filters, status, info chips) one step smaller | |
 | 2026-11-03 | Match capacity: one dot per place; taken dots filled, the ones still missing for the minimum outlined in the accent, plus "Faltan 2 para que se arme · cierra 17:00" | Replaces the bar with a minimum marker in the match detail |
 | 2026-11-03 | No pull-down bounce at the top of the page | |
+| 2026-11-03 | The map button opens an in-app sheet: Mapbox map with the field pin, the player's location and the driving route; driving and walking times; a secondary "Abrir en otra app para navegar" link | **Changes session 6** (round button that opened Maps). Times come from the Mapbox Directions API |
+| 2026-11-03 | Location is asked only after an in-app explanation ("Usar mi ubicación" / "Ahora no"); it stays in the browser and is never stored | Without permission the map shows only the field |
+| 2026-11-03 | Explore gets a "Cerca de mí" filter: sorts by driving time from the player and shows "6 min · 1.8 km" on each match | Explore's default order stays by date (session 5). Times come from the Mapbox Matrix API |
+| 2026-11-03 | Fields store latitude and longitude | Needed for the map and distances; the admin sets them with the field |
 
 ### Open items
 - Apply the new style to the remaining canvas screens (sign-up, sign-in, payment, success, my matches, drop-out, balance, profile, empty state)

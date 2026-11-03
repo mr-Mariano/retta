@@ -72,6 +72,8 @@ const ACCOUNTS: Account[] = [
 const FIELDS = [
   {
     name: "Cancha La Estancia",
+    latitude: 20.6707,
+    longitude: -103.3934,
     coverImage: "foto-3",
     address: "Av. Guadalupe 1450, Chapalita, Guadalajara",
     area: "Chapalita",
@@ -81,6 +83,8 @@ const FIELDS = [
   },
   {
     name: "Fut 7 Providencia",
+    latitude: 20.6955,
+    longitude: -103.3826,
     coverImage: "foto-1",
     address: "Calle Rubén Darío 820, Providencia, Guadalajara",
     area: "Providencia",
@@ -90,6 +94,8 @@ const FIELDS = [
   },
   {
     name: "Deportivo Tlaquepaque",
+    latitude: 20.6405,
+    longitude: -103.3115,
     coverImage: "foto-5",
     address: "Av. Niños Héroes 300, Centro, San Pedro Tlaquepaque",
     area: "Tlaquepaque",
@@ -204,6 +210,8 @@ async function main() {
         area: field.area,
         has_changing_rooms: field.hasChangingRooms,
         cover_image: field.coverImage,
+        latitude: field.latitude,
+        longitude: field.longitude,
         notes: field.notes,
         manager_id: userIds.get(field.manager),
       })),

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { dayKey, formatDay, formatLongDay, formatTime } from "@/lib/time";
+import { MapButton } from "./map-sheet";
 import { ShareButton } from "./share-button";
 import { SignUpForm } from "./sign-up-form";
 
@@ -26,7 +27,15 @@ interface MatchDetail {
   slot: {
     starts_at: string;
     ends_at: string;
-    field: { name: string; area: string | null; address: string; has_changing_rooms: boolean; cover_image: string };
+    field: {
+      name: string;
+      area: string | null;
+      address: string;
+      has_changing_rooms: boolean;
+      cover_image: string;
+      latitude: number | null;
+      longitude: number | null;
+    };
   };
   registrations: { player_id: string; created_at: string; player: { full_name: string } }[];
 }
@@ -79,7 +88,7 @@ export default async function MatchDetailPage({
   const { data: match } = await supabase
     .from("matches")
     .select(
-      "id, title, description, min_players, max_players, price_cents, status, confirmation_deadline, format, level, type, organizer:profiles!matches_organizer_id_fkey(full_name), slot:slots!inner(starts_at, ends_at, field:fields!inner(name, area, address, has_changing_rooms, cover_image)), registrations(player_id, created_at, player:profiles!registrations_player_id_fkey(full_name))",
+      "id, title, description, min_players, max_players, price_cents, status, confirmation_deadline, format, level, type, organizer:profiles!matches_organizer_id_fkey(full_name), slot:slots!inner(starts_at, ends_at, field:fields!inner(name, area, address, has_changing_rooms, cover_image, latitude, longitude)), registrations(player_id, created_at, player:profiles!registrations_player_id_fkey(full_name))",
     )
     .eq("id", id)
     .eq("registrations.status", "active")
@@ -103,7 +112,6 @@ export default async function MatchDetailPage({
   const deadlinePassed = deadline <= now;
   const pesos = match.price_cents / 100;
   const level = LEVEL[match.level];
-  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${field.name}, ${field.address}`)}`;
 
   const priceLabel = pesos === 0 ? "Gratis" : `$${pesos}`;
   const cover = `/fotos/canchas/${field.cover_image}.jpg`;
@@ -168,19 +176,13 @@ export default async function MatchDetailPage({
               <span className="text-[16px] font-semibold">{field.name}</span>
               <span className="text-sm text-muted">{field.area ?? field.address}</span>
             </div>
-            <a
-              href={mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Abrir ${field.name} en Maps`}
-              className="flex size-11 shrink-0 items-center justify-center rounded-full border border-line bg-elevated text-ink"
-            >
-              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z" />
-                <path d="M9 4v14" />
-                <path d="M15 6v14" />
-              </svg>
-            </a>
+            <MapButton
+              field={{
+                name: field.name,
+                address: field.address,
+                coords: field.latitude !== null && field.longitude !== null ? { lat: field.latitude, lng: field.longitude } : null,
+              }}
+            />
           </div>
         </div>
 
