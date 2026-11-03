@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -26,6 +27,8 @@ export async function signUpForMatch(matchId: string): Promise<SignUpResult> {
   }
 
   const { just_confirmed } = data as { just_confirmed: boolean };
+  // Data changed: drop the browser's cached pages.
+  revalidatePath("/", "layout");
   redirect(`/retas/${matchId}/inscrito${just_confirmed ? "?armada=1" : ""}`);
 }
 
@@ -50,5 +53,7 @@ export async function dropOutOfMatch(matchId: string): Promise<DropOutResult> {
   }
 
   const { credit_cents } = data as { credit_cents: number };
+  // Data changed: drop the browser's cached pages.
+  revalidatePath("/", "layout");
   redirect(`/mis-retas?aviso=baja&saldo=${credit_cents / 100}`);
 }

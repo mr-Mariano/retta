@@ -81,6 +81,7 @@ export function BottomNav() {
           <Link
             key={section.href}
             href={section.href}
+            prefetch
             aria-label={active ? undefined : section.label}
             aria-current={active ? "page" : undefined}
             className={

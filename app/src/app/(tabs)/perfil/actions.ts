@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { parsePhone } from "@/lib/phone-validation";
@@ -25,6 +26,8 @@ export async function updateName(_prev: EditState, formData: FormData): Promise<
   if (!fullName) return { error: "Escribe tu nombre.", values: { full_name: fullName } };
   const { error } = await saveProfile({ full_name: fullName });
   if (error) return { error: "No pudimos guardar tu nombre. Inténtalo de nuevo.", values: { full_name: fullName } };
+  // Data changed: drop the browser's cached pages.
+  revalidatePath("/", "layout");
   redirect(SAVED);
 }
 
@@ -36,6 +39,8 @@ export async function updatePhone(_prev: EditState, formData: FormData): Promise
   if (!phone.ok) return { error: phone.error, values };
   const { error } = await saveProfile({ phone: phone.e164 });
   if (error) return { error: "No pudimos guardar tu teléfono. Inténtalo de nuevo.", values };
+  // Data changed: drop the browser's cached pages.
+  revalidatePath("/", "layout");
   redirect(SAVED);
 }
 
@@ -62,5 +67,7 @@ export async function updateSocials(_prev: EditState, formData: FormData): Promi
 
   const { error } = await saveProfile({ instagram: instagram || null, facebook: facebook || null });
   if (error) return { error: "No pudimos guardar tus redes. Inténtalo de nuevo.", values };
+  // Data changed: drop the browser's cached pages.
+  revalidatePath("/", "layout");
   redirect(SAVED);
 }
