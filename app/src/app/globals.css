@@ -56,6 +56,16 @@ html {
   overscroll-behavior-y: none;
 }
 
+/* Phones scroll by touch, so scrollbars only add clutter. */
+@media (pointer: coarse) {
+  * {
+    scrollbar-width: none;
+  }
+  *::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 body {
   background: var(--color-bg-base);
   color: var(--color-text-primary);
