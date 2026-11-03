@@ -30,7 +30,7 @@ export function DropOutSheet({ info, closeHref }: { info: DropOutInfo; closeHref
         role="dialog"
         aria-modal="true"
         aria-labelledby="baja-titulo"
-        className="absolute inset-x-0 bottom-0 flex animate-sheet-up flex-col gap-4 rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col overflow-y-auto gap-4 rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
       >
         <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
         <div className="flex flex-col gap-1">

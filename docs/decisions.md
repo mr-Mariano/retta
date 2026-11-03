@@ -184,6 +184,9 @@ Canvas: Claude Design "Retta · Jugador · Diseño final", page Direcciones visu
 | 2026-11-03 | Players can link Instagram and Facebook from their profile; other players see them only if they shared at least one match, from a player card opened in the sign-up list or history | New scope. Links open the social app; Retta stores only the usernames |
 | 2026-11-03 | Motion: switching tabs slides the page in from the side of the previous tab (nav order); sheets rise from the bottom over a fading backdrop; toasts rise in; buttons and links shrink slightly when pressed. All quick (200–300 ms), no bounce, off with reduced motion | The bottom nav stays fixed while pages change |
 | 2026-11-03 | Every tab and the match detail show a loading skeleton right away while their data loads | |
+| 2026-11-03 | Organizer tools live under Perfil → Herramientas → "Tus retas" (Próximas / Pasadas); cards lead with the status ("Faltan 2 para que se arme") | Card variant 4 of five |
+| 2026-11-03 | Create match: pick field, day and a free slot, then one question per screen (players, price with a keypad, format/level/type) and a review with "Editar" per row; title and note are optional at the end | Variant A of three. Closing options: 3, 2 or 1 h before start, only those the database accepts |
+| 2026-11-03 | Manage match: capacity, sign-ups with a WhatsApp icon per player and "Recordar a todos" (opens WhatsApp with the message ready to send to the match group); cancel needs a reason | A web app cannot message several WhatsApp contacts at once without the paid Business API |
 
 ### Open items
 - Apply the new style to the remaining canvas screens (sign-up, sign-in, payment, success, my matches, drop-out, balance, profile, empty state)

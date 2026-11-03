@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import { CapacityDots } from "@/components/capacity-dots";
 import { DropOutSheet } from "@/components/drop-out-sheet";
 import { createClient } from "@/lib/supabase/server";
 import { dayKey, formatDay, formatLongDay, formatTime } from "@/lib/time";
@@ -383,7 +384,7 @@ function PaymentSheet({
         role="dialog"
         aria-modal="true"
         aria-labelledby="pago-titulo"
-        className="absolute inset-x-0 bottom-0 flex animate-sheet-up flex-col gap-[18px] rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col overflow-y-auto gap-[18px] rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
       >
         <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
         <h2 id="pago-titulo" className="font-display text-[28px] leading-none font-medium">
@@ -426,23 +427,6 @@ function PaymentSheet({
         </Link>
       </section>
     </div>
-  );
-}
-
-/** One dot per place (session 7): taken ones filled, the ones still missing for the minimum outlined in the accent. */
-function CapacityDots({ active, min, max }: { active: number; min: number; max: number }) {
-  return (
-    <ol aria-label={`${active} de ${max} lugares ocupados, mínimo ${min}`} className="flex flex-wrap gap-1.5">
-      {Array.from({ length: max }, (_, i) => (
-        <li
-          key={i}
-          aria-hidden="true"
-          className={`size-4 rounded-full ${
-            i < active ? "bg-action" : i < min ? "border-[1.5px] border-action" : "border-[1.5px] border-muted/40"
-          }`}
-        />
-      ))}
-    </ol>
   );
 }
 

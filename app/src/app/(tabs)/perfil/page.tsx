@@ -34,7 +34,7 @@ export default async function Perfil({ searchParams }: { searchParams: Promise<{
   } = await supabase.auth.getUser();
 
   const [{ data: profile }, { data: socials }, { data: balanceCents }, { data: played }] = await Promise.all([
-    supabase.from("profiles").select("full_name, phone, created_at").eq("id", user!.id).single(),
+    supabase.from("profiles").select("full_name, phone, created_at, role").eq("id", user!.id).single(),
     supabase.rpc("my_socials"),
     supabase.rpc("my_balance"),
     supabase
@@ -84,6 +84,12 @@ export default async function Perfil({ searchParams }: { searchParams: Promise<{
         <SocialRow icon={<InstagramIcon />} name="Instagram" value={instagram ? `@${instagram}` : null} />
         <SocialRow icon={<FacebookIcon />} name="Facebook" value={facebook} />
       </Section>
+
+      {(profile?.role === "organizer" || profile?.role === "admin") && (
+        <Section title="Herramientas">
+          <Row href="/perfil/organizar" label="Organizar retas" value="Tus retas" />
+        </Section>
+      )}
 
       <form action={signOut}>
         <button type="submit" className="flex h-12 w-full items-center justify-center rounded-full border border-line text-[16px] font-semibold text-ink">
