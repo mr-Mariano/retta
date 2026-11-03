@@ -41,3 +41,9 @@ export function isThisWeekend(date: Date, now = new Date()) {
   }
   return keys.includes(dayKey(date));
 }
+
+/** "Sábado 25 de octubre" */
+export function formatLongDay(date: Date) {
+  const text = date.toLocaleDateString("es-MX", { timeZone: TIME_ZONE, weekday: "long", day: "numeric", month: "long" });
+  return `${text.charAt(0).toUpperCase()}${text.slice(1)}`.replace(",", "");
+}
