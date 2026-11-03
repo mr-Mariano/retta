@@ -7,6 +7,7 @@ import { DropOutSheet } from "@/components/drop-out-sheet";
 import { createClient } from "@/lib/supabase/server";
 import { dayKey, formatDay, formatLongDay, formatTime } from "@/lib/time";
 import { MapButton } from "./map-sheet";
+import { PlayersSheet, type MatchPlayer } from "./players-sheet";
 import { ShareButton } from "./share-button";
 import { SignUpForm } from "./sign-up-form";
 
@@ -78,9 +79,9 @@ export default async function MatchDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ pago?: string; baja?: string }>;
+  searchParams: Promise<{ pago?: string; baja?: string; jugadores?: string; jugador?: string }>;
 }) {
-  const [{ id }, { pago, baja }] = await Promise.all([params, searchParams]);
+  const [{ id }, { pago, baja, jugadores, jugador }] = await Promise.all([params, searchParams]);
   const supabase = await createClient();
   const {
     data: { user },
@@ -143,6 +144,9 @@ export default async function MatchDetailPage({
         .returns<{ transactions: { type: string; amount_cents: number }[] }[]>()
         .maybeSingle()
     : { data: null };
+  // Sign-up list and player card (session 7).
+  const showPlayers = jugadores === "1" || Boolean(jugador);
+  const { data: players } = showPlayers ? await supabase.rpc("match_players", { p_match_id: match.id }) : { data: null };
   const paidCents = (myRegistration?.transactions ?? [])
     .filter((t) => t.type === "charge" || t.type === "credit_used")
     .reduce((total, t) => total + t.amount_cents, 0);
@@ -228,7 +232,13 @@ export default async function MatchDetailPage({
           </span>
           <div className="flex flex-col gap-0.5">
             <span className="text-[15px] font-semibold">Organiza {match.organizer.full_name}</span>
-            <span className="text-sm text-muted">{signUpsLine(match.registrations.map((r) => r.player.full_name))}</span>
+            {match.registrations.some((r) => r.player_id !== user?.id) ? (
+              <Link href={`/retas/${match.id}?jugadores=1`} scroll={false} className="text-sm text-muted underline decoration-line underline-offset-4">
+                {signUpsLine(match.registrations.map((r) => r.player.full_name))}
+              </Link>
+            ) : (
+              <span className="text-sm text-muted">{signUpsLine(match.registrations.map((r) => r.player.full_name))}</span>
+            )}
           </div>
         </div>
 
@@ -251,6 +261,10 @@ export default async function MatchDetailPage({
       </div>
 
       <ActionBar matchId={match.id} deadline={formatTime(deadline)} price={priceLabel} isFree={pesos === 0} state={actionState} />
+
+      {showPlayers && players && (
+        <PlayersSheet matchId={match.id} players={players as MatchPlayer[]} selectedId={jugador} />
+      )}
 
       {showDropOut && (
         <DropOutSheet

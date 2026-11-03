@@ -179,6 +179,9 @@ Canvas: Claude Design "Retta · Jugador · Diseño final", page Direcciones visu
 | 2026-11-03 | Explore gets a "Cerca de mí" filter: sorts by driving time from the player and shows "6 min · 1.8 km" on each match | Explore's default order stays by date (session 5). Times come from the Mapbox Matrix API |
 | 2026-11-03 | Fields store latitude and longitude | Needed for the map and distances; the admin sets them with the field |
 | 2026-11-03 | Toasts stack open, newest at the bottom, up to 3 at once; each keeps its own close button and progress line | Light toast with a blue check and a shadow so it stands out from blue buttons behind it. Closes the toast duration item only partly (duration still open) |
+| 2026-11-03 | Balance screen: amount in a compact card and the history as a vertical timeline (blue dots for credits, grey for uses and test payments), each entry naming what happened and the match | Variant C of three |
+| 2026-11-03 | Profile screen: player card (initials, name, "Jugador desde…", matches played, attendance, balance), then a settings list (name, phone, email) where each row opens its own edit, then "Cerrar sesión" | Variant A of three |
+| 2026-11-03 | Players can link Instagram and Facebook from their profile; other players see them only if they shared at least one match, from a player card opened in the sign-up list or history | New scope. Links open the social app; Retta stores only the usernames |
 
 ### Open items
 - Apply the new style to the remaining canvas screens (sign-up, sign-in, payment, success, my matches, drop-out, balance, profile, empty state)

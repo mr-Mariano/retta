@@ -30,3 +30,16 @@ export function parsePhone(raw: string, countryInput: string): PhoneResult {
 
   return { ok: true, e164: phone.number };
 }
+
+/** Splits a stored E.164 number into its country and national number, for editing. */
+export function splitPhone(e164: string | null): { country: string; national: string } {
+  const parsed = e164 ? parsePhoneNumberFromString(e164) : undefined;
+  return parsed?.country
+    ? { country: parsed.country, national: parsed.formatNational() }
+    : { country: DEFAULT_COUNTRY, national: "" };
+}
+
+/** "+52 33 1234 5678" */
+export function formatPhone(e164: string | null) {
+  return e164 ? (parsePhoneNumberFromString(e164)?.formatInternational() ?? e164) : "";
+}

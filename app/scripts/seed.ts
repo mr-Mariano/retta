@@ -69,6 +69,13 @@ const ACCOUNTS: Account[] = [
   ].map((fullName, i): Account => ({ key: `jugador${i + 1}`, fullName, role: "player" })),
 ];
 
+const SOCIALS: Record<string, { instagram?: string; facebook?: string }> = {
+  jugador2: { instagram: "luis.fut7", facebook: "luis.gdl.fut" },
+  jugador3: { instagram: "carlos_retas" },
+  jugador4: { facebook: "sofia.juega.gdl" },
+  jugador5: { instagram: "diego.10.gdl" },
+};
+
 const FIELDS = [
   {
     name: "Cancha La Estancia",
@@ -193,6 +200,11 @@ async function main() {
       `Profile ${email}`,
     );
     userIds.set(account.key, user.id);
+  }
+
+  // A few players link their socials so the player card has something to show.
+  for (const [key, socials] of Object.entries(SOCIALS)) {
+    check(await admin.from("profiles").update(socials).eq("id", userIds.get(key)), `Socials ${key}`);
   }
 
   // Wipe in dependency order. Stale deadline jobs remove themselves when they fire.
