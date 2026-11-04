@@ -7,6 +7,7 @@ import { useFormStatus } from "react-dom";
 import { FieldError } from "@/components/form";
 import { dayKey, formatDay, formatTime, TIME_ZONE } from "@/lib/time";
 import { createMatch, type CreateMatchState } from "../actions";
+import { coverSrc } from "@/lib/covers";
 
 export interface FieldOption {
   id: string;
@@ -125,7 +126,7 @@ export function CreateFlow({ fields, slots }: { fields: FieldOption[]; slots: Sl
                     className={`flex w-[132px] shrink-0 flex-col gap-1.5 rounded-[14px] border-[1.5px] bg-surface p-1.5 text-left ${f.id === fieldId ? "border-action" : "border-line"}`}
                   >
                     <span className="relative h-16 w-full overflow-hidden rounded-[9px]">
-                      <Image src={`/fotos/canchas/${f.cover_image}.jpg`} alt="" fill sizes="132px" className="object-cover" />
+                      <Image src={coverSrc(f.cover_image)} alt="" fill sizes="132px" className="object-cover" />
                     </span>
                     <span className="flex flex-col px-1 pb-0.5">
                       <span className="truncate text-sm font-semibold">{f.name}</span>

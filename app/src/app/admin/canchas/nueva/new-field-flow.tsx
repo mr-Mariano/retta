@@ -7,11 +7,14 @@ import { useFormStatus } from "react-dom";
 import type { Map as MapboxMap } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { FieldError } from "@/components/form";
+import { BUNDLED_COVERS, FIELD_PHOTOS_BUCKET, coverSrc } from "@/lib/covers";
 import { MAPBOX_TOKEN } from "@/lib/mapbox";
+import { createClient } from "@/lib/supabase/client";
 import { createField, type CreateFieldState } from "../../actions";
 
 const STEPS = ["foto", "ubicacion", "responsable"] as const;
-const COVERS = ["foto-1", "foto-2", "foto-3", "foto-4", "foto-5", "foto-6"];
+// Phone photos are resized before upload so they go up fast and load fast.
+const MAX_SIDE = 1600;
 // Guadalajara centre: where the map opens when there is no better guess.
 const START = { lat: 20.6767, lng: -103.3475 };
 
@@ -28,6 +31,7 @@ export function NewFieldFlow({ managers }: { managers: { id: string; full_name: 
   const [direction, setDirection] = useState<"forward" | "back">("forward");
   const [name, setName] = useState("");
   const [cover, setCover] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [place, setPlace] = useState<Place | null>(null);
   const [managerId, setManagerId] = useState(managers.length === 1 ? managers[0]!.id : "");
   const [changingRooms, setChangingRooms] = useState(false);
@@ -37,7 +41,7 @@ export function NewFieldFlow({ managers }: { managers: { id: string; full_name: 
     setDirection(to > step ? "forward" : "back");
     setStep(to);
   };
-  const canContinue = step === 0 ? name.trim().length >= 3 && Boolean(cover) : step === 1 ? Boolean(place?.address) : Boolean(managerId);
+  const canContinue = step === 0 ? name.trim().length >= 3 && Boolean(cover) && !uploading : step === 1 ? Boolean(place?.address) : Boolean(managerId);
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-14 pb-8">
@@ -74,23 +78,7 @@ export function NewFieldFlow({ managers }: { managers: { id: string; full_name: 
               maxLength={60}
               className="h-14 rounded-2xl border-[1.5px] border-line bg-surface px-4 text-[20px] focus:border-action focus:outline-none"
             />
-            <div className="flex flex-col gap-2">
-              <span className="text-[13px] font-semibold text-muted">Foto</span>
-              <div className="grid grid-cols-3 gap-2">
-                {COVERS.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setCover(c)}
-                    aria-pressed={cover === c}
-                    aria-label={`Foto ${c.slice(-1)}`}
-                    className={`relative aspect-[4/3] overflow-hidden rounded-xl border-2 ${cover === c ? "border-action" : "border-transparent"}`}
-                  >
-                    <Image src={`/fotos/canchas/${c}.jpg`} alt="" fill sizes="140px" className="object-cover" />
-                  </button>
-                ))}
-              </div>
-            </div>
+            <PhotoPicker cover={cover} onCover={setCover} uploading={uploading} onUploading={setUploading} />
           </>
         )}
 
@@ -183,6 +171,111 @@ export function NewFieldFlow({ managers }: { managers: { id: string; full_name: 
       </div>
     </main>
   );
+}
+
+/** "Tomar foto o elegir de la galería" (one input: phones offer camera and gallery), or a bundled cover. */
+function PhotoPicker({
+  cover,
+  onCover,
+  uploading,
+  onUploading,
+}: {
+  cover: string;
+  onCover: (cover: string) => void;
+  uploading: boolean;
+  onUploading: (uploading: boolean) => void;
+}) {
+  const [preview, setPreview] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const uploaded = cover.startsWith("http");
+
+  async function pick(file: File | undefined) {
+    if (!file) return;
+    setError("");
+    setPreview(URL.createObjectURL(file));
+    onUploading(true);
+    try {
+      const blob = await shrink(file);
+      const path = `${crypto.randomUUID()}.jpg`;
+      const supabase = createClient();
+      const { error: uploadError } = await supabase.storage.from(FIELD_PHOTOS_BUCKET).upload(path, blob, { contentType: "image/jpeg" });
+      if (uploadError) throw uploadError;
+      onCover(supabase.storage.from(FIELD_PHOTOS_BUCKET).getPublicUrl(path).data.publicUrl);
+    } catch {
+      setPreview(null);
+      setError("No se pudo subir la foto. Intenta otra vez.");
+    } finally {
+      onUploading(false);
+    }
+  }
+
+  const shown = preview ?? (uploaded ? cover : null);
+
+  return (
+    <div className="flex flex-col gap-3">
+      <label
+        className={`relative flex h-[200px] cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-[20px] ${
+          shown ? "" : "border-[1.5px] border-dashed border-action bg-action/10 text-action"
+        }`}
+      >
+        <input type="file" accept="image/*" className="sr-only" onChange={(event) => pick(event.target.files?.[0])} />
+        {shown ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element -- local preview of the picked file */}
+            <img src={shown} alt="Foto de la cancha" className="absolute inset-0 size-full object-cover" />
+            {uploading ? (
+              <span className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/45 text-white">
+                <span aria-hidden="true" className="agent-spin size-7 rounded-full border-[3px] border-white/30 border-t-white" />
+                <span className="text-sm font-semibold">Subiendo foto…</span>
+              </span>
+            ) : (
+              <span className="absolute top-3 right-3 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold text-white">Cambiar</span>
+            )}
+          </>
+        ) : (
+          <>
+            <svg aria-hidden="true" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 8h3l2-3h6l2 3h3v11H4z" />
+              <circle cx="12" cy="13" r="3.5" />
+            </svg>
+            <span className="text-[16px] font-semibold">Tomar foto o elegir de la galería</span>
+          </>
+        )}
+      </label>
+      <FieldError id="foto-error">{error}</FieldError>
+      <span className="text-[13px] font-semibold text-muted">O elige una del set</span>
+      <div className="grid grid-cols-6 gap-1.5">
+        {BUNDLED_COVERS.map((c) => (
+          <button
+            key={c}
+            type="button"
+            disabled={uploading}
+            onClick={() => {
+              setPreview(null);
+              onCover(c);
+            }}
+            aria-pressed={cover === c}
+            aria-label={`Foto ${c.slice(-1)} del set`}
+            className={`relative aspect-square overflow-hidden rounded-lg border-2 ${cover === c ? "border-action" : "border-transparent"}`}
+          >
+            <Image src={coverSrc(c)} alt="" fill sizes="60px" className="object-cover" />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Downscales a photo to at most MAX_SIDE px and re-encodes it as JPEG. */
+async function shrink(file: File): Promise<Blob> {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  return new Promise((resolve, reject) => canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("encode"))), "image/jpeg", 0.82));
 }
 
 function CreateButton({ disabled }: { disabled: boolean }) {

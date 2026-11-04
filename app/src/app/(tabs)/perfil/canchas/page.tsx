@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { requireRole } from "@/lib/roles";
+import { coverSrc } from "@/lib/covers";
 
 export const metadata: Metadata = { title: "Tus canchas · Retta" };
 
@@ -53,7 +54,7 @@ export default async function Canchas() {
               <li key={field.id}>
                 <Link href={`/canchas/${field.id}`} className="flex gap-3 rounded-[18px] border border-line bg-surface p-2 text-ink">
                   <span className="relative size-[84px] shrink-0 overflow-hidden rounded-xl bg-elevated">
-                    <Image src={`/fotos/canchas/${field.cover_image}.jpg`} alt="" fill sizes="84px" className="object-cover" />
+                    <Image src={coverSrc(field.cover_image)} alt="" fill sizes="84px" className="object-cover" />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col justify-center gap-1">
                     <span className="truncate font-display text-[21px] leading-none font-medium">{field.name}</span>

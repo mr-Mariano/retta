@@ -1,5 +1,6 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { coverSrc } from "@/lib/covers";
 
 /** Notices from the agent and from the matches a player joined (in-app inbox). */
 
@@ -77,7 +78,7 @@ export async function loadNotices(supabase: SupabaseClient, userId: string, limi
           id: m.id,
           title: m.title ?? `Reta en ${m.slot.field.name}`,
           fieldName: m.slot.field.area ?? m.slot.field.name,
-          cover: `/fotos/canchas/${m.slot.field.cover_image}.jpg`,
+          cover: coverSrc(m.slot.field.cover_image),
           startsAt: m.slot.starts_at,
           deadline: m.confirmation_deadline,
           pending: m.status === "pending",

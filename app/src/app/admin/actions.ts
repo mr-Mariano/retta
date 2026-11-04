@@ -2,13 +2,18 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { BUNDLED_COVERS, FIELD_PHOTOS_BUCKET } from "@/lib/covers";
 import { requireRole } from "@/lib/roles";
 
 export interface CreateFieldState {
   error?: string;
 }
 
-const COVERS = ["foto-1", "foto-2", "foto-3", "foto-4", "foto-5", "foto-6"];
+/** A bundled cover key, or a photo uploaded to this project's field-photos bucket. */
+function validCover(cover: string) {
+  const uploads = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${FIELD_PHOTOS_BUCKET}/`;
+  return BUNDLED_COVERS.includes(cover) || (cover.startsWith(uploads) && !cover.slice(uploads.length).includes(".."));
+}
 
 /** New field from the 3-step flow (admin flow B, 2026-11-04). */
 export async function createField(_prev: CreateFieldState, formData: FormData): Promise<CreateFieldState> {
@@ -24,7 +29,7 @@ export async function createField(_prev: CreateFieldState, formData: FormData): 
   const changingRooms = formData.get("has_changing_rooms") === "on";
 
   if (name.length < 3) return { error: "Escribe el nombre de la cancha." };
-  if (!COVERS.includes(cover)) return { error: "Elige una foto." };
+  if (!validCover(cover)) return { error: "Elige una foto." };
   if (!address || !Number.isFinite(latitude) || !Number.isFinite(longitude)) return { error: "Ubica la cancha en el mapa." };
   if (!managerId) return { error: "Elige quién la administra." };
 

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { requireRole } from "@/lib/roles";
+import { coverSrc } from "@/lib/covers";
 
 export const metadata: Metadata = { title: "Canchas · Retta" };
 
@@ -45,7 +46,7 @@ export default async function AdminCanchas() {
                   className="flex items-center gap-3 border-b border-line py-3"
                 >
                   <span className="relative size-11 shrink-0 overflow-hidden rounded-xl bg-elevated">
-                    <Image src={`/fotos/canchas/${field.cover_image}.jpg`} alt="" fill sizes="44px" className="object-cover" />
+                    <Image src={coverSrc(field.cover_image)} alt="" fill sizes="44px" className="object-cover" />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-[16px] font-semibold">{field.name}</span>

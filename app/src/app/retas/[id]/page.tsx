@@ -11,6 +11,7 @@ import { MapButton } from "./map-sheet";
 import { PlayersSheet, type MatchPlayer } from "./players-sheet";
 import { ShareButton } from "./share-button";
 import { SignUpForm } from "./sign-up-form";
+import { coverSrc } from "@/lib/covers";
 
 export const metadata: Metadata = { title: "Reta · Retta" };
 
@@ -117,7 +118,7 @@ export default async function MatchDetailPage({
   const level = LEVEL[match.level];
 
   const priceLabel = pesos === 0 ? "Gratis" : `$${pesos}`;
-  const cover = `/fotos/canchas/${field.cover_image}.jpg`;
+  const cover = coverSrc(field.cover_image);
   const actionState: ActionState =
     isCancelled || isPast
       ? "closed"

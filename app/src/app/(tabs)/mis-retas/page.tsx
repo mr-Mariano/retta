@@ -5,6 +5,7 @@ import { DropOutSheet } from "@/components/drop-out-sheet";
 import { ToastStack } from "@/components/toast-stack";
 import { createClient } from "@/lib/supabase/server";
 import { dayKey, formatDay, formatTime } from "@/lib/time";
+import { coverSrc } from "@/lib/covers";
 
 export const metadata: Metadata = { title: "Mis retas · Retta" };
 
@@ -83,7 +84,7 @@ function toItem(row: RegistrationRow, now: Date): Item {
     matchId: match.id,
     title: match.title ?? `Reta en ${match.slot.field.name}`,
     fieldName: match.slot.field.name,
-    cover: `/fotos/canchas/${match.slot.field.cover_image}.jpg`,
+    cover: coverSrc(match.slot.field.cover_image),
     startsAt,
     deadline,
     active,

@@ -9,6 +9,7 @@ import { formatDay, formatTime, isThisWeekend, relativeDay } from "@/lib/time";
 import { dismissNotice } from "../../avisos/actions";
 import { MatchCard, type Match } from "./match-card";
 import { NearMeList } from "./near-me-list";
+import { coverSrc } from "@/lib/covers";
 
 export const metadata: Metadata = { title: "Explorar · Retta" };
 
@@ -44,7 +45,7 @@ function toMatch(row: MatchRow): Match {
     id: row.id,
     title: row.title ?? `Reta en ${row.slot.field.name}`,
     fieldName: row.slot.field.area ? `${row.slot.field.name} · ${row.slot.field.area}` : row.slot.field.name,
-    cover: `/fotos/canchas/${row.slot.field.cover_image}.jpg`,
+    cover: coverSrc(row.slot.field.cover_image),
     startsAt: new Date(row.slot.starts_at),
     price: pesos === 0 ? "Gratis" : `$${pesos}`,
     isFree: pesos === 0,
