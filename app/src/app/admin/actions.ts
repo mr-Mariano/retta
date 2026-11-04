@@ -54,3 +54,12 @@ export async function setRole(userId: string, role: string) {
   revalidatePath("/admin/usuarios");
   redirect(`/admin/usuarios?aviso=${error ? (error.message.includes("own_role") ? "propio" : "error") : "rol"}`);
 }
+
+/** Retas sheet: an admin cancels any match before it starts; the reason is optional. */
+export async function cancelMatchAsAdmin(matchId: string, formData: FormData) {
+  const { supabase } = await requireRole(["admin"]);
+  const note = String(formData.get("note") ?? "").trim();
+  const { error } = await supabase.rpc("cancel_match", { p_match_id: matchId, p_note: note || null });
+  revalidatePath("/", "layout");
+  redirect(`/admin/retas?aviso=${error ? "error" : "cancelada"}`);
+}
