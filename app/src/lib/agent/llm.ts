@@ -65,7 +65,10 @@ export async function runToolLoop(system: string, user: string, tools: Tool[]) {
       }),
       signal: AbortSignal.timeout(20_000),
     });
-    if (!response.ok) throw new Error(`llm_http_${response.status}`);
+    if (!response.ok) {
+      const detail = (await response.text().catch(() => "")).slice(0, 300);
+      throw new Error(`llm_http_${response.status} (${config.model}): ${detail}`);
+    }
 
     const body = (await response.json()) as { choices?: { message: Message }[] };
     const message = body.choices?.[0]?.message;

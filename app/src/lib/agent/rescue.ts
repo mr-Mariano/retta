@@ -236,8 +236,9 @@ async function plan(tools: RescueTools, pass: "primera" | "segunda", available: 
   if (llmConfig()) {
     try {
       return await runToolLoop(tools.systemPrompt(pass), tools.situation(), available);
-    } catch {
+    } catch (error) {
       // Fall through to the rules; whatever the model already did stays done.
+      console.error("[agente] LLM failed, using rules:", error instanceof Error ? error.message : error);
     }
   }
   await rules();
