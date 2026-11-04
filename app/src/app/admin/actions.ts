@@ -43,3 +43,14 @@ export async function createField(_prev: CreateFieldState, formData: FormData): 
   revalidatePath("/", "layout");
   redirect("/admin/canchas");
 }
+
+const ROLES = ["player", "organizer", "field_manager", "admin"];
+
+/** Role sheet in Usuarios: tapping a role saves it (set_user_role checks admin and self). */
+export async function setRole(userId: string, role: string) {
+  const { supabase } = await requireRole(["admin"]);
+  if (!ROLES.includes(role)) redirect("/admin/usuarios");
+  const { error } = await supabase.rpc("set_user_role", { p_user_id: userId, p_role: role });
+  revalidatePath("/admin/usuarios");
+  redirect(`/admin/usuarios?aviso=${error ? (error.message.includes("own_role") ? "propio" : "error") : "rol"}`);
+}
