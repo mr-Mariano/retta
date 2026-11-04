@@ -135,11 +135,95 @@ body {
     opacity 120ms ease-out;
 }
 
+/* Agente Retta (2026-11-04) ------------------------------------------------ */
+
+/* Blue glow shared by the agent's bubble, cards and task list. */
+.agent-glow {
+  background:
+    linear-gradient(160deg, rgb(61 107 255 / 0.18), rgb(122 92 255 / 0.06) 70%),
+    var(--color-bg-surface);
+  border: 1px solid rgb(61 107 255 / 0.35);
+}
+.agent-mark {
+  background: linear-gradient(135deg, #3d6bff, #7a5cff);
+  color: #fff;
+}
+
+/* Opening Avisos: the bell rings and presses, the page recedes and blurs,
+   then Avisos grows as a circle from the bell and its rows rise in. */
+@keyframes bell-ring {
+  0% { transform: rotate(0); }
+  20% { transform: rotate(16deg); }
+  40% { transform: rotate(-13deg); }
+  60% { transform: rotate(9deg); }
+  80% { transform: rotate(-5deg); }
+  100% { transform: rotate(0); }
+}
+.bell-ringing svg {
+  transform-origin: 50% 10%;
+  animation: bell-ring 360ms ease-out;
+}
+[data-avisos="opening"] main {
+  transform: scale(0.94);
+  filter: blur(3px);
+  transition:
+    transform 180ms cubic-bezier(0.65, 0, 0.35, 1),
+    filter 180ms ease-out;
+}
+@keyframes avisos-reveal {
+  from { clip-path: circle(0 at calc(100% - 37px) 74px); }
+  to { clip-path: circle(150% at calc(100% - 37px) 74px); }
+}
+.avisos-reveal {
+  animation: avisos-reveal 420ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+.cascade > * {
+  animation: rise-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.cascade > :nth-child(1) { animation-delay: 160ms; }
+.cascade > :nth-child(2) { animation-delay: 210ms; }
+.cascade > :nth-child(3) { animation-delay: 260ms; }
+.cascade > :nth-child(n + 4) { animation-delay: 310ms; }
+
+/* Task list while the agent works. */
+@keyframes agent-spin {
+  to { transform: rotate(360deg); }
+}
+.agent-spin {
+  animation: agent-spin 900ms linear infinite;
+}
+@keyframes agent-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+.agent-shimmer {
+  background: linear-gradient(90deg, var(--color-text-secondary) 35%, var(--color-text-primary) 50%, var(--color-text-secondary) 65%);
+  background-size: 200% 100%;
+  background-clip: text;
+  color: transparent;
+  animation: agent-shimmer 2.2s linear infinite;
+}
+@keyframes agent-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(61 107 255 / 0.55); }
+  70% { box-shadow: 0 0 0 8px rgb(61 107 255 / 0); }
+}
+.agent-pulse {
+  animation: agent-pulse 1.8s infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 1ms !important;
     transition-duration: 1ms !important;
+  }
+  .agent-spin,
+  .agent-shimmer,
+  .agent-pulse {
+    animation: none !important;
+  }
+  .agent-shimmer {
+    color: var(--color-text-secondary);
   }
 }

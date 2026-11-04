@@ -4,8 +4,12 @@ import { headers } from "next/headers";
 import { CapacityDots } from "@/components/capacity-dots";
 import { ToastStack } from "@/components/toast-stack";
 import { formatDay, formatTime } from "@/lib/time";
+import { decideMove } from "../actions";
+import { AgentCard, type AgentRun, type Proposal } from "./agent-card";
 import { CancelForm } from "./cancel-form";
 import { loadOrganizerMatch } from "./match-data";
+import { createClient } from "@/lib/supabase/server";
+import { AgentMark } from "@/components/agent-mark";
 
 export const metadata: Metadata = { title: "Gestionar reta · Retta" };
 
@@ -19,6 +23,43 @@ const initials = (name: string) =>
     .map((part) => part[0]!.toUpperCase())
     .join("");
 
+const NOTICES: Record<string, string> = {
+  publicada: "Reta publicada",
+  movida: "Moviste la reta. Les avisamos a los inscritos",
+  "propuesta-no": "La reta se queda como está",
+  proposal_not_pending: "Esa propuesta ya no está vigente",
+  slot_taken: "Ese horario ya lo tomó otra reta",
+  proposal_expired: "Ya es tarde para mover la reta",
+  match_cancelled: "La reta ya se canceló",
+  error: "No se pudo completar. Intenta de nuevo",
+};
+
+/** The agent's rescue run for this match (with its steps) and a pending move proposal. */
+async function loadAgent(matchId: string): Promise<{ run: AgentRun | null; proposal: Proposal | null }> {
+  const supabase = await createClient();
+  const [{ data: run }, { data: proposal }] = await Promise.all([
+    supabase
+      .from("agent_runs")
+      .select("status, outcome, started_at, steps:agent_steps(position, title, result, state)")
+      .eq("kind", "rescue")
+      .eq("match_id", matchId)
+      .order("position", { referencedTable: "steps" })
+      .returns<AgentRun[]>()
+      .maybeSingle(),
+    supabase
+      .from("move_proposals")
+      .select("id, reason, slot:slots!inner(starts_at, field:fields!inner(name))")
+      .eq("match_id", matchId)
+      .eq("status", "pending")
+      .returns<{ id: string; reason: string; slot: { starts_at: string; field: { name: string } } }[]>()
+      .maybeSingle(),
+  ]);
+  return {
+    run: run ?? null,
+    proposal: proposal ? { id: proposal.id, starts_at: proposal.slot.starts_at, field_name: proposal.slot.field.name, reason: proposal.reason } : null,
+  };
+}
+
 /** wa.me link with the message already written; without a phone it opens the share sheet. */
 function whatsapp(text: string, phone?: string | null) {
   const to = phone ? phone.replace(/\D/g, "") : "";
@@ -30,10 +71,11 @@ export default async function GestionarReta({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ cancelar?: string; aviso?: string }>;
+  searchParams: Promise<{ cancelar?: string; propuesta?: string; aviso?: string }>;
 }) {
-  const [{ id }, { cancelar, aviso }] = await Promise.all([params, searchParams]);
+  const [{ id }, { cancelar, propuesta, aviso }] = await Promise.all([params, searchParams]);
   const match = await loadOrganizerMatch(id);
+  const { run, proposal } = await loadAgent(match.id);
   const h = await headers();
   const origin = `${h.get("x-forwarded-proto") ?? "http"}://${h.get("x-forwarded-host") ?? h.get("host")}`;
 
@@ -92,6 +134,10 @@ export default async function GestionarReta({
             <span className="text-muted">{summary[1]}</span>
           </span>
         </div>
+      )}
+
+      {match.status !== "cancelled" && !started && (run || match.status === "pending") && (
+        <AgentCard matchId={match.id} run={run} enabled={match.agent_enabled} proposal={proposal} />
       )}
 
       {attendanceOpen && (
@@ -214,7 +260,11 @@ export default async function GestionarReta({
         </div>
       )}
 
-      <ToastStack key={aviso} toasts={aviso === "publicada" ? [{ id: "publicada", message: "Reta publicada" }] : []} clearParams={["aviso"]} />
+      {propuesta === "1" && proposal && match.status !== "cancelled" && (
+        <ProposalSheet matchId={match.id} title={title} startsAt={startsAt} fieldName={match.slot.field.name} active={active} min={match.min_players} proposal={proposal} />
+      )}
+
+      <ToastStack key={aviso} toasts={aviso && NOTICES[aviso] ? [{ id: aviso, message: NOTICES[aviso] }] : []} clearParams={["aviso"]} />
     </main>
   );
 }
@@ -225,5 +275,80 @@ function WhatsAppIcon({ size }: { size: number }) {
       <path d="M3 21l1.7-5A9 9 0 1 1 8 19.3z" />
       <path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1.5-1.5-2-1-1 1c-1-.5-2-1.5-2.5-2.5l1-1-1-2z" />
     </svg>
+  );
+}
+
+/** The agent's proposal to move the match (approved design): now vs. proposed, why, and what happens to sign-ups. */
+function ProposalSheet({
+  matchId,
+  title,
+  startsAt,
+  fieldName,
+  active,
+  min,
+  proposal,
+}: {
+  matchId: string;
+  title: string;
+  startsAt: Date;
+  fieldName: string;
+  active: number;
+  min: number;
+  proposal: Proposal;
+}) {
+  const to = new Date(proposal.starts_at);
+  return (
+    <div className="fixed inset-0 z-30 mx-auto max-w-md">
+      <Link href={`/organizar/${matchId}`} scroll={false} aria-label="Cerrar" className="absolute inset-0 animate-fade-in bg-black/60" />
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="propuesta-titulo"
+        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col gap-4 overflow-y-auto rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
+      >
+        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
+        <span className="flex items-center gap-1.5 text-[13px] text-muted">
+          <AgentMark size={20} />
+          <span className="font-semibold text-ink">Agente Retta</span>
+        </span>
+        <h2 id="propuesta-titulo" className="-mt-1.5 font-display text-[28px] leading-[1.05] font-medium">
+          ¿Movemos tu reta a las {formatTime(to)}?
+        </h2>
+        <div className="flex items-center gap-2">
+          <div className="flex flex-1 flex-col gap-0.5 rounded-[14px] border border-line bg-elevated p-3">
+            <span className="text-xs font-semibold tracking-[0.05em] text-muted uppercase">Ahora</span>
+            <span className="font-display text-[22px] leading-none font-medium">{formatTime(startsAt)}</span>
+            <span className="text-[13px]">{fieldName}</span>
+            <span className="text-xs text-muted">
+              {active} de {min} mínimo
+            </span>
+          </div>
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-muted">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+          <div className="flex flex-1 flex-col gap-0.5 rounded-[14px] border border-action/45 bg-action/15 p-3">
+            <span className="text-xs font-semibold tracking-[0.05em] text-muted uppercase">Propuesta</span>
+            <span className="font-display text-[22px] leading-none font-medium">{formatTime(to)}</span>
+            <span className="text-[13px]">{proposal.field_name}</span>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 text-[15px] leading-[1.45]">
+          <span>
+            <strong className="font-semibold">Por qué:</strong> {proposal.reason}
+          </span>
+          <span className="text-muted">Les aviso a los {active} inscritos de {title}. Quien no pueda se da de baja con saldo completo.</span>
+        </div>
+        <form action={decideMove.bind(null, matchId, proposal.id, true)}>
+          <button type="submit" className="h-[52px] w-full rounded-full bg-action text-[17px] font-semibold text-on-action">
+            Mover a las {formatTime(to)}
+          </button>
+        </form>
+        <form action={decideMove.bind(null, matchId, proposal.id, false)}>
+          <button type="submit" className="h-12 w-full rounded-full border border-line text-[16px] font-semibold text-ink">
+            Dejarla como está
+          </button>
+        </form>
+      </section>
+    </div>
   );
 }

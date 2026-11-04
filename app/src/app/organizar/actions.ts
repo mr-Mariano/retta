@@ -95,3 +95,26 @@ export async function markAttendance(registrationId: string, attendance: "presen
   revalidatePath("/", "layout");
   return {};
 }
+
+/** "Detener agente": the agent stops working on this match (it reads agent_enabled on every pass). */
+export async function stopAgent(matchId: string) {
+  const supabase = await createClient();
+  await supabase.from("matches").update({ agent_enabled: false }).eq("id", matchId);
+  revalidatePath("/", "layout");
+}
+
+const PROPOSAL_ERRORS: Record<string, string> = {
+  proposal_not_pending: "Esa propuesta ya no está vigente",
+  slot_taken: "Ese horario ya lo tomó otra reta",
+  proposal_expired: "Ya es tarde para mover la reta",
+  match_cancelled: "La reta ya se canceló",
+};
+
+/** Accepts or rejects the agent's proposal to move the match; the database does the move. */
+export async function decideMove(matchId: string, proposalId: string, accept: boolean) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("decide_move_proposal", { p_proposal_id: proposalId, p_accept: accept });
+  revalidatePath("/", "layout");
+  const notice = error ? (Object.keys(PROPOSAL_ERRORS).find((code) => error.message.includes(code)) ?? "error") : accept ? "movida" : "propuesta-no";
+  redirect(`/organizar/${matchId}?aviso=${notice}`);
+}

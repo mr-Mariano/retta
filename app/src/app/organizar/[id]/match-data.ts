@@ -10,6 +10,7 @@ export interface OrganizerMatch {
   max_players: number;
   confirmation_deadline: string;
   organizer_id: string;
+  agent_enabled: boolean;
   slot: { starts_at: string; ends_at: string; field: { name: string } };
   registrations: {
     id: string;
@@ -25,7 +26,7 @@ export async function loadOrganizerMatch(id: string) {
   const { data: match } = await supabase
     .from("matches")
     .select(
-      "id, title, status, min_players, max_players, confirmation_deadline, organizer_id, slot:slots!inner(starts_at, ends_at, field:fields!inner(name)), registrations(id, created_at, attendance, player:profiles!registrations_player_id_fkey(full_name, phone))",
+      "id, title, status, min_players, max_players, confirmation_deadline, organizer_id, agent_enabled, slot:slots!inner(starts_at, ends_at, field:fields!inner(name)), registrations(id, created_at, attendance, player:profiles!registrations_player_id_fkey(full_name, phone))",
     )
     .eq("id", id)
     .eq("registrations.status", "active")

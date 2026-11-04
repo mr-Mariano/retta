@@ -93,6 +93,7 @@ export default async function Perfil({ searchParams }: { searchParams: Promise<{
           {(profile.role === "field_manager" || profile.role === "admin") && (
             <Row href="/perfil/canchas" label="Horarios de cancha" value="Tus canchas" />
           )}
+          {profile.role === "admin" && <Row href="/perfil/agente" label="Agente Retta" value="Impacto" />}
         </Section>
       )}
 

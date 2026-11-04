@@ -21,6 +21,6 @@ Course project for Diseño de Software (ITESO). A platform to find and join pick
 
 ## How I work
 
-- Each topic goes through a grill-me session → proposal in Claude Design → my approval → Figma. Do not jump to Figma or code before I approve.
+- No grill-me sessions. Each topic goes straight to a proposal in Claude Design → I ask for variants or approve → code. Do not write code before I approve.
 - Keep answers short and actionable.
 - When I'm wrong or something is off, say so directly.

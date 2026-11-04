@@ -1,8 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { AgentMark } from "@/components/agent-mark";
+import { BellLink } from "@/components/bell-link";
+import { joinHref, loadNotices, type Notice } from "@/lib/notices";
 import { createClient } from "@/lib/supabase/server";
 import { formatDay, formatTime, isThisWeekend, relativeDay } from "@/lib/time";
+import { dismissNotice } from "../../avisos/actions";
 import { MatchCard, type Match } from "./match-card";
 import { NearMeList } from "./near-me-list";
 
@@ -90,7 +94,7 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: profile }, { data: balanceCents }, { data: featured }, { data: rows }] = await Promise.all([
+  const [{ data: profile }, { data: balanceCents }, { data: featured }, { data: rows }, { count: unread }, notices] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", user!.id).maybeSingle(),
     supabase.rpc("my_balance"),
     supabase.rpc("featured_match"),
@@ -103,7 +107,20 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
       .gt("slots.starts_at", now.toISOString())
       .eq("registrations.status", "active")
       .returns<MatchRow[]>(),
+    supabase
+      .from("notices")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user!.id)
+      .is("read_at", null)
+      .is("dismissed_at", null),
+    loadNotices(supabase, user!.id, 10),
   ]);
+  const suggestion = notices.find(
+    (notice) =>
+      notice.kind === "reactivation" &&
+      notice.open &&
+      now.getTime() - new Date(notice.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000,
+  );
 
   // Cancelled and played matches are hidden; so is a pending match past its
   // deadline, which the deadline job is about to cancel.
@@ -124,15 +141,20 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
       <div className="flex flex-col gap-0.5">
         <div className="flex items-center justify-between gap-3">
           <span className="text-[15px] text-muted">Hola{firstName ? `, ${firstName}` : ""}</span>
-          <Link
-            href="/saldo"
-            className="flex h-9 shrink-0 items-center rounded-full border border-line bg-surface px-2.5 text-[13px] font-bold text-ink"
-          >
-            Saldo ${balance}
-          </Link>
+          <span className="flex items-center gap-2">
+            <Link
+              href="/saldo"
+              className="flex h-9 shrink-0 items-center rounded-full border border-line bg-surface px-2.5 text-[13px] font-bold text-ink"
+            >
+              Saldo ${balance}
+            </Link>
+            <BellLink unread={unread ?? 0} />
+          </span>
         </div>
         <h1 className="font-display text-[32px] leading-none font-medium">Retas cerca de ti</h1>
       </div>
+
+      {suggestion && <AgentBubble notice={suggestion} now={now} />}
 
       <nav aria-label="Filtrar retas" className="-mx-4 overflow-x-auto px-4 [scrollbar-width:none]">
         <ul className="flex w-max gap-2">
@@ -206,5 +228,53 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
       )}
 
     </main>
+  );
+}
+
+/** "el jueves", "hoy", "mañana" for the agent's sentence. */
+function dayPhrase(date: Date, now: Date) {
+  const relative = relativeDay(date, now);
+  if (relative) return relative.toLowerCase();
+  return `el ${date.toLocaleDateString("es-MX", { timeZone: "America/Mexico_City", weekday: "long" })}`;
+}
+
+/** Reactivation from the agent: a chat bubble with quick replies (variant E). */
+function AgentBubble({ notice, now }: { notice: Notice; now: Date }) {
+  const match = notice.match!;
+  const startsAt = new Date(match.startsAt);
+  const left = match.max - match.active;
+  const weeks = notice.lastPlayedAt
+    ? Math.floor((now.getTime() - new Date(notice.lastPlayedAt).getTime()) / (7 * 24 * 60 * 60 * 1000))
+    : null;
+  const opener =
+    weeks === null ? "¿Te animas a jugar esta semana?" : weeks <= 1 ? "Hace unos días que no juegas." : `Hace ${weeks} semanas que no juegas.`;
+  const day = dayPhrase(startsAt, now);
+  const chip = "flex h-[34px] items-center rounded-full px-3.5 text-sm font-semibold";
+  return (
+    <section aria-label="Sugerencia del Agente Retta" className="flex animate-rise-in items-start gap-2.5">
+      <AgentMark size={34} />
+      <div className="flex flex-1 flex-col gap-2">
+        <p className="agent-glow rounded-[4px_18px_18px_18px] px-3.5 py-3 text-[16px] leading-[1.4]">
+          {opener}{" "}
+          <strong className="font-semibold">
+            {day.charAt(0).toUpperCase() + day.slice(1)} a las {formatTime(startsAt)}
+          </strong>{" "}
+          hay reta en {match.fieldName}. {left === 1 ? "Queda 1 lugar." : `Quedan ${left} lugares.`}
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          <Link href={joinHref(match)} className={`${chip} bg-action text-on-action`}>
+            Me apunto
+          </Link>
+          <form action={dismissNotice.bind(null, notice.id)}>
+            <button type="submit" className={`${chip} border border-line text-ink`}>
+              Otro día
+            </button>
+          </form>
+          <Link href="/explorar?f=cerca" className={`${chip} border border-line text-ink`}>
+            Más opciones
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }
