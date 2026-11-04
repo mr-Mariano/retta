@@ -5,6 +5,7 @@ import { NextResponse, type NextRequest } from "next/server";
 const PUBLIC_ROUTES = ["/", "/registro", "/entrar"];
 const PROFILE_ROUTE = "/completa-perfil";
 const HOME_ROUTE = "/explorar";
+const ADMIN_HOME_ROUTE = "/admin";
 
 /**
  * Refreshes the Supabase session cookie and routes by auth state:
@@ -50,7 +51,7 @@ export async function updateSession(request: NextRequest) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("phone")
+    .select("phone, role")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -61,7 +62,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (isPublic || path === PROFILE_ROUTE) {
-    return redirectKeepingCookies(request, response, HOME_ROUTE);
+    return redirectKeepingCookies(request, response, profile.role === "admin" ? ADMIN_HOME_ROUTE : HOME_ROUTE);
   }
 
   return response;

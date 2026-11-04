@@ -95,12 +95,12 @@ export async function signInWithEmail(_prev: SignInState, formData: FormData): P
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("phone")
+    .select("phone, role")
     .eq("id", data.user.id)
     .maybeSingle();
   // Data changed: drop the browser's cached pages.
   revalidatePath("/", "layout");
-  redirect(profile?.phone ? "/explorar" : "/completa-perfil");
+  redirect(!profile?.phone ? "/completa-perfil" : profile.role === "admin" ? "/admin" : "/explorar");
 }
 
 export async function completeProfile(_prev: ProfileState, formData: FormData): Promise<ProfileState> {

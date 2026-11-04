@@ -2,14 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
-import { TAB_PATHS } from "@/components/bottom-nav";
+import { tabIndex } from "@/components/bottom-nav";
 
 // Last tab shown, kept across navigations so the next page knows where it came from.
 let previousTab = -1;
-
-function tabIndex(pathname: string) {
-  return TAB_PATHS.findIndex((path) => pathname === path || pathname.startsWith(`${path}/`));
-}
 
 /**
  * Re-mounts on every tab change (session 7): the new page slides in from the side of
