@@ -250,6 +250,8 @@ class RescueTools {
   proposed = false;
   private found = new Map<string, Candidate>();
   private options_: MoveOption[] = [];
+  /** Invited in earlier passes; search no longer returns them, so they count toward "encontrados". */
+  private readonly invitedBefore: number;
 
   constructor(
     private db: SupabaseClient,
@@ -259,6 +261,7 @@ class RescueTools {
     private invited = 0,
   ) {
     this.deadline = match.confirmation_deadline;
+    this.invitedBefore = invited;
   }
 
   private get title() {
@@ -295,7 +298,7 @@ class RescueTools {
     const { data } = await this.db.rpc("agent_candidates", { p_match_id: this.match.id, p_limit: Math.min(Math.max(limit, 1), MAX_INVITES) });
     const list = (data ?? []) as Candidate[];
     list.forEach((c) => this.found.set(c.id, c));
-    await this.steps.set(STEP.search, "Buscar jugadores afines", `${this.found.size} encontrados`, "done");
+    await this.steps.set(STEP.search, "Buscar jugadores afines", `${this.invitedBefore + this.found.size} encontrados`, "done");
     return list;
   }
 
