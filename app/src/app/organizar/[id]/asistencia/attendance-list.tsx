@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { SavingChip, type SaveState } from "@/components/saving-chip";
 import { markAttendance } from "../../actions";
 
 interface Player {
@@ -13,6 +14,7 @@ interface Player {
 export function AttendanceList({ players }: { players: Player[] }) {
   const [marks, setMarks] = useState(() => new Map(players.map((p) => [p.id, p.attendance])));
   const [error, setError] = useState<string | null>(null);
+  const [saveState, setSaveState] = useState<SaveState>("idle");
   const [, startTransition] = useTransition();
   const marked = [...marks.values()].filter((value) => value !== "unrecorded").length;
 
@@ -20,11 +22,15 @@ export function AttendanceList({ players }: { players: Player[] }) {
     const previous = marks.get(id)!;
     setMarks((current) => new Map(current).set(id, value));
     setError(null);
+    setSaveState("saving");
     startTransition(async () => {
       const result = await markAttendance(id, value);
       if (result.error) {
         setMarks((current) => new Map(current).set(id, previous));
         setError(result.error);
+        setSaveState("idle");
+      } else {
+        setSaveState("saved");
       }
     });
   }
@@ -38,6 +44,7 @@ export function AttendanceList({ players }: { players: Player[] }) {
           </span>
           <span className="text-muted"> marcados</span>
         </span>
+        <SavingChip state={saveState} />
       </div>
       {error && <p className="text-[13px] text-danger">{error}</p>}
       <ul className="flex flex-col divide-y divide-line">

@@ -51,13 +51,14 @@ export async function createField(_prev: CreateFieldState, formData: FormData): 
 
 const ROLES = ["player", "organizer", "field_manager", "admin"];
 
-/** Role sheet in Usuarios: tapping a role saves it (set_user_role checks admin and self). */
-export async function setRole(userId: string, role: string) {
+/** Role sheet in Usuarios: tapping a role saves it at once (set_user_role checks admin and self). */
+export async function setRole(userId: string, role: string): Promise<{ error?: string }> {
   const { supabase } = await requireRole(["admin"]);
-  if (!ROLES.includes(role)) redirect("/admin/usuarios");
+  if (!ROLES.includes(role)) return { error: "Ese rol no existe" };
   const { error } = await supabase.rpc("set_user_role", { p_user_id: userId, p_role: role });
+  if (error) return { error: error.message.includes("own_role") ? "No puedes cambiar tu propio rol" : "No se pudo cambiar el rol" };
   revalidatePath("/admin/usuarios");
-  redirect(`/admin/usuarios?aviso=${error ? (error.message.includes("own_role") ? "propio" : "error") : "rol"}`);
+  return {};
 }
 
 /** Retas sheet: an admin cancels any match before it starts; the reason is optional. */

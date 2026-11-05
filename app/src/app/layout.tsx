@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Alegreya_Sans } from "next/font/google";
+import { Suspense } from "react";
+import { NavigationProgress } from "@/components/navigation-progress";
 import "./globals.css";
 
 // One family for titles and body (session 7); 500 for titles, 700 stands in for 600.
@@ -26,6 +28,9 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${alegreyaSans.variable} antialiased`}>
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         {children}
       </body>
     </html>

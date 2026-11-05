@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { useFormStatus } from "react-dom";
+import { PendingButton } from "@/components/pending-button";
 
 const inputBox =
   "h-[50px] w-full rounded-[14px] border bg-surface px-4 text-[16px] text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-ink/40";
@@ -69,15 +69,10 @@ export function TextField({ id, name, label, type = "text", autoComplete, defaul
 
 /** Primary pill button that shows a pending label while its form submits. */
 export function SubmitButton({ children, pendingLabel }: { children: ReactNode; pendingLabel: string }) {
-  const { pending } = useFormStatus();
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="mt-1.5 h-[52px] w-full rounded-full bg-action text-[17px] font-bold text-on-action disabled:opacity-60"
-    >
-      {pending ? pendingLabel : children}
-    </button>
+    <PendingButton pendingLabel={pendingLabel} className="mt-1.5 h-[52px] w-full rounded-full bg-action text-[17px] font-bold text-on-action">
+      {children}
+    </PendingButton>
   );
 }
 

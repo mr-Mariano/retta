@@ -10,6 +10,7 @@ import { CancelForm } from "./cancel-form";
 import { loadOrganizerMatch } from "./match-data";
 import { createClient } from "@/lib/supabase/server";
 import { AgentMark } from "@/components/agent-mark";
+import { PendingButton } from "@/components/pending-button";
 
 export const metadata: Metadata = { title: "Gestionar reta · Retta" };
 
@@ -339,9 +340,9 @@ function ProposalSheet({
           <span className="text-muted">Les aviso a los {active} inscritos de {title}. Quien no pueda se da de baja con saldo completo.</span>
         </div>
         <form action={decideMove.bind(null, matchId, proposal.id, true)}>
-          <button type="submit" className="h-[52px] w-full rounded-full bg-action text-[17px] font-semibold text-on-action">
+          <PendingButton pendingLabel="Moviendo la reta…" className="h-[52px] w-full rounded-full bg-action text-[17px] font-semibold text-on-action">
             Mover a las {formatTime(to)}
-          </button>
+          </PendingButton>
         </form>
         <form action={decideMove.bind(null, matchId, proposal.id, false)}>
           <button type="submit" className="h-12 w-full rounded-full border border-line text-[16px] font-semibold text-ink">

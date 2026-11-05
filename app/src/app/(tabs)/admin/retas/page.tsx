@@ -5,6 +5,7 @@ import { ToastStack } from "@/components/toast-stack";
 import { requireRole } from "@/lib/roles";
 import { dayKey, formatDay, formatTime } from "@/lib/time";
 import { cancelMatchAsAdmin } from "@/app/admin/actions";
+import { PendingButton } from "@/components/pending-button";
 
 export const metadata: Metadata = { title: "Retas · Retta" };
 
@@ -101,9 +102,9 @@ export default async function AdminRetas({ searchParams }: { searchParams: Promi
                 className="mt-2 w-full rounded-2xl border border-line bg-elevated px-4 py-3 text-[16px] placeholder:text-muted focus:border-action focus:outline-none"
               />
             </details>
-            <button type="submit" className="h-[52px] rounded-full bg-danger text-[17px] font-semibold text-[#1a0805]">
+            <PendingButton pendingLabel="Cancelando…" className="h-[52px] rounded-full bg-danger text-[17px] font-semibold text-[#1a0805]">
               Cancelar reta
-            </button>
+            </PendingButton>
           </form>
         </Sheet>
       )}

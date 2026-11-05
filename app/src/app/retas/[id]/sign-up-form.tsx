@@ -1,18 +1,10 @@
 "use client";
 
 import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
 import { FieldError } from "@/components/form";
 import { signUpForMatch, type SignUpResult } from "./actions";
+import { PendingButton } from "@/components/pending-button";
 
-function Submit({ label, className }: { label: string; className: string }) {
-  const { pending } = useFormStatus();
-  return (
-    <button type="submit" disabled={pending} className={`${className} disabled:opacity-60`}>
-      {pending ? "Inscribiendo…" : label}
-    </button>
-  );
-}
 
 /** Signs up in one step (session 2): pays the remainder after applying credit. */
 export function SignUpForm({
@@ -30,7 +22,9 @@ export function SignUpForm({
 
   return (
     <form action={action} className={`flex flex-col gap-2 ${formClassName ?? ""}`}>
-      <Submit label={label} className={className} />
+      <PendingButton pendingLabel="Inscribiendo…" className={className}>
+        {label}
+      </PendingButton>
       {state.error && <FieldError id={`signup-error-${matchId}`}>{state.error}</FieldError>}
     </form>
   );

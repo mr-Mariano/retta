@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useActionState, useEffect, useRef, useState } from "react";
-import { useFormStatus } from "react-dom";
 import type { Map as MapboxMap } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { FieldError } from "@/components/form";
@@ -11,6 +10,7 @@ import { BUNDLED_COVERS, FIELD_PHOTOS_BUCKET, coverSrc } from "@/lib/covers";
 import { MAPBOX_TOKEN } from "@/lib/mapbox";
 import { createClient } from "@/lib/supabase/client";
 import { createField, type CreateFieldState } from "../../actions";
+import { PendingButton } from "@/components/pending-button";
 
 const STEPS = ["foto", "ubicacion", "responsable"] as const;
 // Phone photos are resized before upload so they go up fast and load fast.
@@ -279,16 +279,10 @@ async function shrink(file: File): Promise<Blob> {
 }
 
 function CreateButton({ disabled }: { disabled: boolean }) {
-  const { pending } = useFormStatus();
   return (
-    <button
-      type="submit"
-      form="crear-cancha"
-      disabled={disabled || pending}
-      className="h-[52px] w-full rounded-full bg-action text-[17px] font-semibold text-on-action disabled:opacity-40"
-    >
-      {pending ? "Creando…" : "Crear cancha"}
-    </button>
+    <PendingButton form="crear-cancha" pendingLabel="Creando cancha…" disabled={disabled} className="h-[52px] w-full rounded-full bg-action text-[17px] font-semibold text-on-action">
+      Crear cancha
+    </PendingButton>
   );
 }
 

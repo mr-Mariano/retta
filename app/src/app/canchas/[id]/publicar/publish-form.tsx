@@ -1,9 +1,9 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { useFormStatus } from "react-dom";
 import { FieldError } from "@/components/form";
 import { publishSlots, type PublishState } from "../../actions";
+import { PendingButton } from "@/components/pending-button";
 
 // Monday first, as people read a week; values are JS weekdays (0 = Sunday).
 const WEEKDAYS = [
@@ -28,11 +28,10 @@ const PERIODS = [
 ];
 
 function Submit({ count }: { count: number }) {
-  const { pending } = useFormStatus();
   return (
-    <button type="submit" disabled={pending || count === 0} className="h-[52px] rounded-full bg-action text-[17px] font-semibold text-on-action disabled:opacity-50">
-      {pending ? "Publicando…" : `Publicar ${count} horario${count === 1 ? "" : "s"}`}
-    </button>
+    <PendingButton pendingLabel="Publicando…" disabled={count === 0} className="h-[52px] rounded-full bg-action text-[17px] font-semibold text-on-action">
+      {`Publicar ${count} horario${count === 1 ? "" : "s"}`}
+    </PendingButton>
   );
 }
 

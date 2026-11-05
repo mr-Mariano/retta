@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AgentMark } from "@/components/agent-mark";
 import { formatTime } from "@/lib/time";
-import { stopAgent } from "../actions";
+import { StopAgentButton } from "./stop-agent-button";
 
 export interface AgentStep {
   position: number;
@@ -47,22 +47,19 @@ export function AgentCard({
         <span className="flex-1 text-[13px] leading-snug text-muted">
           Si faltan jugadores una hora antes del cierre, el Agente Retta invita a jugadores afines por ti.
         </span>
-        <form action={stopAgent.bind(null, matchId)}>
-          <button type="submit" className="text-[13px] font-semibold text-muted underline underline-offset-2">
-            Apagar
-          </button>
-        </form>
+        <StopAgentButton matchId={matchId} compact />
       </div>
     );
   }
 
-  const working = run.status === "running";
+  // Stopped by the organizer: the run closes on the next tick, show it as stopped now.
+  const working = run.status === "running" && enabled;
   const current = run.steps.find((step) => step.state === "running");
   const subtitle = working
     ? (current?.result ?? current?.title ?? "Trabajando")
     : run.outcome === "rescued"
       ? "Tu reta se armó"
-      : run.status === "stopped"
+      : run.status === "stopped" || !enabled
         ? "Lo detuviste"
         : "Terminó";
 
@@ -103,13 +100,7 @@ export function AgentCard({
         </Link>
       )}
 
-      {working && (
-        <form action={stopAgent.bind(null, matchId)} className="mt-2">
-          <button type="submit" className="flex h-11 w-full items-center justify-center rounded-full border border-line text-[15px] font-semibold text-danger">
-            Detener agente
-          </button>
-        </form>
-      )}
+      {working && <StopAgentButton matchId={matchId} />}
     </section>
   );
 }

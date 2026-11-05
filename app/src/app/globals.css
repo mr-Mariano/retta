@@ -211,6 +211,70 @@ body {
   animation: agent-pulse 1.8s infinite;
 }
 
+/* Waiting feedback (2026-11-04). A: the button answers. */
+.pending-button {
+  transition: transform 120ms ease-out, opacity 120ms ease-out;
+}
+.pending-button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.pending-button[data-pending="true"] {
+  transform: scale(0.98);
+}
+.button-spinner {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2.5px solid currentColor;
+  border-top-color: transparent;
+  opacity: 0.85;
+  animation: agent-spin 800ms linear infinite;
+}
+
+/* B: thin progress bar while the next screen loads, plus shimmering skeletons. */
+@keyframes nav-progress {
+  0% { transform: scaleX(0); }
+  40% { transform: scaleX(0.55); }
+  100% { transform: scaleX(0.85); }
+}
+.nav-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 3px;
+  transform-origin: left;
+  background: var(--color-action-bg);
+  box-shadow: 0 0 10px var(--color-action-bg);
+  pointer-events: none;
+}
+.nav-progress[data-state="loading"] {
+  animation: nav-progress 2.5s cubic-bezier(0.1, 0.7, 0.3, 1) forwards;
+}
+.nav-progress[data-state="done"] {
+  transform: scaleX(1);
+  opacity: 0;
+  transition: transform 150ms ease-out, opacity 250ms ease-out 150ms;
+}
+@keyframes bone-shimmer {
+  from { background-position: 150% 0; }
+  to { background-position: -50% 0; }
+}
+.bone {
+  background: linear-gradient(90deg, var(--color-surface) 30%, var(--color-elevated) 50%, var(--color-surface) 70%);
+  background-size: 300% 100%;
+  animation: bone-shimmer 1.4s linear infinite;
+}
+
+/* C: "Guardando… / Guardado" chip for small changes that apply at once. */
+@keyframes saving-dot {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+.saving-dot {
+  animation: saving-dot 1s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -220,7 +284,9 @@ body {
   }
   .agent-spin,
   .agent-shimmer,
-  .agent-pulse {
+  .agent-pulse,
+  .bone,
+  .saving-dot {
     animation: none !important;
   }
   .agent-shimmer {

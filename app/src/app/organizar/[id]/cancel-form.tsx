@@ -1,16 +1,15 @@
 "use client";
 
 import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
 import { FieldError } from "@/components/form";
 import { cancelOwnMatch, type CancelState } from "../actions";
+import { PendingButton } from "@/components/pending-button";
 
 function Submit() {
-  const { pending } = useFormStatus();
   return (
-    <button type="submit" disabled={pending} className="h-[52px] rounded-full bg-danger text-[17px] font-semibold text-[#1a0805] disabled:opacity-60">
-      {pending ? "Cancelando…" : "Cancelar la reta"}
-    </button>
+    <PendingButton pendingLabel="Cancelando…" className="h-[52px] rounded-full bg-danger text-[17px] font-semibold text-[#1a0805]">
+      Cancelar la reta
+    </PendingButton>
   );
 }
 

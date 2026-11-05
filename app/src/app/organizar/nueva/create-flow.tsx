@@ -3,11 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useActionState, useMemo, useState, type ReactNode } from "react";
-import { useFormStatus } from "react-dom";
 import { FieldError } from "@/components/form";
 import { dayKey, formatDay, formatTime, TIME_ZONE } from "@/lib/time";
 import { createMatch, type CreateMatchState } from "../actions";
 import { coverSrc } from "@/lib/covers";
+import { PendingButton } from "@/components/pending-button";
 
 export interface FieldOption {
   id: string;
@@ -329,11 +329,10 @@ export function CreateFlow({ fields, slots }: { fields: FieldOption[]; slots: Sl
 }
 
 function PublishButton() {
-  const { pending } = useFormStatus();
   return (
-    <button type="submit" form="publicar" disabled={pending} className="h-[52px] rounded-full bg-action text-[17px] font-semibold text-on-action disabled:opacity-60">
-      {pending ? "Publicando…" : "Publicar reta"}
-    </button>
+    <PendingButton form="publicar" pendingLabel="Publicando…" className="h-[52px] rounded-full bg-action text-[17px] font-semibold text-on-action">
+      Publicar reta
+    </PendingButton>
   );
 }
 
