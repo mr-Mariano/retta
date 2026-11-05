@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 import { dayKey, formatDay, formatLongDay, formatTime } from "@/lib/time";
 import { MapButton } from "./map-sheet";
 import { PlayersSheet, type MatchPlayer } from "./players-sheet";
+import { CloseButton } from "./close-button";
 import { ShareButton } from "./share-button";
 import { SignUpForm } from "./sign-up-form";
 import { coverSrc } from "@/lib/covers";
@@ -169,24 +170,25 @@ export default async function MatchDetailPage({
         : ["Ya se armó", ` · ${left === 1 ? "queda 1 lugar" : `quedan ${left} lugares`}`];
 
   return (
-    <main className="relative mx-auto min-h-dvh max-w-md pb-32">
-      <div className="relative h-[280px] bg-elevated">
+    <main className="relative mx-auto min-h-dvh max-w-md pb-32 lg:grid lg:max-w-[980px]! lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:gap-x-10 lg:pt-20 lg:pb-12">
+      <CloseButton />
+      <div className="relative h-[280px] bg-elevated lg:h-[260px] lg:overflow-hidden lg:rounded-[6px]">
         <Image src={cover} alt="" fill priority sizes="448px" className="object-cover" />
         <Link
           href="/explorar"
           aria-label="Regresar"
-          className="absolute top-[52px] left-4 flex size-11 items-center justify-center rounded-full bg-scrim text-white"
+          className="absolute top-[52px] left-4 flex size-11 lg:hidden items-center justify-center rounded-full bg-scrim text-white"
         >
           <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </Link>
-        <div className="absolute top-[52px] right-4">
+        <div className="absolute top-[52px] right-4 lg:hidden">
           <ShareButton title={title} />
         </div>
       </div>
 
-      <div className="relative -mt-7 flex flex-col gap-4 rounded-t-[10px] bg-base px-5 pt-5">
+      <div className="relative -mt-7 flex flex-col gap-4 rounded-t-[10px] bg-base px-5 pt-5 lg:col-start-1 lg:mt-0 lg:rounded-none lg:px-0 lg:pt-6">
         <div className="flex flex-col gap-2">
           <span className="self-start rounded-[6px] bg-elevated px-2.5 py-1 text-xs font-semibold">{statusLabel}</span>
           <h1 className="font-display text-[33px] leading-none font-extrabold tracking-tight">{title}</h1>
@@ -209,7 +211,7 @@ export default async function MatchDetailPage({
         </div>
 
         {!isCancelled && (
-          <div className="flex flex-col gap-2.5 rounded-2xl border border-line bg-surface p-3.5">
+          <div className="flex flex-col gap-2.5 rounded-2xl border border-line bg-surface p-3.5 lg:hidden">
             <div className="flex items-center justify-between gap-3">
               <CapacityDots active={active} min={match.min_players} max={match.max_players} />
               <span className="shrink-0 text-sm text-muted">
@@ -263,6 +265,16 @@ export default async function MatchDetailPage({
       </div>
 
       <ActionBar matchId={match.id} deadline={formatTime(deadline)} price={priceLabel} isFree={pesos === 0} state={actionState} />
+      <DesktopActionCard
+        matchId={match.id}
+        title={title}
+        deadline={formatTime(deadline)}
+        price={priceLabel}
+        isFree={pesos === 0}
+        state={actionState}
+        capacity={isCancelled ? null : { lead: capacityLead, rest: capacityRest, active, min: match.min_players, max: match.max_players }}
+        pendingNote={!isPast && match.status === "pending"}
+      />
 
       {showPlayers && players && (
         <PlayersSheet matchId={match.id} players={players as MatchPlayer[]} selectedId={jugador} />
@@ -302,6 +314,72 @@ const PRIMARY_BUTTON =
 
 type ActionState = "open" | "full" | "signedUp" | "locked" | "closed";
 
+/** Desktop (detail A): price, capacity and the action in a card that stays in view on the right. */
+function DesktopActionCard({
+  matchId,
+  title,
+  deadline,
+  price,
+  isFree,
+  state,
+  capacity,
+  pendingNote,
+}: {
+  matchId: string;
+  title: string;
+  deadline: string;
+  price: string;
+  isFree: boolean;
+  state: ActionState;
+  capacity: { lead: string; rest: string; active: number; min: number; max: number } | null;
+  pendingNote: boolean;
+}) {
+  return (
+    <aside className="sticky top-20 col-start-2 row-span-2 row-start-1 hidden flex-col gap-4 rounded-[6px] bg-surface p-5 lg:flex">
+      <span className="flex items-baseline justify-between">
+        <span className="font-display text-[34px] leading-none font-extrabold tracking-tight">{price}</span>
+        <span className="text-sm text-muted">por persona</span>
+      </span>
+      {capacity && (
+        <span className="flex flex-col gap-2.5">
+          <span className="text-[15px]">
+            <span className="font-semibold">{capacity.lead}</span>
+            <span className="text-muted">{capacity.rest}</span>
+          </span>
+          <CapacityDots active={capacity.active} min={capacity.min} max={capacity.max} size="sm" />
+        </span>
+      )}
+      {pendingNote && <span className="text-[13px] leading-snug text-muted">Si no se arma, la reta se cancela y te devolvemos el pago como saldo.</span>}
+      {state === "closed" ? (
+        <span className="text-[15px] text-muted">Esta reta ya no acepta inscripciones.</span>
+      ) : state === "signedUp" || state === "locked" ? (
+        <>
+          <span className="flex flex-col">
+            <span className="text-[16px] font-bold">Estás inscrito</span>
+            <span className="text-[13px] text-muted">{state === "locked" ? "Tu lugar está fijo" : `Baja con saldo hasta las ${deadline}`}</span>
+          </span>
+          {state === "signedUp" && (
+            <Link href={`/retas/${matchId}?baja=1`} scroll={false} className="flex h-12 items-center justify-center rounded-[6px] border border-line text-[16px] font-semibold">
+              Darme de baja
+            </Link>
+          )}
+        </>
+      ) : state === "full" ? (
+        <span className="flex h-12 items-center justify-center rounded-[6px] bg-elevated text-[16px] font-bold text-muted">Llena</span>
+      ) : isFree ? (
+        <SignUpForm matchId={matchId} label="Inscribirme" className={PRIMARY_BUTTON} />
+      ) : (
+        <Link href={`/retas/${matchId}?pago=1`} scroll={false} className={PRIMARY_BUTTON}>
+          Inscribirme
+        </Link>
+      )}
+      <span className="flex justify-center pt-1 [&_button]:size-auto [&_button]:gap-2 [&_button]:bg-transparent [&_button]:text-sm [&_button]:font-semibold [&_button]:text-muted">
+        <ShareButton title={title} />
+      </span>
+    </aside>
+  );
+}
+
 function ActionBar({
   matchId,
   deadline,
@@ -318,7 +396,7 @@ function ActionBar({
   if (state === "closed") return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-10 mx-auto flex max-w-md items-center gap-4 border-t border-line bg-surface px-5 pt-4 pb-8">
+    <div className="fixed inset-x-0 bottom-0 z-10 mx-auto flex max-w-md items-center gap-4 lg:hidden border-t border-line bg-surface px-5 pt-4 pb-8">
       {state === "signedUp" || state === "locked" ? (
         <>
           <div className="flex min-w-0 flex-1 flex-col">

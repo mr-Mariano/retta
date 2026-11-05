@@ -22,6 +22,10 @@ export function NavigationProgress() {
       if (url.origin !== window.location.origin) return;
       if (url.pathname === window.location.pathname && url.search === window.location.search) return;
       setState("loading");
+      // Lets "✕" on a match page go back instead of to Explorar.
+      try {
+        sessionStorage.setItem("retta:in-app", "1");
+      } catch {}
     }
     // Capture phase: next/link calls preventDefault before a bubbling listener would run.
     document.addEventListener("click", onClick, true);

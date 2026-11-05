@@ -159,10 +159,10 @@ export default async function MisRetas({
       : [];
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-28">
-      <h1 className="font-display text-[34px] leading-none font-extrabold tracking-tight">Mis retas</h1>
+    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-28 lg:max-w-[980px]! lg:pt-10">
+      <h1 className="font-display text-[34px] leading-none font-extrabold tracking-tight lg:text-[40px]">Mis retas</h1>
 
-      <nav aria-label="Mis retas" className="flex rounded-[6px] border border-line bg-surface p-1">
+      <nav aria-label="Mis retas" className="flex rounded-[6px] border border-line bg-surface p-1 lg:gap-7 lg:rounded-none lg:border-0 lg:border-b lg:bg-transparent lg:p-0">
         {TABS.map((item) => {
           const active = (item.key === "historial") === history;
           return (
@@ -170,11 +170,12 @@ export default async function MisRetas({
               key={item.label}
               href={item.key ? `/mis-retas?tab=${item.key}` : "/mis-retas"}
               aria-current={active ? "page" : undefined}
-              className={`flex h-10 flex-1 items-center justify-center rounded-[6px] text-[15px] font-semibold ${
-                active ? "bg-action text-on-action" : "text-muted"
+              className={`flex h-10 flex-1 items-center justify-center rounded-[6px] text-[15px] font-semibold lg:h-11 lg:flex-none lg:rounded-none lg:bg-transparent ${
+                active ? "bg-action text-on-action lg:-mb-px lg:border-b-2 lg:border-ink lg:font-bold lg:text-ink" : "text-muted"
               }`}
             >
               {item.label}
+              {active && !history && upcoming.length > 0 ? <span className="hidden lg:inline">&nbsp;· {upcoming.length}</span> : null}
             </Link>
           );
         })}
@@ -196,13 +197,23 @@ export default async function MisRetas({
           )}
         </div>
       ) : (
-        <ul className="flex flex-col gap-3">
-          {list.map((item) => (
-            <li key={item.registrationId}>
-              <MatchCard item={item} now={now} showActions={!history} />
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="flex flex-col gap-3 lg:hidden">
+            {list.map((item) => (
+              <li key={item.registrationId}>
+                <MatchCard item={item} now={now} showActions={!history} />
+              </li>
+            ))}
+          </ul>
+          {/* Desktop (Mis retas A, 2026-11-05): one row per match, like a trip history. */}
+          <ul className="hidden flex-col lg:flex">
+            {list.map((item) => (
+              <li key={item.registrationId}>
+                <MatchRow item={item} now={now} showActions={!history} />
+              </li>
+            ))}
+          </ul>
+        </>
       )}
 
       {dropping && (
@@ -263,6 +274,38 @@ function MatchCard({ item, now, showActions }: { item: Item; now: Date; showActi
           </Link>
         )}
       </div>
+    </article>
+  );
+}
+
+function MatchRow({ item, now, showActions }: { item: Item; now: Date; showActions: boolean }) {
+  const pending = item.status.label === "Por confirmar";
+  return (
+    <article className="flex items-center gap-[18px] border-b border-line px-3 py-4 hover:bg-surface">
+      <span className="flex w-[72px] shrink-0 flex-col">
+        <span className="text-xs font-bold text-muted uppercase">{formatDay(item.startsAt, now)}</span>
+        <span className="text-[20px] font-extrabold tracking-tight">{formatTime(item.startsAt)}</span>
+      </span>
+      <span className="relative h-[52px] w-[72px] shrink-0 overflow-hidden rounded-[4px] bg-elevated">
+        <Image src={item.cover} alt="" fill sizes="72px" className="object-cover" />
+      </span>
+      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="truncate text-[16px] font-bold">{item.title}</span>
+        <span className="truncate text-sm text-muted">
+          {item.fieldName} · {item.note}
+        </span>
+      </span>
+      <span className={`shrink-0 text-[13px] font-bold ${pending ? "text-action" : "text-ink"}`}>{item.status.label.replace(/[¡!]/g, "")}</span>
+      <span className="flex shrink-0 gap-2">
+        <Link href={`/retas/${item.matchId}`} className="flex h-9 items-center rounded-[4px] border border-line px-3.5 text-sm font-semibold">
+          Ver
+        </Link>
+        {showActions && item.canDrop && (
+          <Link href={`/mis-retas?baja=${item.matchId}`} scroll={false} className="flex h-9 items-center rounded-[4px] border border-line px-3.5 text-sm font-semibold text-muted">
+            Darme de baja
+          </Link>
+        )}
+      </span>
     </article>
   );
 }
