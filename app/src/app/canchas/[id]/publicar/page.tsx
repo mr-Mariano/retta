@@ -19,7 +19,7 @@ export default async function Publicar({ params }: { params: Promise<{ id: strin
         </span>
         {field.name}
       </Link>
-      <h1 className="font-display text-[32px] leading-[1.05] font-medium">Publicar horarios</h1>
+      <h1 className="font-display text-[32px] leading-[1.05] font-extrabold tracking-tight">Publicar horarios</h1>
       <PublishForm fieldId={field.id} />
     </main>
   );

@@ -12,7 +12,7 @@ export function PerfilForm({ account }: { account: { initials: string; label: st
     <form action={action} className="flex flex-1 flex-col gap-7" noValidate>
       <PhoneField large defaultValue={state.values?.phone} defaultCountry={state.values?.country} error={state.error} />
       <div className="mt-auto flex flex-col gap-3">
-        <div className="flex items-center gap-2.5 rounded-[14px] border border-line bg-surface px-3.5 py-3">
+        <div className="flex items-center gap-2.5 rounded-[6px] border border-line bg-surface px-3.5 py-3">
           <span aria-hidden="true" className="flex size-7 shrink-0 items-center justify-center rounded-full bg-elevated text-xs font-bold">
             {account.initials}
           </span>

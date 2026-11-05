@@ -42,10 +42,10 @@ export function LiveMatchCard({ match }: { match: FeaturedMatch }) {
   const startsAt = new Date(match.starts_at);
   const name = match.title !== `Reta en ${match.field_name}` ? `${match.title} · ${match.field_name}` : match.title;
   return (
-    <div className="flex items-center gap-3 rounded-[18px] border border-line bg-base/80 p-3 backdrop-blur-sm">
+    <div className="flex items-center gap-3 rounded-[6px] border border-line bg-base/80 p-3 backdrop-blur-sm">
       <span className="flex size-[52px] shrink-0 flex-col items-center justify-center rounded-xl bg-elevated">
         <span className="text-[11px] font-bold text-muted">{dayLabel(startsAt)}</span>
-        <span className="font-display text-[18px] leading-none font-medium">{formatTime(startsAt)}</span>
+        <span className="font-display text-[18px] leading-none font-extrabold tracking-tight">{formatTime(startsAt)}</span>
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-1.5">
         <span className="truncate text-[15px] font-bold text-ink">{name}</span>
@@ -56,9 +56,9 @@ export function LiveMatchCard({ match }: { match: FeaturedMatch }) {
             aria-valuemin={0}
             aria-valuemax={match.max_players}
             aria-valuenow={match.active_count}
-            className="relative h-1.5 flex-1 rounded-full bg-line"
+            className="relative h-1.5 flex-1 rounded-[6px] bg-line"
           >
-            <span className="absolute inset-y-0 left-0 rounded-full bg-action" style={{ width: `${(match.active_count / match.max_players) * 100}%` }} />
+            <span className="absolute inset-y-0 left-0 rounded-[6px] bg-action" style={{ width: `${(match.active_count / match.max_players) * 100}%` }} />
           </span>
           <span className="text-[13px] font-semibold text-muted">
             {match.active_count}/{match.max_players}
@@ -88,7 +88,7 @@ export async function AuthSplit({ children }: { children: ReactNode }) {
               <LiveMatchCard match={match} />
             </div>
           )}
-          <h2 className="font-display text-[56px] leading-none font-medium">{headline(match)}</h2>
+          <h2 className="font-display text-[56px] leading-none font-extrabold tracking-tight">{headline(match)}</h2>
           <p className="text-[18px] opacity-85">Encuentra una reta cerca y únete solo, en un minuto.</p>
         </div>
       </section>

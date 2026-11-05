@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import { PendingButton } from "@/components/pending-button";
 
 const inputBox =
-  "h-[50px] w-full rounded-[14px] border bg-surface px-4 text-[16px] text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-ink/40";
+  "h-[50px] w-full rounded-[6px] border bg-surface px-4 text-[16px] text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-ink/40";
 
 export function FieldError({ id, children }: { id: string; children?: ReactNode }) {
   if (!children) return null;
@@ -56,7 +56,7 @@ export function TextField({ id, name, label, type = "text", autoComplete, defaul
             type="button"
             onClick={() => setVisible((v) => !v)}
             aria-pressed={visible}
-            className="absolute top-[3px] right-1 h-11 rounded-[10px] px-3.5 text-sm font-semibold text-muted"
+            className="absolute top-[3px] right-1 h-11 rounded-[6px] px-3.5 text-sm font-semibold text-muted"
           >
             {visible ? "Ocultar" : "Mostrar"}
           </button>
@@ -70,7 +70,7 @@ export function TextField({ id, name, label, type = "text", autoComplete, defaul
 /** Primary pill button that shows a pending label while its form submits. */
 export function SubmitButton({ children, pendingLabel }: { children: ReactNode; pendingLabel: string }) {
   return (
-    <PendingButton pendingLabel={pendingLabel} className="mt-1.5 h-[52px] w-full rounded-full bg-action text-[17px] font-bold text-on-action">
+    <PendingButton pendingLabel={pendingLabel} className="mt-1.5 h-[52px] w-full rounded-[6px] bg-action text-[17px] font-bold text-on-action">
       {children}
     </PendingButton>
   );

@@ -115,8 +115,8 @@ export default async function GestionarReta({
       </Link>
 
       <div className="flex flex-col gap-1.5">
-        <span className="self-start rounded-full bg-elevated px-2.5 py-1 text-xs font-semibold">{statusLabel}</span>
-        <h1 className="font-display text-[32px] leading-none font-medium">{title}</h1>
+        <span className="self-start rounded-[6px] bg-elevated px-2.5 py-1 text-xs font-semibold">{statusLabel}</span>
+        <h1 className="font-display text-[32px] leading-none font-extrabold tracking-tight">{title}</h1>
         <span className="text-[15px] text-muted">
           {formatDay(startsAt, now)} · {formatTime(startsAt)}–{formatTime(endsAt)} · {match.slot.field.name}
         </span>
@@ -142,19 +142,19 @@ export default async function GestionarReta({
       )}
 
       {attendanceOpen && (
-        <Link href={`/organizar/${match.id}/asistencia`} className="flex h-12 items-center justify-center rounded-full bg-action text-[16px] font-semibold text-on-action">
+        <Link href={`/organizar/${match.id}/asistencia`} className="flex h-12 items-center justify-center rounded-[6px] bg-action text-[16px] font-semibold text-on-action">
           Pasar asistencia
         </Link>
       )}
 
       <div className="flex items-center justify-between gap-3">
-        <h2 className="font-display text-[21px] font-medium">Inscritos ({active})</h2>
+        <h2 className="font-display text-[21px] font-extrabold tracking-tight">Inscritos ({active})</h2>
         {active > 0 && match.status !== "cancelled" && (
           <a
             href={whatsapp(reminder())}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-[38px] items-center gap-1.5 rounded-full bg-action px-3.5 text-sm font-semibold text-on-action"
+            className="flex h-[38px] items-center gap-1.5 rounded-[6px] bg-action px-3.5 text-sm font-semibold text-on-action"
           >
             <WhatsAppIcon size={17} />
             Recordar a todos
@@ -206,7 +206,7 @@ export default async function GestionarReta({
           <Link
             href={`/organizar/${match.id}?cancelar=1`}
             scroll={false}
-            className="flex h-12 items-center justify-center rounded-full border border-line text-[16px] font-semibold text-danger"
+            className="flex h-12 items-center justify-center rounded-[6px] border border-line text-[16px] font-semibold text-danger"
           >
             Cancelar reta
           </Link>
@@ -220,11 +220,11 @@ export default async function GestionarReta({
             role="dialog"
             aria-modal="true"
             aria-labelledby="cancelar-titulo"
-            className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col gap-4 overflow-y-auto rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
+            className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col gap-4 overflow-y-auto rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8"
           >
-            <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
+            <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line" />
             <div className="flex flex-col gap-1">
-              <h2 id="cancelar-titulo" className="font-display text-[28px] leading-none font-medium">
+              <h2 id="cancelar-titulo" className="font-display text-[28px] leading-none font-extrabold tracking-tight">
                 ¿Cancelar la reta?
               </h2>
               <span className="text-[15px] text-muted">
@@ -254,7 +254,7 @@ export default async function GestionarReta({
               </li>
             </ul>
             <CancelForm matchId={match.id} />
-            <Link href={`/organizar/${match.id}`} scroll={false} className="flex h-12 items-center justify-center rounded-full border border-line text-[16px] font-semibold text-ink">
+            <Link href={`/organizar/${match.id}`} scroll={false} className="flex h-12 items-center justify-center rounded-[6px] border border-line text-[16px] font-semibold text-ink">
               Mejor no
             </Link>
           </section>
@@ -305,20 +305,20 @@ function ProposalSheet({
         role="dialog"
         aria-modal="true"
         aria-labelledby="propuesta-titulo"
-        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col gap-4 overflow-y-auto rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col gap-4 overflow-y-auto rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8"
       >
-        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
+        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line" />
         <span className="flex items-center gap-1.5 text-[13px] text-muted">
           <AgentMark size={20} />
           <span className="font-semibold text-ink">Agente Retta</span>
         </span>
-        <h2 id="propuesta-titulo" className="-mt-1.5 font-display text-[28px] leading-[1.05] font-medium">
+        <h2 id="propuesta-titulo" className="-mt-1.5 font-display text-[28px] leading-[1.05] font-extrabold tracking-tight">
           ¿Movemos tu reta a las {formatTime(to)}?
         </h2>
         <div className="flex items-center gap-2">
-          <div className="flex flex-1 flex-col gap-0.5 rounded-[14px] border border-line bg-elevated p-3">
+          <div className="flex flex-1 flex-col gap-0.5 rounded-[6px] border border-line bg-elevated p-3">
             <span className="text-xs font-semibold tracking-[0.05em] text-muted uppercase">Ahora</span>
-            <span className="font-display text-[22px] leading-none font-medium">{formatTime(startsAt)}</span>
+            <span className="font-display text-[22px] leading-none font-extrabold tracking-tight">{formatTime(startsAt)}</span>
             <span className="text-[13px]">{fieldName}</span>
             <span className="text-xs text-muted">
               {active} de {min} mínimo
@@ -327,9 +327,9 @@ function ProposalSheet({
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-muted">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
-          <div className="flex flex-1 flex-col gap-0.5 rounded-[14px] border border-action/45 bg-action/15 p-3">
+          <div className="flex flex-1 flex-col gap-0.5 rounded-[6px] border border-action/45 bg-action/15 p-3">
             <span className="text-xs font-semibold tracking-[0.05em] text-muted uppercase">Propuesta</span>
-            <span className="font-display text-[22px] leading-none font-medium">{formatTime(to)}</span>
+            <span className="font-display text-[22px] leading-none font-extrabold tracking-tight">{formatTime(to)}</span>
             <span className="text-[13px]">{proposal.field_name}</span>
           </div>
         </div>
@@ -340,12 +340,12 @@ function ProposalSheet({
           <span className="text-muted">Les aviso a los {active} inscritos de {title}. Quien no pueda se da de baja con saldo completo.</span>
         </div>
         <form action={decideMove.bind(null, matchId, proposal.id, true)}>
-          <PendingButton pendingLabel="Moviendo la reta…" className="h-[52px] w-full rounded-full bg-action text-[17px] font-semibold text-on-action">
+          <PendingButton pendingLabel="Moviendo la reta…" className="h-[52px] w-full rounded-[6px] bg-action text-[17px] font-semibold text-on-action">
             Mover a las {formatTime(to)}
           </PendingButton>
         </form>
         <form action={decideMove.bind(null, matchId, proposal.id, false)}>
-          <button type="submit" className="h-12 w-full rounded-full border border-line text-[16px] font-semibold text-ink">
+          <button type="submit" className="h-12 w-full rounded-[6px] border border-line text-[16px] font-semibold text-ink">
             Dejarla como está
           </button>
         </form>

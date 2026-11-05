@@ -21,7 +21,7 @@ export default async function AdminCanchas() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-32">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-[34px] leading-none font-medium">Canchas</h1>
+        <h1 className="font-display text-[34px] leading-none font-extrabold tracking-tight">Canchas</h1>
         <Link
           href="/admin/canchas/nueva"
           aria-label="Nueva cancha"
@@ -57,7 +57,7 @@ export default async function AdminCanchas() {
                       <path d="M9 6l6 6-6 6" />
                     </svg>
                   ) : (
-                    <span className="rounded-full bg-action/15 px-2.5 py-[3px] text-xs font-semibold text-action">Asignar</span>
+                    <span className="rounded-[6px] bg-action/15 px-2.5 py-[3px] text-xs font-semibold text-action">Asignar</span>
                   )}
                 </Link>
               </li>

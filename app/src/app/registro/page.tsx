@@ -25,7 +25,7 @@ export default async function Registro() {
         </Link>
         <div className="flex items-end justify-between gap-2">
           <div className="flex flex-col gap-2">
-            <h1 className="font-display text-[38px] leading-none font-medium">
+            <h1 className="font-display text-[38px] leading-none font-extrabold tracking-tight">
               Encuentra tu reta
             </h1>
             <p className="text-[15px] leading-normal text-muted">

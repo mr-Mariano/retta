@@ -29,7 +29,7 @@ export function PhoneField({ label = "Teléfono", hint, defaultValue, defaultCou
       </label>
       <div
         className={`flex items-center overflow-hidden bg-surface ${
-          large ? "h-16 rounded-2xl" : "h-[50px] rounded-[14px]"
+          large ? "h-16 rounded-2xl" : "h-[50px] rounded-[6px]"
         } ${error ? "border-[1.5px] border-danger" : large ? "border-[1.5px] border-ink" : "border border-line"}`}
       >
         <div className="relative flex h-full shrink-0 items-center gap-1.5 border-r border-line pr-2.5 pl-3.5">

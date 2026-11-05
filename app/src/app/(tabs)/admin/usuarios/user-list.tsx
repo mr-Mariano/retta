@@ -18,7 +18,7 @@ export function UserList({ users }: { users: UserRow[] }) {
 
   return (
     <>
-      <label className="flex h-11 items-center gap-2.5 rounded-full bg-surface px-3.5 text-muted">
+      <label className="flex h-11 items-center gap-2.5 rounded-[6px] bg-surface px-3.5 text-muted">
         <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
           <circle cx="11" cy="11" r="7" />
           <path d="M20 20l-4-4" />

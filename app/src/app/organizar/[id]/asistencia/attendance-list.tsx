@@ -37,7 +37,7 @@ export function AttendanceList({ players }: { players: Player[] }) {
 
   return (
     <>
-      <div className="flex items-center justify-between rounded-[14px] border border-line bg-surface px-3.5 py-3">
+      <div className="flex items-center justify-between rounded-[6px] border border-line bg-surface px-3.5 py-3">
         <span aria-live="polite" className="text-[15px]">
           <span className="font-semibold">
             {marked} de {players.length}
@@ -58,7 +58,7 @@ export function AttendanceList({ players }: { players: Player[] }) {
                   type="button"
                   onClick={() => mark(player.id, "present")}
                   aria-pressed={value === "present"}
-                  className={`h-[34px] rounded-[9px] px-3 text-sm font-semibold ${value === "present" ? "bg-action text-on-action" : "text-muted"}`}
+                  className={`h-[34px] rounded-[6px] px-3 text-sm font-semibold ${value === "present" ? "bg-action text-on-action" : "text-muted"}`}
                 >
                   Vino
                 </button>
@@ -66,7 +66,7 @@ export function AttendanceList({ players }: { players: Player[] }) {
                   type="button"
                   onClick={() => mark(player.id, "absent")}
                   aria-pressed={value === "absent"}
-                  className={`h-[34px] rounded-[9px] px-3 text-sm font-semibold ${value === "absent" ? "bg-elevated text-ink" : "text-muted"}`}
+                  className={`h-[34px] rounded-[6px] px-3 text-sm font-semibold ${value === "absent" ? "bg-elevated text-ink" : "text-muted"}`}
                 >
                   No vino
                 </button>

@@ -72,7 +72,7 @@ export default async function Agenda({
         Tus canchas
       </Link>
       <div className="flex flex-col gap-1">
-        <h1 className="font-display text-[30px] leading-none font-medium">{field.name}</h1>
+        <h1 className="font-display text-[30px] leading-none font-extrabold tracking-tight">{field.name}</h1>
         {field.area && <span className="text-sm text-muted">{field.area}</span>}
       </div>
 
@@ -96,7 +96,7 @@ export default async function Agenda({
       </nav>
 
       <div className="flex items-baseline justify-between">
-        <h2 className="font-display text-[21px] font-medium">{formatLongDay(mxDate(day, "12:00"))}</h2>
+        <h2 className="font-display text-[21px] font-extrabold tracking-tight">{formatLongDay(mxDate(day, "12:00"))}</h2>
         {today.length > 0 && (
           <span className="text-sm text-muted">
             {today.length - booked} libres · {booked} con reta
@@ -113,7 +113,7 @@ export default async function Agenda({
             return (
               <li
                 key={slot.id}
-                className={`flex items-center gap-3 rounded-[14px] px-3 py-2.5 ${match ? "border border-line bg-surface" : "border border-dashed border-line"}`}
+                className={`flex items-center gap-3 rounded-[6px] px-3 py-2.5 ${match ? "border border-line bg-surface" : "border border-dashed border-line"}`}
               >
                 <span className="flex w-[54px] flex-col">
                   <span className="text-[18px] font-medium">{formatTime(new Date(slot.starts_at))}</span>
@@ -127,7 +127,7 @@ export default async function Agenda({
                         {match.organizer.full_name} · {match.registrations[0]?.count ?? 0} de {match.max_players}
                       </span>
                     </span>
-                    <span className="rounded-full bg-elevated px-2 py-[3px] text-xs font-semibold">Con reta</span>
+                    <span className="rounded-[6px] bg-elevated px-2 py-[3px] text-xs font-semibold">Con reta</span>
                   </>
                 ) : (
                   <>
@@ -157,7 +157,7 @@ export default async function Agenda({
       <div className="fixed inset-x-0 bottom-0 z-10 mx-auto max-w-md bg-gradient-to-t from-base from-60% px-4 pt-6 pb-8">
         <Link
           href={`/canchas/${field.id}/publicar`}
-          className="flex h-[52px] items-center justify-center gap-2 rounded-full bg-action text-[17px] font-semibold text-on-action"
+          className="flex h-[52px] items-center justify-center gap-2 rounded-[6px] bg-action text-[17px] font-semibold text-on-action"
         >
           <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
             <path d="M12 5v14M5 12h14" />
@@ -173,11 +173,11 @@ export default async function Agenda({
             role="dialog"
             aria-modal="true"
             aria-labelledby="quitar-titulo"
-            className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col gap-4 overflow-y-auto rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
+            className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col gap-4 overflow-y-auto rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8"
           >
-            <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
+            <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line" />
             <div className="flex flex-col gap-1">
-              <h2 id="quitar-titulo" className="font-display text-[28px] leading-none font-medium">
+              <h2 id="quitar-titulo" className="font-display text-[28px] leading-none font-extrabold tracking-tight">
                 ¿Quitar este horario?
               </h2>
               <span className="text-[15px] text-muted">
@@ -189,11 +189,11 @@ export default async function Agenda({
               Los organizadores ya no podrán crear una reta en este horario. Puedes volver a publicarlo cuando quieras.
             </p>
             <form action={removeSlot.bind(null, field.id, removing.id, day)}>
-              <button type="submit" className="h-[52px] w-full rounded-full bg-danger text-[17px] font-semibold text-[#1a0805]">
+              <button type="submit" className="h-[52px] w-full rounded-[6px] bg-danger text-[17px] font-semibold text-[#1a0805]">
                 Quitar horario
               </button>
             </form>
-            <Link href={`/canchas/${field.id}?dia=${day}`} scroll={false} className="flex h-12 items-center justify-center rounded-full border border-line text-[16px] font-semibold text-ink">
+            <Link href={`/canchas/${field.id}?dia=${day}`} scroll={false} className="flex h-12 items-center justify-center rounded-[6px] border border-line text-[16px] font-semibold text-ink">
               Mejor no
             </Link>
           </section>

@@ -57,7 +57,7 @@ export function NewFieldFlow({ managers }: { managers: { id: string; full_name: 
         )}
         <div aria-hidden="true" className="flex flex-1 gap-1.5">
           {STEPS.map((s, i) => (
-            <span key={s} className={`h-1 flex-1 rounded-full transition-colors duration-300 ${i <= step ? "bg-action" : "bg-line"}`} />
+            <span key={s} className={`h-1 flex-1 rounded-[6px] transition-colors duration-300 ${i <= step ? "bg-action" : "bg-line"}`} />
           ))}
         </div>
         <span className="text-[13px] font-semibold text-muted">
@@ -68,7 +68,7 @@ export function NewFieldFlow({ managers }: { managers: { id: string; full_name: 
       <div key={step} className={`flex flex-1 flex-col gap-5 pt-6 ${direction === "forward" ? "animate-slide-from-right" : "animate-slide-from-left"}`}>
         {step === 0 && (
           <>
-            <h1 className="font-display text-[32px] leading-[1.05] font-medium">¿Cómo se llama?</h1>
+            <h1 className="font-display text-[32px] leading-[1.05] font-extrabold tracking-tight">¿Cómo se llama?</h1>
             <input
               autoFocus
               value={name}
@@ -85,7 +85,7 @@ export function NewFieldFlow({ managers }: { managers: { id: string; full_name: 
         {step === 1 && (
           <>
             <div className="flex flex-col gap-1.5">
-              <h1 className="font-display text-[32px] leading-[1.05] font-medium">¿Dónde está?</h1>
+              <h1 className="font-display text-[32px] leading-[1.05] font-extrabold tracking-tight">¿Dónde está?</h1>
               <p className="text-[15px] text-muted">Mueve el mapa; la dirección se llena sola.</p>
             </div>
             <PinMap place={place} onPlace={setPlace} />
@@ -94,7 +94,7 @@ export function NewFieldFlow({ managers }: { managers: { id: string; full_name: 
 
         {step === 2 && (
           <form id="crear-cancha" action={action} className="flex flex-col gap-5">
-            <h1 className="font-display text-[32px] leading-[1.05] font-medium">¿Quién la administra?</h1>
+            <h1 className="font-display text-[32px] leading-[1.05] font-extrabold tracking-tight">¿Quién la administra?</h1>
             <div role="radiogroup" aria-label="Responsable" className="flex flex-col gap-2">
               {managers.map((m) => {
                 const selected = m.id === managerId;
@@ -161,7 +161,7 @@ export function NewFieldFlow({ managers }: { managers: { id: string; full_name: 
             type="button"
             disabled={!canContinue}
             onClick={() => go(step + 1)}
-            className="h-[52px] w-full rounded-full bg-action text-[17px] font-semibold text-on-action disabled:opacity-40"
+            className="h-[52px] w-full rounded-[6px] bg-action text-[17px] font-semibold text-on-action disabled:opacity-40"
           >
             Siguiente
           </button>
@@ -214,7 +214,7 @@ function PhotoPicker({
   return (
     <div className="flex flex-col gap-3">
       <label
-        className={`relative flex h-[200px] cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-[20px] ${
+        className={`relative flex h-[200px] cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-[6px] ${
           shown ? "" : "border-[1.5px] border-dashed border-action bg-action/10 text-action"
         }`}
       >
@@ -229,7 +229,7 @@ function PhotoPicker({
                 <span className="text-sm font-semibold">Subiendo foto…</span>
               </span>
             ) : (
-              <span className="absolute top-3 right-3 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold text-white">Cambiar</span>
+              <span className="absolute top-3 right-3 rounded-[6px] bg-black/60 px-3 py-1 text-xs font-semibold text-white">Cambiar</span>
             )}
           </>
         ) : (
@@ -280,7 +280,7 @@ async function shrink(file: File): Promise<Blob> {
 
 function CreateButton({ disabled }: { disabled: boolean }) {
   return (
-    <PendingButton form="crear-cancha" pendingLabel="Creando cancha…" disabled={disabled} className="h-[52px] w-full rounded-full bg-action text-[17px] font-semibold text-on-action">
+    <PendingButton form="crear-cancha" pendingLabel="Creando cancha…" disabled={disabled} className="h-[52px] w-full rounded-[6px] bg-action text-[17px] font-semibold text-on-action">
       Crear cancha
     </PendingButton>
   );

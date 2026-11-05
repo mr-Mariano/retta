@@ -71,7 +71,7 @@ export default async function Avisos() {
       </Link>
 
       <div className="cascade flex flex-col gap-[18px]">
-        <h1 className="font-display text-[34px] leading-none font-medium">Avisos</h1>
+        <h1 className="font-display text-[34px] leading-none font-extrabold tracking-tight">Avisos</h1>
 
         {invites.length > 0 && <InviteDeck cards={invites} />}
 

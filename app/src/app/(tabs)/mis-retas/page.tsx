@@ -160,9 +160,9 @@ export default async function MisRetas({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-28">
-      <h1 className="font-display text-[34px] leading-none font-medium">Mis retas</h1>
+      <h1 className="font-display text-[34px] leading-none font-extrabold tracking-tight">Mis retas</h1>
 
-      <nav aria-label="Mis retas" className="flex rounded-full border border-line bg-surface p-1">
+      <nav aria-label="Mis retas" className="flex rounded-[6px] border border-line bg-surface p-1">
         {TABS.map((item) => {
           const active = (item.key === "historial") === history;
           return (
@@ -170,7 +170,7 @@ export default async function MisRetas({
               key={item.label}
               href={item.key ? `/mis-retas?tab=${item.key}` : "/mis-retas"}
               aria-current={active ? "page" : undefined}
-              className={`flex h-10 flex-1 items-center justify-center rounded-full text-[15px] font-semibold ${
+              className={`flex h-10 flex-1 items-center justify-center rounded-[6px] text-[15px] font-semibold ${
                 active ? "bg-action text-on-action" : "text-muted"
               }`}
             >
@@ -189,7 +189,7 @@ export default async function MisRetas({
           {!history && (
             <Link
               href="/explorar"
-              className="flex h-12 items-center rounded-full bg-action px-6 text-[16px] font-semibold text-on-action"
+              className="flex h-12 items-center rounded-[6px] bg-action px-6 text-[16px] font-semibold text-on-action"
             >
               Buscar una reta
             </Link>
@@ -228,11 +228,11 @@ export default async function MisRetas({
 
 function MatchCard({ item, now, showActions }: { item: Item; now: Date; showActions: boolean }) {
   return (
-    <article className="flex flex-col gap-3 rounded-[20px] border border-line bg-surface p-2.5">
-      <div className="relative h-[120px] overflow-hidden rounded-[14px] bg-elevated">
+    <article className="flex flex-col gap-3 rounded-[6px] border border-line bg-surface p-2.5">
+      <div className="relative h-[120px] overflow-hidden rounded-[6px] bg-elevated">
         <Image src={item.cover} alt="" fill sizes="448px" className="object-cover" />
         <span
-          className={`absolute top-2.5 left-2.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
+          className={`absolute top-2.5 left-2.5 rounded-[6px] px-2.5 py-1 text-xs font-semibold ${
             item.status.accent ? "bg-action text-on-action" : "bg-scrim text-white"
           }`}
         >
@@ -240,7 +240,7 @@ function MatchCard({ item, now, showActions }: { item: Item; now: Date; showActi
         </span>
       </div>
       <div className="flex flex-col gap-[3px] px-1.5">
-        <span className="font-display text-[21px] leading-none font-medium">{item.title}</span>
+        <span className="font-display text-[21px] leading-none font-extrabold tracking-tight">{item.title}</span>
         <span className="text-[15px] font-semibold">
           {formatDay(item.startsAt, now)} · {formatTime(item.startsAt)} · {item.fieldName}
         </span>
@@ -249,7 +249,7 @@ function MatchCard({ item, now, showActions }: { item: Item; now: Date; showActi
       <div className="flex gap-2 px-0.5 pb-0.5">
         <Link
           href={`/retas/${item.matchId}`}
-          className="flex h-[42px] flex-1 items-center justify-center rounded-full border border-line text-[15px] font-semibold text-ink"
+          className="flex h-[42px] flex-1 items-center justify-center rounded-[6px] border border-line text-[15px] font-semibold text-ink"
         >
           Ver detalle
         </Link>
@@ -257,7 +257,7 @@ function MatchCard({ item, now, showActions }: { item: Item; now: Date; showActi
           <Link
             href={`/mis-retas?baja=${item.matchId}`}
             scroll={false}
-            className="flex h-[42px] flex-1 items-center justify-center rounded-full border border-line text-[15px] font-semibold text-muted"
+            className="flex h-[42px] flex-1 items-center justify-center rounded-[6px] border border-line text-[15px] font-semibold text-muted"
           >
             Darme de baja
           </Link>

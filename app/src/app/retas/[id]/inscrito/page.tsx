@@ -62,7 +62,7 @@ export default async function SignedUp({
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center gap-[18px] px-6 pt-[72px] pb-8 text-center">
       <Image src="/mascota/celebra.png" alt="" width={230} height={230} priority />
-      <h1 className="font-display text-[45px] leading-none font-medium">
+      <h1 className="font-display text-[45px] leading-none font-extrabold tracking-tight">
         {justConfirmed ? "¡Ya se armó la reta!" : "¡Estás dentro!"}
       </h1>
       <p className="max-w-[320px] text-[16px] leading-normal text-muted">
@@ -81,13 +81,13 @@ export default async function SignedUp({
       <div className="mt-auto flex w-full flex-col gap-3">
         <Link
           href={`/retas/${id}`}
-          className="flex h-[52px] items-center justify-center rounded-full bg-action text-[17px] font-bold text-on-action"
+          className="flex h-[52px] items-center justify-center rounded-[6px] bg-action text-[17px] font-bold text-on-action"
         >
           Ver mi reta
         </Link>
         <Link
           href="/explorar"
-          className="flex h-[52px] items-center justify-center rounded-full border border-line text-[17px] font-bold text-ink"
+          className="flex h-[52px] items-center justify-center rounded-[6px] border border-line text-[17px] font-bold text-ink"
         >
           Seguir explorando
         </Link>

@@ -51,7 +51,7 @@ export default async function AdminRetas({ searchParams }: { searchParams: Promi
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-32">
-      <h1 className="font-display text-[34px] leading-none font-medium">Retas</h1>
+      <h1 className="font-display text-[34px] leading-none font-extrabold tracking-tight">Retas</h1>
 
       {matches.length === 0 ? (
         <p className="py-8 text-center text-[15px] text-muted">No hay retas próximas.</p>
@@ -65,7 +65,7 @@ export default async function AdminRetas({ searchParams }: { searchParams: Promi
                 return (
                   <li key={match.id}>
                     <Link href={`/admin/retas?reta=${match.id}`} scroll={false} className="flex items-center gap-3 border-b border-line py-3">
-                      <span className="w-12 font-display text-[19px] font-medium">{formatTime(new Date(match.slot.starts_at))}</span>
+                      <span className="w-12 font-display text-[19px] font-extrabold tracking-tight">{formatTime(new Date(match.slot.starts_at))}</span>
                       <span className="flex min-w-0 flex-1 flex-col">
                         <span className="truncate text-[16px] font-semibold">{name(match)}</span>
                         <span className="text-[13px] text-muted">
@@ -102,7 +102,7 @@ export default async function AdminRetas({ searchParams }: { searchParams: Promi
                 className="mt-2 w-full rounded-2xl border border-line bg-elevated px-4 py-3 text-[16px] placeholder:text-muted focus:border-action focus:outline-none"
               />
             </details>
-            <PendingButton pendingLabel="Cancelando…" className="h-[52px] rounded-full bg-danger text-[17px] font-semibold text-[#1a0805]">
+            <PendingButton pendingLabel="Cancelando…" className="h-[52px] rounded-[6px] bg-danger text-[17px] font-semibold text-[#1a0805]">
               Cancelar reta
             </PendingButton>
           </form>

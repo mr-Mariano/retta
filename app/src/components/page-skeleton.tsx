@@ -6,7 +6,7 @@ export function PageSkeleton({ rows = 4 }: { rows?: number }) {
     <main aria-busy="true" aria-label="Cargando" className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-10">
       <Bone className="size-10 rounded-full" />
       <Bone className="h-9 w-48 rounded-xl" />
-      <Bone className="h-[140px] w-full rounded-[20px]" />
+      <Bone className="h-[140px] w-full rounded-[6px]" />
       {Array.from({ length: rows }, (_, i) => (
         <div key={i} className="flex items-center gap-3">
           <Bone className="size-12 shrink-0 rounded-xl" />

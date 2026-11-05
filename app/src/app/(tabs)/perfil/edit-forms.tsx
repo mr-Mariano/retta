@@ -31,7 +31,7 @@ function PrefixedField({ id, label, prefix, defaultValue, placeholder }: { id: s
       <label htmlFor={id} className="text-[13px] font-semibold text-muted">
         {label}
       </label>
-      <div className="flex h-[50px] items-center gap-1 rounded-[14px] border border-line bg-base px-4 text-[16px] focus-within:ring-2 focus-within:ring-ink/40">
+      <div className="flex h-[50px] items-center gap-1 rounded-[6px] border border-line bg-base px-4 text-[16px] focus-within:ring-2 focus-within:ring-ink/40">
         <span className="text-muted">{prefix}</span>
         <input
           id={id}

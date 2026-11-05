@@ -93,7 +93,7 @@ export default async function AgenteImpacto() {
       </Link>
 
       <div className="flex flex-col items-center gap-1 pt-2">
-        <p className="relative rounded-[20px] border border-line bg-surface px-[18px] py-3 text-center text-[18px] font-semibold">
+        <p className="relative rounded-[6px] border border-line bg-surface px-[18px] py-3 text-center text-[18px] font-semibold">
           {saved === 0 ? "Esta semana aún no salvo retas" : saved === 1 ? "Esta semana salvé 1 reta" : `Esta semana salvé ${saved} retas`}
           <span aria-hidden="true" className="absolute -bottom-[8px] left-1/2 size-3.5 -translate-x-1/2 rotate-45 border-r border-b border-line bg-surface" />
         </p>
@@ -101,7 +101,7 @@ export default async function AgenteImpacto() {
       </div>
 
       <div className="-mt-2 flex flex-col items-center gap-0.5 text-center">
-        <span className="font-display text-[56px] leading-none font-medium">
+        <span className="font-display text-[56px] leading-none font-extrabold tracking-tight">
           {Math.round(played).toLocaleString("es-MX")} <span className="text-[24px]">min</span>
         </span>
         <span className="text-[15px] text-muted">de fútbol que sí se jugó</span>
@@ -112,11 +112,11 @@ export default async function AgenteImpacto() {
 
       <div className="flex flex-col">
         <div className={line}>
-          <span className="w-14 font-display text-[28px] leading-none font-medium text-action">{back.size}</span>
+          <span className="w-14 font-display text-[28px] leading-none font-extrabold tracking-tight text-action">{back.size}</span>
           <span className="flex-1 text-[16px]">{back.size === 1 ? "jugador volvió a jugar" : "jugadores volvieron a jugar"}</span>
         </div>
         <div className={line}>
-          <span className="w-14 font-display text-[28px] leading-none font-medium text-danger">{notRescued}</span>
+          <span className="w-14 font-display text-[28px] leading-none font-extrabold tracking-tight text-danger">{notRescued}</span>
           <span className="flex-1 text-[16px]">{notRescued === 1 ? "reta no se salvó" : "retas no se salvaron"}</span>
         </div>
       </div>

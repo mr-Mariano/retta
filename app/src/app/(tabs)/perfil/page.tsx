@@ -59,12 +59,12 @@ export default async function Perfil({ searchParams }: { searchParams: Promise<{
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-28">
-      <div className="flex flex-col items-center gap-2.5 rounded-[20px] border border-line bg-surface px-4 py-5 text-center">
-        <span aria-hidden="true" className="flex size-[72px] items-center justify-center rounded-full bg-action font-display text-[28px] font-medium text-on-action">
+      <div className="flex flex-col items-center gap-2.5 rounded-[6px] border border-line bg-surface px-4 py-5 text-center">
+        <span aria-hidden="true" className="flex size-[72px] items-center justify-center rounded-full bg-action font-display text-[28px] font-extrabold tracking-tight text-on-action">
           {initials(name)}
         </span>
         <div className="flex flex-col gap-0.5">
-          <h1 className="font-display text-[26px] leading-tight font-medium">{name}</h1>
+          <h1 className="font-display text-[26px] leading-tight font-extrabold tracking-tight">{name}</h1>
           {since && <span className="text-sm text-muted">Jugador desde {since}</span>}
         </div>
         <dl className="mt-1.5 grid w-full grid-cols-3 border-t border-line pt-3.5">
@@ -98,7 +98,7 @@ export default async function Perfil({ searchParams }: { searchParams: Promise<{
       )}
 
       <form action={signOut}>
-        <button type="submit" className="flex h-12 w-full items-center justify-center rounded-full border border-line text-[16px] font-semibold text-ink">
+        <button type="submit" className="flex h-12 w-full items-center justify-center rounded-[6px] border border-line text-[16px] font-semibold text-ink">
           Cerrar sesión
         </button>
       </form>
@@ -132,7 +132,7 @@ function Stat({ value, label, bordered }: { value: string; label: string; border
   return (
     <div className={`flex flex-col-reverse gap-0.5 ${bordered ? "border-x border-line" : ""}`}>
       <dt className="text-xs text-muted">{label}</dt>
-      <dd className="font-display text-[24px] font-medium">{value}</dd>
+      <dd className="font-display text-[24px] font-extrabold tracking-tight">{value}</dd>
     </div>
   );
 }
@@ -185,7 +185,7 @@ function SocialRow({ icon, name, value }: { icon: ReactNode; name: string; value
           <Chevron />
         </>
       ) : (
-        <span className="flex h-8 items-center rounded-full bg-action px-3 text-sm font-semibold text-on-action">Vincular</span>
+        <span className="flex h-8 items-center rounded-[6px] bg-action px-3 text-sm font-semibold text-on-action">Vincular</span>
       )}
     </Link>
   );

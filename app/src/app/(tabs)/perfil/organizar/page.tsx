@@ -80,8 +80,8 @@ export default async function Organizar({ searchParams }: { searchParams: Promis
       </Link>
 
       <div className="flex items-end justify-between">
-        <h1 className="font-display text-[34px] leading-none font-medium">Tus retas</h1>
-        <Link href="/organizar/nueva" className="flex h-10 items-center gap-1.5 rounded-full bg-action px-3.5 text-[15px] font-semibold text-on-action">
+        <h1 className="font-display text-[34px] leading-none font-extrabold tracking-tight">Tus retas</h1>
+        <Link href="/organizar/nueva" className="flex h-10 items-center gap-1.5 rounded-[6px] bg-action px-3.5 text-[15px] font-semibold text-on-action">
           <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
             <path d="M12 5v14M5 12h14" />
           </svg>
@@ -89,7 +89,7 @@ export default async function Organizar({ searchParams }: { searchParams: Promis
         </Link>
       </div>
 
-      <nav aria-label="Tus retas" className="flex rounded-full border border-line bg-surface p-1">
+      <nav aria-label="Tus retas" className="flex rounded-[6px] border border-line bg-surface p-1">
         {[
           { href: "/perfil/organizar", label: "Próximas", active: !past },
           { href: "/perfil/organizar?tab=pasadas", label: "Pasadas", active: past },
@@ -98,7 +98,7 @@ export default async function Organizar({ searchParams }: { searchParams: Promis
             key={item.label}
             href={item.href}
             aria-current={item.active ? "page" : undefined}
-            className={`flex h-[38px] flex-1 items-center justify-center rounded-full text-[15px] font-semibold ${item.active ? "bg-action text-on-action" : "text-muted"}`}
+            className={`flex h-[38px] flex-1 items-center justify-center rounded-[6px] text-[15px] font-semibold ${item.active ? "bg-action text-on-action" : "text-muted"}`}
           >
             {item.label}
           </Link>
@@ -117,9 +117,9 @@ export default async function Organizar({ searchParams }: { searchParams: Promis
             const active = row.registrations[0]?.count ?? 0;
             return (
               <li key={row.id}>
-                <Link href={`/organizar/${row.id}`} className="flex flex-col gap-2 rounded-[18px] border border-line bg-surface p-3.5 text-ink">
+                <Link href={`/organizar/${row.id}`} className="flex flex-col gap-2 rounded-[6px] border border-line bg-surface p-3.5 text-ink">
                   <span className={`text-[15px] font-semibold ${info.accent ? "text-action" : "text-muted"}`}>{info.status}</span>
-                  <span className="font-display text-[24px] leading-none font-medium">{row.title ?? `Reta en ${row.slot.field.name}`}</span>
+                  <span className="font-display text-[24px] leading-none font-extrabold tracking-tight">{row.title ?? `Reta en ${row.slot.field.name}`}</span>
                   <span className="text-sm text-muted">
                     {formatDay(startsAt, now)} {formatTime(startsAt)} · {row.slot.field.name} · {active} de {row.max_players}
                   </span>
@@ -128,7 +128,7 @@ export default async function Organizar({ searchParams }: { searchParams: Promis
                 {info.attendance && (
                   <Link
                     href={`/organizar/${row.id}/asistencia`}
-                    className="mt-2 flex h-10 items-center justify-center gap-1.5 rounded-full bg-action text-[15px] font-semibold text-on-action"
+                    className="mt-2 flex h-10 items-center justify-center gap-1.5 rounded-[6px] bg-action text-[15px] font-semibold text-on-action"
                   >
                     <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 6 9 17l-5-5" />

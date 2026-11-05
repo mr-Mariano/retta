@@ -15,7 +15,7 @@ export default async function AdminUsuarios({ searchParams }: { searchParams: Pr
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-32">
-      <h1 className="font-display text-[34px] leading-none font-medium">Usuarios</h1>
+      <h1 className="font-display text-[34px] leading-none font-extrabold tracking-tight">Usuarios</h1>
       <UserList users={users} />
 
       {selected && (

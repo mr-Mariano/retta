@@ -30,7 +30,7 @@ export default async function Entrar({
           />
         </Link>
         <div className="flex flex-col gap-2">
-          <h1 className="font-display text-[38px] leading-none font-medium">
+          <h1 className="font-display text-[38px] leading-none font-extrabold tracking-tight">
             Hola de nuevo
           </h1>
           <p className="text-[15px] leading-normal text-muted">

@@ -19,7 +19,7 @@ export function SavingChip({ state }: { state: SaveState }) {
 
   if (visible === "idle") return null;
   return (
-    <span role="status" className="inline-flex animate-fade-in items-center gap-1.5 rounded-full bg-elevated px-3 py-1 text-[13px] font-semibold text-muted">
+    <span role="status" className="inline-flex animate-fade-in items-center gap-1.5 rounded-[6px] bg-elevated px-3 py-1 text-[13px] font-semibold text-muted">
       {visible === "saving" ? (
         <>
           <span aria-hidden="true" className="saving-dot size-2 rounded-full bg-action" />

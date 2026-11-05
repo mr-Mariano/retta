@@ -41,16 +41,16 @@ export function PlayersSheet({ matchId, players, selectedId }: { matchId: string
         role="dialog"
         aria-modal="true"
         aria-labelledby="jugadores-titulo"
-        className="absolute inset-x-0 bottom-0 flex animate-sheet-up max-h-[85dvh] flex-col gap-4 overflow-y-auto rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex animate-sheet-up max-h-[85dvh] flex-col gap-4 overflow-y-auto rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8"
       >
-        <span aria-hidden="true" className="h-[5px] w-10 shrink-0 self-center rounded-full bg-line" />
+        <span aria-hidden="true" className="h-[5px] w-10 shrink-0 self-center rounded-[6px] bg-line" />
 
         {selected ? (
           <>
             <div className="flex items-center gap-3.5">
               <Avatar name={selected.full_name} size="lg" />
               <div className="flex flex-col gap-0.5">
-                <h2 id="jugadores-titulo" className="font-display text-[26px] leading-none font-medium">
+                <h2 id="jugadores-titulo" className="font-display text-[26px] leading-none font-extrabold tracking-tight">
                   {selected.full_name}
                 </h2>
                 <span className="text-sm text-muted">{sharedLabel(selected.shared)}</span>
@@ -73,7 +73,7 @@ export function PlayersSheet({ matchId, players, selectedId }: { matchId: string
             {others.length > 0 && <h3 className="-mb-1.5 text-[13px] font-semibold text-muted">También en esta reta</h3>}
           </>
         ) : (
-          <h2 id="jugadores-titulo" className="font-display text-[28px] leading-none font-medium">
+          <h2 id="jugadores-titulo" className="font-display text-[28px] leading-none font-extrabold tracking-tight">
             Inscritos
           </h2>
         )}
@@ -111,7 +111,7 @@ function Avatar({ name, size }: { name: string; size?: "lg" }) {
     <span
       aria-hidden="true"
       style={{ background: tint(name) }}
-      className={`flex shrink-0 items-center justify-center rounded-full font-semibold text-white ${
+      className={`flex shrink-0 items-center justify-center rounded-[6px] font-semibold text-white ${
         size === "lg" ? "size-[60px] text-[22px]" : "size-9 text-[13px]"
       }`}
     >
@@ -122,7 +122,7 @@ function Avatar({ name, size }: { name: string; size?: "lg" }) {
 
 function SocialLink({ href, icon, value, network }: { href: string; icon: React.ReactNode; value: string; network: string }) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="flex h-[50px] items-center gap-3 rounded-[14px] bg-elevated px-4 text-ink">
+    <a href={href} target="_blank" rel="noopener noreferrer" className="flex h-[50px] items-center gap-3 rounded-[6px] bg-elevated px-4 text-ink">
       {icon}
       <span className="flex-1 truncate text-[16px] font-semibold">{value}</span>
       <span className="text-[13px] text-muted">{network}</span>

@@ -5,13 +5,13 @@
   Dark is the primary mode; light applies when the OS prefers it.
 */
 :root {
-  --color-bg-base: #0b0c0e;
-  --color-bg-surface: #141518;
-  --color-bg-elevated: #1b1d21;
-  --color-bg-sidebar: #101114;
-  --color-border-default: #24262b;
-  --color-text-primary: #edeef0;
-  --color-text-secondary: #8f9298;
+  --color-bg-base: #000000;
+  --color-bg-surface: #0e0e0e;
+  --color-bg-elevated: #1a1a1a;
+  --color-bg-sidebar: #000000;
+  --color-border-default: #262626;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a6a6a6;
   --color-action-bg: #3d6bff;
   --color-action-fg: #ffffff;
   --color-overlay-scrim: rgb(10 10 10 / 0.6);
@@ -49,8 +49,15 @@
   --color-on-action: var(--color-action-fg);
   --color-scrim: var(--color-overlay-scrim);
   --color-danger: var(--color-status-danger);
-  --font-sans: var(--font-alegreya-sans);
-  --font-display: var(--font-alegreya-sans);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-inter);
+
+  /* Plano 2 (2026-11-05): nearly square corners everywhere. */
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 6px;
+  --radius-3xl: 8px;
 
   /* Motion (session 7): quick, decelerating, never bouncy. */
   --animate-slide-from-right: slide-from-right 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -115,7 +122,7 @@ html {
 body {
   background: var(--color-bg-base);
   color: var(--color-text-primary);
-  font-family: var(--font-alegreya-sans), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
 }
 
 /* Toast progress line: empties over the toast's 5 s lifetime (session 6). */

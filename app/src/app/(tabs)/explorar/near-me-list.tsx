@@ -47,7 +47,7 @@ export function NearMeList({ matches }: { matches: SerializedMatch[] }) {
         <button
           type="button"
           onClick={locate}
-          className="flex h-12 items-center justify-center rounded-full bg-action text-[16px] font-semibold text-on-action"
+          className="flex h-12 items-center justify-center rounded-[6px] bg-action text-[16px] font-semibold text-on-action"
         >
           Usar mi ubicación
         </button>

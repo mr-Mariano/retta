@@ -26,7 +26,7 @@ interface PanelMatch {
 const FORMAT = { fut5: "Fut 5", fut7: "Fut 7", fut11: "Fut 11" };
 const LEVEL = { beginner: "Principiante", intermediate: "Intermedio", advanced: "Avanzado" };
 const TYPE = { men: "Varonil", women: "Femenil", mixed: "Mixto" };
-const PRIMARY = "flex h-12 items-center justify-center rounded-full bg-action px-6 text-[17px] font-semibold text-on-action";
+const PRIMARY = "flex h-12 items-center justify-center rounded-[6px] bg-action px-6 text-[17px] font-semibold text-on-action";
 
 /**
  * A match in the desktop side panel (option E, detail 1): the results stay
@@ -72,11 +72,11 @@ export async function MatchPanel({
       className="fixed inset-y-0 right-0 z-30 hidden w-[460px] animate-slide-from-right flex-col gap-3.5 overflow-y-auto border-l border-line bg-surface px-[22px] pt-[18px] pb-[22px] shadow-[-20px_0_40px_rgb(0_0_0/0.45)] lg:flex"
     >
       <ClosePanel href={closeHref} />
-      <div className="relative h-[210px] shrink-0 overflow-hidden rounded-[18px] text-white">
+      <div className="relative h-[210px] shrink-0 overflow-hidden rounded-[6px] text-white">
         <Image src={coverSrc(field.cover_image)} alt="" fill sizes="416px" className="object-cover" />
         <span aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgb(10_10_10/0.05),rgb(10_10_10/0.8))]" />
         <span className="absolute inset-x-[18px] bottom-3.5 flex flex-col gap-1">
-          <span className="font-display text-[30px] leading-none font-medium">{title}</span>
+          <span className="font-display text-[30px] leading-none font-extrabold tracking-tight">{title}</span>
           <span className="text-[15px] opacity-85">
             {formatDay(startsAt, now)} · {formatTime(startsAt)}–{formatTime(new Date(match.slot.ends_at))} · {field.name}
           </span>
@@ -112,7 +112,7 @@ export async function MatchPanel({
               <span className="text-[16px] font-semibold">Estás inscrito</span>
               <span className="text-[13px] text-muted">Tu lugar está apartado</span>
             </span>
-            <Link href={`/retas/${match.id}`} className="flex h-12 items-center rounded-full border border-line px-5 text-[16px] font-semibold">
+            <Link href={`/retas/${match.id}`} className="flex h-12 items-center rounded-[6px] border border-line px-5 text-[16px] font-semibold">
               Ver reta
             </Link>
           </>

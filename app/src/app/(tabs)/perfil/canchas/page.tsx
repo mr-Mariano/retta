@@ -39,7 +39,7 @@ export default async function Canchas() {
         Perfil
       </Link>
       <div className="flex flex-col gap-2">
-        <h1 className="font-display text-[34px] leading-none font-medium">Tus canchas</h1>
+        <h1 className="font-display text-[34px] leading-none font-extrabold tracking-tight">Tus canchas</h1>
         <p className="text-[15px] text-muted">Publica horarios para que los organizadores armen retas.</p>
       </div>
 
@@ -52,12 +52,12 @@ export default async function Canchas() {
             const free = field.slots.length - booked;
             return (
               <li key={field.id}>
-                <Link href={`/canchas/${field.id}`} className="flex gap-3 rounded-[18px] border border-line bg-surface p-2 text-ink">
+                <Link href={`/canchas/${field.id}`} className="flex gap-3 rounded-[6px] border border-line bg-surface p-2 text-ink">
                   <span className="relative size-[84px] shrink-0 overflow-hidden rounded-xl bg-elevated">
                     <Image src={coverSrc(field.cover_image)} alt="" fill sizes="84px" className="object-cover" />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col justify-center gap-1">
-                    <span className="truncate font-display text-[21px] leading-none font-medium">{field.name}</span>
+                    <span className="truncate font-display text-[21px] leading-none font-extrabold tracking-tight">{field.name}</span>
                     {field.area && <span className="text-[13px] text-muted">{field.area}</span>}
                     <span className="text-sm">
                       <span className="font-semibold text-action">{free} libres</span>

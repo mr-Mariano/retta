@@ -186,10 +186,10 @@ export default async function MatchDetailPage({
         </div>
       </div>
 
-      <div className="relative -mt-7 flex flex-col gap-4 rounded-t-3xl bg-base px-5 pt-5">
+      <div className="relative -mt-7 flex flex-col gap-4 rounded-t-[10px] bg-base px-5 pt-5">
         <div className="flex flex-col gap-2">
-          <span className="self-start rounded-full bg-elevated px-2.5 py-1 text-xs font-semibold">{statusLabel}</span>
-          <h1 className="font-display text-[33px] leading-none font-medium">{title}</h1>
+          <span className="self-start rounded-[6px] bg-elevated px-2.5 py-1 text-xs font-semibold">{statusLabel}</span>
+          <h1 className="font-display text-[33px] leading-none font-extrabold tracking-tight">{title}</h1>
           <span className="text-[16px] font-semibold">
             {formatLongDay(startsAt)} · {formatTime(startsAt)}–{formatTime(endsAt)}
           </span>
@@ -298,7 +298,7 @@ export default async function MatchDetailPage({
 }
 
 const PRIMARY_BUTTON =
-  "flex h-[52px] w-full items-center justify-center rounded-full bg-action text-[17px] font-bold text-on-action";
+  "flex h-[52px] w-full items-center justify-center rounded-[6px] bg-action text-[17px] font-bold text-on-action";
 
 type ActionState = "open" | "full" | "signedUp" | "locked" | "closed";
 
@@ -329,7 +329,7 @@ function ActionBar({
             <Link
               href={`/retas/${matchId}?baja=1`}
               scroll={false}
-              className="flex h-[52px] items-center justify-center rounded-full border border-line px-5 text-[16px] font-bold text-ink"
+              className="flex h-[52px] items-center justify-center rounded-[6px] border border-line px-5 text-[16px] font-bold text-ink"
             >
               Darme de baja
             </Link>
@@ -338,11 +338,11 @@ function ActionBar({
       ) : (
         <>
           <div className="flex flex-col">
-            <span className="font-display text-[27px] leading-none font-medium">{price}</span>
+            <span className="font-display text-[27px] leading-none font-extrabold tracking-tight">{price}</span>
             <span className="text-xs text-muted">por persona</span>
           </div>
           {state === "full" ? (
-            <span aria-disabled="true" className="flex h-[52px] flex-1 items-center justify-center rounded-full bg-elevated text-[17px] font-bold text-muted">
+            <span aria-disabled="true" className="flex h-[52px] flex-1 items-center justify-center rounded-[6px] bg-elevated text-[17px] font-bold text-muted">
               Llena
             </span>
           ) : isFree ? (
@@ -385,10 +385,10 @@ function PaymentSheet({
         role="dialog"
         aria-modal="true"
         aria-labelledby="pago-titulo"
-        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col overflow-y-auto gap-[18px] rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col overflow-y-auto gap-[18px] rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8"
       >
-        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
-        <h2 id="pago-titulo" className="font-display text-[28px] leading-none font-medium">
+        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line" />
+        <h2 id="pago-titulo" className="font-display text-[28px] leading-none font-extrabold tracking-tight">
           Confirma tu inscripción
         </h2>
         <div className="flex items-center gap-3">
@@ -414,11 +414,11 @@ function PaymentSheet({
           <div aria-hidden="true" className="h-px bg-line" />
           <div className="flex items-baseline justify-between">
             <dt className="font-semibold">Total a pagar</dt>
-            <dd className="font-display text-[28px] leading-none font-medium">${total}</dd>
+            <dd className="font-display text-[28px] leading-none font-extrabold tracking-tight">${total}</dd>
           </div>
         </dl>
         {total > 0 && (
-          <span className="self-start rounded-full border border-dashed border-muted/60 px-3 py-1.5 text-[13px] font-semibold">
+          <span className="self-start rounded-[6px] border border-dashed border-muted/60 px-3 py-1.5 text-[13px] font-semibold">
             Pago de prueba · no se cobra dinero real
           </span>
         )}
@@ -433,7 +433,7 @@ function PaymentSheet({
 
 function Chip({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
-    <li className="flex h-7 items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 text-[13px] font-semibold">
+    <li className="flex h-7 items-center gap-1.5 rounded-[6px] border border-line bg-surface px-2.5 text-[13px] font-semibold">
       {icon}
       {children}
     </li>

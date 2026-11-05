@@ -64,7 +64,7 @@ export function AgentCard({
         : "Terminó";
 
   return (
-    <section aria-label="Agente Retta" className="flex flex-col gap-1 rounded-[20px] border border-line bg-surface p-3.5">
+    <section aria-label="Agente Retta" className="flex flex-col gap-1 rounded-[6px] border border-line bg-surface p-3.5">
       <div className="flex items-center gap-2.5">
         <AgentMark size={36} pulse={working} />
         <span className="flex min-w-0 flex-1 flex-col">
@@ -96,7 +96,7 @@ export function AgentCard({
             <span className="text-[15px] font-semibold">¿Movemos tu reta a las {formatTime(new Date(proposal.starts_at))}?</span>
             <span className="text-[13px] text-muted">{proposal.field_name}</span>
           </span>
-          <span className="flex h-9 items-center rounded-full bg-action px-3.5 text-sm font-semibold text-on-action">Revisar</span>
+          <span className="flex h-9 items-center rounded-[6px] bg-action px-3.5 text-sm font-semibold text-on-action">Revisar</span>
         </Link>
       )}
 

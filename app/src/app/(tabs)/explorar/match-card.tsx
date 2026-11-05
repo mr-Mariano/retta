@@ -34,14 +34,14 @@ export function MatchCard({ match, now, detail }: { match: Match; now: Date; det
         <span className="truncate text-[13px] text-muted">{detail ?? match.fieldName}</span>
       </span>
       <span className="flex flex-col items-end gap-1.5 pr-1.5">
-        <span className="font-display text-[20px] leading-none font-medium">{match.price}</span>
-        <span className="rounded-full bg-elevated px-[7px] py-0.5 text-[11px] font-semibold text-muted">
+        <span className="font-display text-[20px] leading-none font-extrabold tracking-tight">{match.price}</span>
+        <span className="rounded-[6px] bg-elevated px-[7px] py-0.5 text-[11px] font-semibold text-muted">
           {full ? "Llena" : `${match.active}/${match.max}`}
         </span>
       </span>
     </>
   );
-  const className = "flex items-center gap-3 rounded-[18px] border border-line bg-surface p-2 text-ink";
+  const className = "flex items-center gap-3 rounded-[6px] border border-line bg-surface p-2 text-ink";
 
   // Full matches stay visible but cannot be opened (session 5).
   if (full) {

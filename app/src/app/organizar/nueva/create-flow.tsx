@@ -100,7 +100,7 @@ export function CreateFlow({ fields, slots }: { fields: FieldOption[]; slots: Sl
         )}
         <div aria-label={`Paso ${step + 1} de ${STEPS.length}`} className="flex flex-1 gap-1.5">
           {STEPS.map((name, i) => (
-            <span key={name} className={`h-1 flex-1 rounded-full transition-colors duration-300 ${i <= step ? "bg-action" : "bg-line"}`} />
+            <span key={name} className={`h-1 flex-1 rounded-[6px] transition-colors duration-300 ${i <= step ? "bg-action" : "bg-line"}`} />
           ))}
         </div>
         <Link href="/perfil/organizar" className="text-[15px] font-semibold text-muted">
@@ -123,9 +123,9 @@ export function CreateFlow({ fields, slots }: { fields: FieldOption[]; slots: Sl
                       setSlotId("");
                     }}
                     aria-pressed={f.id === fieldId}
-                    className={`flex w-[132px] shrink-0 flex-col gap-1.5 rounded-[14px] border-[1.5px] bg-surface p-1.5 text-left ${f.id === fieldId ? "border-action" : "border-line"}`}
+                    className={`flex w-[132px] shrink-0 flex-col gap-1.5 rounded-[6px] border-[1.5px] bg-surface p-1.5 text-left ${f.id === fieldId ? "border-action" : "border-line"}`}
                   >
-                    <span className="relative h-16 w-full overflow-hidden rounded-[9px]">
+                    <span className="relative h-16 w-full overflow-hidden rounded-[6px]">
                       <Image src={coverSrc(f.cover_image)} alt="" fill sizes="132px" className="object-cover" />
                     </span>
                     <span className="flex flex-col px-1 pb-0.5">
@@ -207,13 +207,13 @@ export function CreateFlow({ fields, slots }: { fields: FieldOption[]; slots: Sl
           <>
             <Question kicker="Precio" title="¿Cuánto paga cada quien?" />
             <div className="flex flex-col items-center gap-2.5 pt-2">
-              <span aria-live="polite" className="font-display text-[84px] leading-none font-medium tracking-tight">
+              <span aria-live="polite" className="font-display text-[84px] leading-none font-extrabold tracking-tight tracking-tight">
                 {pesos === 0 ? "Gratis" : `$${pesos}`}
               </span>
               <span className="text-[15px] text-muted">
                 {pesos === 0 ? "Nadie paga por jugar" : `Juntas $${pesos * min} si se arma con ${min}`}
               </span>
-              <button type="button" onClick={() => setPrice(pesos === 0 ? "80" : "0")} className="mt-1.5 flex h-[38px] items-center rounded-full border border-line px-4 text-[15px] font-semibold">
+              <button type="button" onClick={() => setPrice(pesos === 0 ? "80" : "0")} className="mt-1.5 flex h-[38px] items-center rounded-[6px] border border-line px-4 text-[15px] font-semibold">
                 {pesos === 0 ? "Ponerle precio" : "Hacerla gratis"}
               </button>
             </div>
@@ -253,7 +253,7 @@ export function CreateFlow({ fields, slots }: { fields: FieldOption[]; slots: Sl
         {step === 4 && slot && field && (
           <form id="publicar" action={action} className="flex flex-col gap-5">
             <Question kicker="Último paso" title="Revisa y publica" />
-            <div className="flex flex-col divide-y divide-line rounded-[18px] border border-line bg-surface px-4">
+            <div className="flex flex-col divide-y divide-line rounded-[6px] border border-line bg-surface px-4">
               <Summary label="Cuándo" value={`${when}`} onEdit={() => go(0)} />
               <Summary label="Dónde" value={field.name} onEdit={() => go(0)} />
               <Summary label="Jugadores" value={`${min} a ${max}`} onEdit={() => go(1)} />
@@ -268,7 +268,7 @@ export function CreateFlow({ fields, slots }: { fields: FieldOption[]; slots: Sl
                       type="button"
                       onClick={() => setDeadlineHours(h)}
                       aria-pressed={h === hours}
-                      className={`h-9 rounded-full px-3 text-sm font-semibold whitespace-nowrap ${h === hours ? "bg-action text-on-action" : "border border-line"}`}
+                      className={`h-9 rounded-[6px] px-3 text-sm font-semibold whitespace-nowrap ${h === hours ? "bg-action text-on-action" : "border border-line"}`}
                     >
                       {formatTime(new Date(new Date(slot.startsAt).getTime() - h * HOUR_MS))} · {h} h
                     </button>
@@ -316,7 +316,7 @@ export function CreateFlow({ fields, slots }: { fields: FieldOption[]; slots: Sl
             type="button"
             disabled={!canContinue}
             onClick={() => go(step + 1)}
-            className="h-[52px] rounded-full bg-action text-[17px] font-semibold text-on-action disabled:opacity-40"
+            className="h-[52px] rounded-[6px] bg-action text-[17px] font-semibold text-on-action disabled:opacity-40"
           >
             Siguiente
           </button>
@@ -330,7 +330,7 @@ export function CreateFlow({ fields, slots }: { fields: FieldOption[]; slots: Sl
 
 function PublishButton() {
   return (
-    <PendingButton form="publicar" pendingLabel="Publicando…" className="h-[52px] rounded-full bg-action text-[17px] font-semibold text-on-action">
+    <PendingButton form="publicar" pendingLabel="Publicando…" className="h-[52px] rounded-[6px] bg-action text-[17px] font-semibold text-on-action">
       Publicar reta
     </PendingButton>
   );
@@ -340,7 +340,7 @@ function Question({ kicker, title, sub }: { kicker: string; title: string; sub?:
   return (
     <div className="flex flex-col gap-2 pt-1">
       <span className="text-sm font-semibold text-action">{kicker}</span>
-      <h1 className="font-display text-[36px] leading-[1.02] font-medium tracking-tight">{title}</h1>
+      <h1 className="font-display text-[36px] leading-[1.02] font-extrabold tracking-tight tracking-tight">{title}</h1>
       {sub && <p className="text-[16px] leading-snug text-muted">{sub}</p>}
     </div>
   );
@@ -367,7 +367,7 @@ function Stepper({ title, hint, value, onChange }: { title: string; hint: string
         <button type="button" onClick={() => onChange(value - 1)} aria-label={`Menos, ${title.toLowerCase()}`} className={button}>
           −
         </button>
-        <span aria-live="polite" className="w-11 text-center font-display text-[34px] font-medium">
+        <span aria-live="polite" className="w-11 text-center font-display text-[34px] font-extrabold tracking-tight">
           {value}
         </span>
         <button type="button" onClick={() => onChange(value + 1)} aria-label={`Más, ${title.toLowerCase()}`} className={button}>
@@ -388,7 +388,7 @@ function Chips({ label, options, value, onChange }: { label: string; options: { 
             type="button"
             onClick={() => onChange(option.value)}
             aria-pressed={option.value === value}
-            className={`h-10 rounded-full px-4 text-[15px] font-semibold ${option.value === value ? "bg-action text-on-action" : "border border-line"}`}
+            className={`h-10 rounded-[6px] px-4 text-[15px] font-semibold ${option.value === value ? "bg-action text-on-action" : "border border-line"}`}
           >
             {option.label}
           </button>
@@ -423,7 +423,7 @@ function TextInput({ name, label, placeholder }: { name: string; label: string; 
         name={name}
         placeholder={placeholder}
         maxLength={120}
-        className="h-[50px] rounded-[14px] border border-line bg-surface px-4 text-[16px] text-ink placeholder:text-muted focus:ring-2 focus:ring-ink/40 focus:outline-none"
+        className="h-[50px] rounded-[6px] border border-line bg-surface px-4 text-[16px] text-ink placeholder:text-muted focus:ring-2 focus:ring-ink/40 focus:outline-none"
       />
     </div>
   );

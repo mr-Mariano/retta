@@ -135,7 +135,7 @@ export function SidebarNav({
               key={item.href}
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`flex h-[38px] items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] ${
+              className={`flex h-[38px] items-center gap-2.5 rounded-[6px] px-2.5 text-[15px] ${
                 active ? "bg-elevated font-semibold text-ink" : "font-medium text-ink/80 hover:bg-elevated/60"
               }`}
             >
@@ -160,7 +160,7 @@ export function SidebarNav({
                   <Link
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`flex justify-between gap-2 rounded-[10px] px-2.5 py-[7px] text-sm ${active ? "bg-elevated text-ink" : "text-ink/80 hover:bg-elevated/60"}`}
+                    className={`flex justify-between gap-2 rounded-[6px] px-2.5 py-[7px] text-sm ${active ? "bg-elevated text-ink" : "text-ink/80 hover:bg-elevated/60"}`}
                   >
                     <span className="truncate">{item.title}</span>
                     <span className="shrink-0 text-muted">{item.when}</span>

@@ -27,7 +27,7 @@ export default async function Asistencia({ params }: { params: Promise<{ id: str
         La reta
       </Link>
       <div className="flex flex-col gap-1.5">
-        <h1 className="font-display text-[32px] leading-none font-medium">Pasa asistencia</h1>
+        <h1 className="font-display text-[32px] leading-none font-extrabold tracking-tight">Pasa asistencia</h1>
         <span className="text-[15px] text-muted">
           {match.title ?? `Reta en ${match.slot.field.name}`} · {formatDay(startsAt, now).toLowerCase()} {formatTime(startsAt)}
         </span>

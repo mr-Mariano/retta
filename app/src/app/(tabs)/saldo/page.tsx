@@ -61,19 +61,19 @@ export default async function Saldo() {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-28">
-      <h1 className="font-display text-[34px] leading-none font-medium">Saldo</h1>
+      <h1 className="font-display text-[34px] leading-none font-extrabold tracking-tight">Saldo</h1>
 
-      <div className="flex items-center justify-between gap-4 rounded-[18px] border border-line bg-surface p-4">
+      <div className="flex items-center justify-between gap-4 rounded-[6px] border border-line bg-surface p-4">
         <div className="flex flex-col gap-0.5">
           <span className="text-sm text-muted">Disponible</span>
-          <span className="font-display text-[46px] leading-none font-medium">${balance}</span>
+          <span className="font-display text-[46px] leading-none font-extrabold tracking-tight">${balance}</span>
         </div>
         <span className="max-w-[150px] text-right text-[13px] leading-snug text-muted">
           Se descuenta solo al inscribirte. No caduca.
         </span>
       </div>
 
-      <h2 className="mt-1 font-display text-[21px] font-medium">Historial</h2>
+      <h2 className="mt-1 font-display text-[21px] font-extrabold tracking-tight">Historial</h2>
 
       {history.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-8 text-center">
@@ -81,7 +81,7 @@ export default async function Saldo() {
           <p className="max-w-[260px] text-[15px] text-muted">
             Aquí verás tus pagos y el saldo que recibas si te das de baja o se cancela una reta.
           </p>
-          <Link href="/explorar" className="flex h-11 items-center rounded-full border border-line px-5 text-[15px] font-semibold text-ink">
+          <Link href="/explorar" className="flex h-11 items-center rounded-[6px] border border-line px-5 text-[15px] font-semibold text-ink">
             Buscar una reta
           </Link>
         </div>

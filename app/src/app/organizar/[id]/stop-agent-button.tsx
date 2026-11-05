@@ -33,7 +33,7 @@ export function StopAgentButton({ matchId, compact = false }: { matchId: string;
     <button
       type="button"
       onClick={stop}
-      className="pending-button mt-2 flex h-11 w-full items-center justify-center rounded-full border border-line text-[15px] font-semibold text-danger"
+      className="pending-button mt-2 flex h-11 w-full items-center justify-center rounded-[6px] border border-line text-[15px] font-semibold text-danger"
     >
       Detener agente
     </button>

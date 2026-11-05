@@ -23,7 +23,7 @@ export default async function Welcome() {
           )}
 
           <div className={`flex flex-col gap-2 lg:hidden ${match ? "" : "mt-[230px]"}`}>
-            <h1 className="font-display text-[42px] leading-none font-medium">{headline(match)}</h1>
+            <h1 className="font-display text-[42px] leading-none font-extrabold tracking-tight">{headline(match)}</h1>
             <p className="text-[15px] leading-normal text-muted">
               {match ? "Únete en un minuto y aparta tu lugar." : "Inscríbete solo, sin armar equipo. Paga y juega."}
             </p>
@@ -31,14 +31,14 @@ export default async function Welcome() {
 
           {/* Desktop (welcome A): the photo and live match sit on the left; this side only asks. */}
           <div className="hidden flex-col gap-2 lg:flex">
-            <h1 className="font-display text-[34px] leading-[1.05] font-medium">Juega esta semana</h1>
+            <h1 className="font-display text-[34px] leading-[1.05] font-extrabold tracking-tight">Juega esta semana</h1>
             <p className="text-[16px] text-muted">Crea tu cuenta para apartar tu lugar.</p>
           </div>
 
           <div className="mt-auto flex flex-col gap-2.5 lg:mt-4">
             <Link
               href="/registro"
-              className="flex h-[52px] items-center justify-center rounded-full bg-action text-[16px] font-bold text-on-action"
+              className="flex h-[52px] items-center justify-center rounded-[6px] bg-action text-[16px] font-bold text-on-action"
             >
               Crear cuenta
             </Link>

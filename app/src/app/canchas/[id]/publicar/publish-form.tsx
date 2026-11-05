@@ -29,7 +29,7 @@ const PERIODS = [
 
 function Submit({ count }: { count: number }) {
   return (
-    <PendingButton pendingLabel="Publicando…" disabled={count === 0} className="h-[52px] rounded-full bg-action text-[17px] font-semibold text-on-action">
+    <PendingButton pendingLabel="Publicando…" disabled={count === 0} className="h-[52px] rounded-[6px] bg-action text-[17px] font-semibold text-on-action">
       {`Publicar ${count} horario${count === 1 ? "" : "s"}`}
     </PendingButton>
   );
@@ -95,7 +95,7 @@ export function PublishForm({ fieldId }: { fieldId: string }) {
       <input type="hidden" name="weeks" value={weeks} />
 
       <div className="mt-auto flex flex-col gap-2.5 pt-2">
-        <p className="rounded-[14px] border border-line bg-surface px-3.5 py-3 text-[15px]">
+        <p className="rounded-[6px] border border-line bg-surface px-3.5 py-3 text-[15px]">
           <span className="font-semibold">Hasta {count} horarios</span>
           <span className="text-muted"> · se saltan los que ya pasaron o ya existen</span>
         </p>
@@ -117,14 +117,14 @@ function Group({ label, children }: { label: string; children: React.ReactNode }
 
 function Segmented({ options, value, onChange }: { options: { value: number; label: string }[]; value: number; onChange: (value: number) => void }) {
   return (
-    <div className="flex rounded-[13px] border border-line bg-surface p-[3px]">
+    <div className="flex rounded-[6px] border border-line bg-surface p-[3px]">
       {options.map((option) => (
         <button
           key={option.value}
           type="button"
           onClick={() => onChange(option.value)}
           aria-pressed={option.value === value}
-          className={`h-[38px] flex-1 rounded-[10px] text-sm font-semibold ${option.value === value ? "bg-action text-on-action" : "text-muted"}`}
+          className={`h-[38px] flex-1 rounded-[6px] text-sm font-semibold ${option.value === value ? "bg-action text-on-action" : "text-muted"}`}
         >
           {option.label}
         </button>

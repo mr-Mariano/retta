@@ -6,7 +6,7 @@ export function CapacityDots({ active, min, max, size = "md" }: { active: number
         <li
           key={i}
           aria-hidden="true"
-          className={`${size === "sm" ? "size-3" : "size-4"} rounded-full ${
+          className={`${size === "sm" ? "size-3" : "size-4"} rounded-[6px] ${
             i < active ? "bg-action" : i < min ? "border-[1.5px] border-action" : "border-[1.5px] border-muted/40"
           }`}
         />

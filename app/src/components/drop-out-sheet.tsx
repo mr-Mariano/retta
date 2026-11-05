@@ -30,11 +30,11 @@ export function DropOutSheet({ info, closeHref }: { info: DropOutInfo; closeHref
         role="dialog"
         aria-modal="true"
         aria-labelledby="baja-titulo"
-        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col overflow-y-auto gap-4 rounded-t-[28px] border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col overflow-y-auto gap-4 rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8"
       >
-        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
+        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line" />
         <div className="flex flex-col gap-1">
-          <h2 id="baja-titulo" className="font-display text-[28px] leading-none font-medium">
+          <h2 id="baja-titulo" className="font-display text-[28px] leading-none font-extrabold tracking-tight">
             ¿Te das de baja?
           </h2>
           <span className="text-[15px] text-muted">{info.title}</span>
@@ -63,7 +63,7 @@ export function DropOutSheet({ info, closeHref }: { info: DropOutInfo; closeHref
         <Link
           href={closeHref}
           scroll={false}
-          className="flex h-[52px] items-center justify-center rounded-full border border-line text-[17px] font-semibold text-ink"
+          className="flex h-[52px] items-center justify-center rounded-[6px] border border-line text-[17px] font-semibold text-ink"
         >
           Mejor me quedo
         </Link>

@@ -25,17 +25,17 @@ export default async function AdminInicio() {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-3.5 px-4 pt-14 pb-32">
-      <h1 className="pb-1 font-display text-[34px] leading-none font-medium">Administrar</h1>
+      <h1 className="pb-1 font-display text-[34px] leading-none font-extrabold tracking-tight">Administrar</h1>
 
       <PhotoCard href="/admin/canchas" photo="foto-3" title="Canchas" sub="Crear y asignar responsable" value={fields ?? 0} />
 
-      <Link href="/admin/usuarios" className="flex flex-col gap-3.5 rounded-[22px] border border-line bg-surface p-[18px]">
+      <Link href="/admin/usuarios" className="flex flex-col gap-3.5 rounded-[6px] border border-line bg-surface p-[18px]">
         <span className="flex items-end justify-between">
           <span className="flex flex-col gap-0.5">
-            <span className="font-display text-[28px] leading-none font-medium">Usuarios</span>
+            <span className="font-display text-[28px] leading-none font-extrabold tracking-tight">Usuarios</span>
             <span className="text-sm text-muted">Cambiar roles</span>
           </span>
-          <span className="font-display text-[44px] leading-[0.9] font-medium">{people.length}</span>
+          <span className="font-display text-[44px] leading-[0.9] font-extrabold tracking-tight">{people.length}</span>
         </span>
         <span aria-hidden="true" className="flex">
           {shown.map((person, i) => (
@@ -62,15 +62,15 @@ export default async function AdminInicio() {
 
 function PhotoCard({ href, photo, title, sub, value }: { href: string; photo: string; title: string; sub: string; value: number }) {
   return (
-    <Link href={href} className="relative block h-[158px] overflow-hidden rounded-[22px] text-white">
+    <Link href={href} className="relative block h-[158px] overflow-hidden rounded-[6px] text-white">
       <Image src={`/fotos/canchas/${photo}.jpg`} alt="" fill sizes="448px" className="object-cover" />
       <span aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgb(10_10_10/0.1),rgb(10_10_10/0.78))]" />
       <span className="absolute inset-x-[18px] bottom-4 flex items-end justify-between">
         <span className="flex flex-col gap-0.5">
-          <span className="font-display text-[28px] leading-none font-medium">{title}</span>
+          <span className="font-display text-[28px] leading-none font-extrabold tracking-tight">{title}</span>
           <span className="text-sm opacity-85">{sub}</span>
         </span>
-        <span className="font-display text-[44px] leading-[0.9] font-medium">{value}</span>
+        <span className="font-display text-[44px] leading-[0.9] font-extrabold tracking-tight">{value}</span>
       </span>
     </Link>
   );

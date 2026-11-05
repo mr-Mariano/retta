@@ -122,7 +122,7 @@ export function BottomNav({ admin = false }: { admin?: boolean }) {
   return (
     <nav
       aria-label={admin ? "Navegación de administración" : "Navegación principal"}
-      className={`fixed inset-x-4 bottom-6 z-10 mx-auto flex h-12 lg:hidden ${admin ? "max-w-[340px]" : "max-w-[312px]"} items-center justify-between rounded-full border border-line bg-elevated p-1 transition-transform duration-300 motion-reduce:transition-none ${
+      className={`fixed inset-x-4 bottom-6 z-10 mx-auto flex h-12 lg:hidden ${admin ? "max-w-[340px]" : "max-w-[312px]"} items-center justify-between rounded-[6px] border border-line bg-elevated p-1 transition-transform duration-300 motion-reduce:transition-none ${
         hidden ? "translate-y-[calc(100%+2rem)]" : ""
       }`}
     >
@@ -137,7 +137,7 @@ export function BottomNav({ admin = false }: { admin?: boolean }) {
             aria-current={isActive ? "page" : undefined}
             className={
               isActive
-                ? "flex h-10 items-center gap-2 rounded-full bg-action px-3.5 text-sm font-bold text-on-action"
+                ? "flex h-10 items-center gap-2 rounded-[6px] bg-action px-3.5 text-sm font-bold text-on-action"
                 : "flex size-10 items-center justify-center text-muted"
             }
           >

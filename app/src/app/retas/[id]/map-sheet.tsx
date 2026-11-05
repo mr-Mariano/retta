@@ -71,12 +71,12 @@ function MapSheet({ field, onClose }: { field: Field; onClose: () => void }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="mapa-titulo"
-        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col overflow-y-auto gap-4 rounded-t-3xl border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col overflow-y-auto gap-4 rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8"
       >
-        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-full bg-line" />
+        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line" />
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-0.5">
-            <h2 id="mapa-titulo" className="font-display text-[28px] leading-none font-medium">
+            <h2 id="mapa-titulo" className="font-display text-[28px] leading-none font-extrabold tracking-tight">
               {field.name}
             </h2>
             <span className="text-sm text-muted">{field.address}</span>
@@ -96,7 +96,7 @@ function MapSheet({ field, onClose }: { field: Field; onClose: () => void }) {
         {field.coords && MAPBOX_TOKEN ? (
           <FieldMap field={field.coords} user={userCoords} route={routes?.driving?.line ?? null} />
         ) : (
-          <div className="flex h-[200px] items-center justify-center rounded-[14px] border border-line bg-base px-6 text-center text-sm text-muted">
+          <div className="flex h-[200px] items-center justify-center rounded-[6px] border border-line bg-base px-6 text-center text-sm text-muted">
             El mapa no está disponible para esta cancha.
           </div>
         )}
@@ -107,7 +107,7 @@ function MapSheet({ field, onClose }: { field: Field; onClose: () => void }) {
           href={navigateUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex h-12 items-center justify-center gap-2 rounded-full border border-line text-[16px] font-semibold text-ink"
+          className="flex h-12 items-center justify-center gap-2 rounded-[6px] border border-line text-[16px] font-semibold text-ink"
         >
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
@@ -146,7 +146,7 @@ function TravelInfo({
         <button
           type="button"
           onClick={locate}
-          className="flex h-[52px] items-center justify-center rounded-full bg-action text-[17px] font-semibold text-on-action"
+          className="flex h-[52px] items-center justify-center rounded-[6px] bg-action text-[17px] font-semibold text-on-action"
         >
           Usar mi ubicación
         </button>
@@ -268,7 +268,7 @@ function FieldMap({ field, user, route }: { field: Coords; user: Coords | null; 
     });
   }, [loaded, user, route, field.lat, field.lng]);
 
-  return <div ref={container} role="img" aria-label="Mapa con la ubicación de la cancha" className="h-[250px] overflow-hidden rounded-[14px] border border-line" />;
+  return <div ref={container} role="img" aria-label="Mapa con la ubicación de la cancha" className="h-[250px] overflow-hidden rounded-[6px] border border-line" />;
 }
 
 /** The accent token, so the map follows light and dark mode. */

@@ -171,14 +171,14 @@ export default async function Explorar({
           <span className="flex items-center gap-2">
             <Link
               href="/saldo"
-              className="flex h-9 shrink-0 items-center rounded-full border border-line bg-surface px-2.5 text-[13px] font-bold text-ink"
+              className="flex h-9 shrink-0 items-center rounded-[6px] border border-line bg-surface px-2.5 text-[13px] font-bold text-ink"
             >
               Saldo ${balance}
             </Link>
             <BellLink unread={unread ?? 0} />
           </span>
         </div>
-        <h1 className="font-display text-[32px] leading-none font-medium">Retas cerca de ti</h1>
+        <h1 className="font-display text-[32px] leading-none font-extrabold tracking-tight">Retas cerca de ti</h1>
       </div>
 
       {suggestion && (
@@ -189,7 +189,7 @@ export default async function Explorar({
 
       {hero ? (
         <section className="hidden min-h-[calc(100dvh-160px)] flex-col justify-center gap-[22px] lg:flex">
-          <h1 className="text-center font-display text-[40px] leading-none font-medium">
+          <h1 className="text-center font-display text-[40px] leading-none font-extrabold tracking-tight">
             ¿Dónde juegas hoy{firstName ? `, ${firstName}` : ""}?
           </h1>
           <SearchBox q={q} filter={filter.key} autoFocus={buscar === "1"} />
@@ -200,7 +200,7 @@ export default async function Explorar({
                 {picks.map((match) => (
                   <li key={match.id}>
                     <PanelLink matchId={match.id} className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-2.5">
-                      <span className="relative h-24 overflow-hidden rounded-[10px] bg-elevated">
+                      <span className="relative h-24 overflow-hidden rounded-[6px] bg-elevated">
                         <Image src={match.cover} alt="" fill sizes="220px" className="object-cover" />
                       </span>
                       <span className="truncate text-[15px] font-semibold">{match.title}</span>
@@ -233,7 +233,7 @@ export default async function Explorar({
                 <Link
                   href={item.key ? `/explorar?f=${item.key}` : "/explorar"}
                   aria-current={active ? "page" : undefined}
-                  className={`flex h-9 items-center gap-1.5 rounded-full px-[13px] text-sm ${
+                  className={`flex h-9 items-center gap-1.5 rounded-[6px] px-[13px] text-sm ${
                     active ? "bg-action font-bold text-on-action" : "bg-surface font-semibold text-muted"
                   }`}
                 >
@@ -254,14 +254,14 @@ export default async function Explorar({
       {highlight && (
         <Link
           href={`/retas/${highlight.id}`}
-          className="relative block h-[220px] overflow-hidden rounded-[22px] bg-elevated text-white"
+          className="relative block h-[220px] overflow-hidden rounded-[6px] bg-elevated text-white"
         >
           <Image src={highlight.cover} alt="" fill priority sizes="448px" className="object-cover object-[center_60%]" />
-          <span className="absolute top-3.5 left-3.5 rounded-full bg-action px-2.5 py-1 text-[11px] font-semibold tracking-[0.06em] text-on-action uppercase">
+          <span className="absolute top-3.5 left-3.5 rounded-[6px] bg-action px-2.5 py-1 text-[11px] font-semibold tracking-[0.06em] text-on-action uppercase">
             {highlight.pending ? "Se está armando" : "Ya se armó"}
           </span>
           <span className="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-scrim px-4 py-3.5 text-white">
-            <span className="font-display text-[23px] leading-none font-medium">{highlight.title}</span>
+            <span className="font-display text-[23px] leading-none font-extrabold tracking-tight">{highlight.title}</span>
             <span className="text-sm">
               {formatDay(highlight.startsAt, now)} · {formatTime(highlight.startsAt)} · {highlight.active}/{highlight.max} ·{" "}
               {progressNote(highlight)} · {highlight.price}
@@ -270,7 +270,7 @@ export default async function Explorar({
         </Link>
       )}
 
-      <h2 className="mt-1 font-display text-[21px] font-medium">
+      <h2 className="mt-1 font-display text-[21px] font-extrabold tracking-tight">
         {highlight ? "Próximas" : filter.key === "cerca" ? "Más cerca de ti" : filter.label}
       </h2>
 
@@ -281,7 +281,7 @@ export default async function Explorar({
           <Image src="/mascota/espera.png" alt="" width={120} height={120} />
           <p className="text-[15px] text-muted">{filter.empty}</p>
           {filter.key && (
-            <Link href="/explorar" className="flex h-11 items-center rounded-full border border-line px-5 text-[15px] font-bold">
+            <Link href="/explorar" className="flex h-11 items-center rounded-[6px] border border-line px-5 text-[15px] font-bold">
               Ver todas
             </Link>
           )}
@@ -318,7 +318,7 @@ function SearchBox({ q, filter, compact = false, autoFocus = false }: { q: strin
     <Form
       action="/explorar"
       role="search"
-      className={`flex flex-col gap-3.5 rounded-[26px] border border-line bg-surface ${compact ? "px-4 py-3" : "px-5 pt-4 pb-3.5 shadow-[0_10px_30px_rgb(0_0_0/0.35)]"}`}
+      className={`flex flex-col gap-3.5 rounded-[6px] border border-line bg-surface ${compact ? "px-4 py-3" : "px-5 pt-4 pb-3.5 shadow-[0_10px_30px_rgb(0_0_0/0.35)]"}`}
     >
       {filter && <input type="hidden" name="f" value={filter} />}
       <label className="flex items-center gap-3">
@@ -350,7 +350,7 @@ function SearchBox({ q, filter, compact = false, autoFocus = false }: { q: strin
               key={item.label}
               href={chipHref(item.key)}
               aria-current={active ? "page" : undefined}
-              className={`flex h-8 items-center gap-1.5 rounded-full px-3 text-sm font-semibold ${active ? "bg-action text-on-action" : "border border-line text-muted hover:text-ink"}`}
+              className={`flex h-8 items-center gap-1.5 rounded-[6px] px-3 text-sm font-semibold ${active ? "bg-action text-on-action" : "border border-line text-muted hover:text-ink"}`}
             >
               {item.label}
               {active && <span aria-label="Quitar filtro">✕</span>}
@@ -380,12 +380,12 @@ function AgentBubble({ notice, now }: { notice: Notice; now: Date }) {
   const opener =
     weeks === null ? "¿Te animas a jugar esta semana?" : weeks <= 1 ? "Hace unos días que no juegas." : `Hace ${weeks} semanas que no juegas.`;
   const day = dayPhrase(startsAt, now);
-  const chip = "flex h-[34px] items-center rounded-full px-3.5 text-sm font-semibold";
+  const chip = "flex h-[34px] items-center rounded-[6px] px-3.5 text-sm font-semibold";
   return (
     <section aria-label="Sugerencia del Agente Retta" className="flex animate-rise-in items-start gap-2.5">
       <AgentMark size={34} />
       <div className="flex flex-1 flex-col gap-2">
-        <p className="agent-glow rounded-[4px_18px_18px_18px] px-3.5 py-3 text-[16px] leading-[1.4]">
+        <p className="agent-glow rounded-[2px_8px_8px_8px] px-3.5 py-3 text-[16px] leading-[1.4]">
           {opener}{" "}
           <strong className="font-semibold">
             {day.charAt(0).toUpperCase() + day.slice(1)} a las {formatTime(startsAt)}

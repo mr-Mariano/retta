@@ -35,7 +35,7 @@ export function BellLink({ unread }: { unread: number }) {
         <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
       </svg>
       {unread > 0 && (
-        <span className="absolute -top-1 -right-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border-2 border-base bg-action px-1 text-[11px] font-bold text-on-action">
+        <span className="absolute -top-1 -right-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-[6px] border-2 border-base bg-action px-1 text-[11px] font-bold text-on-action">
           {unread > 9 ? "9+" : unread}
         </span>
       )}

@@ -1,15 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Alegreya_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import { DesktopSidebar } from "@/components/desktop-sidebar";
 import { NavigationProgress } from "@/components/navigation-progress";
 import "./globals.css";
 
-// One family for titles and body (session 7); 500 for titles, 700 stands in for 600.
-const alegreyaSans = Alegreya_Sans({
-  variable: "--font-alegreya-sans",
+// Plano 2 (2026-11-05): Inter for titles and body; 800 for titles.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0c0e",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${alegreyaSans.variable} antialiased`}>
+      <body className={`${inter.variable} antialiased`}>
         <Suspense fallback={null}>
           <NavigationProgress />
         </Suspense>
