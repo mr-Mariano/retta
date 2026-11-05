@@ -144,3 +144,22 @@ export async function runToolLoop(system: string, user: string, tools: Tool[]) {
   }
   return model;
 }
+
+/**
+ * One JSON answer from the model (no tools), with the same retry and
+ * fallback as the tool loop. Throws on any failure so callers can use rules.
+ */
+export async function askJson<T>(system: string, user: string): Promise<T> {
+  const config = llmConfig();
+  if (!config) throw new Error("llm_not_configured");
+  const { message } = await completeWithRetry(config, config.model, {
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: user },
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0,
+  });
+  const text = (message.content ?? "").replace(/^```(?:json)?\s*|\s*```$/g, "");
+  return JSON.parse(text) as T;
+}

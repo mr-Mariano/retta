@@ -9,9 +9,9 @@ import { createClient } from "@/lib/supabase/server";
 import { formatDay, formatTime, isThisWeekend, relativeDay } from "@/lib/time";
 import { dismissNotice } from "../../avisos/actions";
 import { MatchCard, type Match } from "./match-card";
+import { ChatSearch, type TodayMatch } from "./chat-search";
 import { MatchPanel } from "./match-panel";
 import { NearMeList } from "./near-me-list";
-import { PanelLink } from "./panel-link";
 import { coverSrc } from "@/lib/covers";
 
 export const metadata: Metadata = { title: "Explorar · Retta" };
@@ -61,6 +61,12 @@ function toMatch(row: MatchRow): Match {
         ? { lat: row.slot.field.latitude, lng: row.slot.field.longitude }
         : null,
   };
+}
+
+const GREETING_CHIPS = ["Lo que haya hoy", "Algo gratis", "Fut 7 en la noche", "Las que están por armarse"];
+
+function firstNameFor(fullName: string | null | undefined) {
+  return fullName?.split(/\s+/)[0] ?? "";
 }
 
 function normalize(text: string) {
@@ -153,8 +159,32 @@ export default async function Explorar({
   const list = upcoming.filter((match) => match !== highlight && matchesFilter(match, filter.key, now) && matchesQuery(match, query));
   // Desktop (option E): a start page with the big search box until the person searches or filters.
   const hero = filter.key === undefined && !query;
-  const suggestionMatch = suggestion?.match ? upcoming.find((match) => match.id === suggestion.match!.id) : undefined;
-  const picks = [...new Set([suggestionMatch, highlight, ...upcoming].filter((m): m is Match => Boolean(m) && m!.active < m!.max))].slice(0, 3);
+  // Desktop chat start (B1 + B2): the agent greets with what is on today.
+  const todayOpen = upcoming.filter((match) => relativeDay(match.startsAt, now) === "Hoy" && match.active < match.max);
+  const almostToday = todayOpen.filter((match) => match.pending && match.min - match.active <= 2).length;
+  const weeksAway = suggestion?.lastPlayedAt
+    ? Math.floor((now.getTime() - new Date(suggestion.lastPlayedAt).getTime()) / (7 * 24 * 60 * 60 * 1000))
+    : 0;
+  const hello = `Hola${firstNameFor(profile?.full_name) ? `, ${firstNameFor(profile?.full_name)}` : ""}.`;
+  const greeting = [
+    hello,
+    weeksAway >= 2 ? `Llevas ${weeksAway} semanas sin jugar.` : "",
+    todayOpen.length
+      ? `Hoy hay ${todayOpen.length === 1 ? "1 reta" : `${todayOpen.length} retas`} abiertas${almostToday ? ` y a ${almostToday === 1 ? "una le faltan" : `${almostToday} les faltan`} pocos para armarse` : ""}. ¿Qué se te antoja?`
+      : "¿Qué quieres jugar?",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const strip = (todayOpen.length ? todayOpen : upcoming.filter((match) => match.active < match.max)).slice(0, 3);
+  const todayHeading = todayOpen.length ? "Hoy se juegan" : "Próximas";
+  const todayCards: TodayMatch[] = strip.map((match) => ({
+    id: match.id,
+    title: match.title,
+    cover: match.cover,
+    time: todayOpen.length ? formatTime(match.startsAt) : `${formatDay(match.startsAt, now)} ${formatTime(match.startsAt)}`,
+    note: progressNote(match),
+    price: match.price,
+  }));
   const params = new URLSearchParams();
   if (filter.key) params.set("f", filter.key);
   if (q) params.set("q", q);
@@ -188,32 +218,7 @@ export default async function Explorar({
       )}
 
       {hero ? (
-        <section className="hidden min-h-[calc(100dvh-160px)] flex-col justify-center gap-[22px] lg:flex">
-          <h1 className="text-center font-display text-[40px] leading-none font-extrabold tracking-tight">
-            ¿Dónde juegas hoy{firstName ? `, ${firstName}` : ""}?
-          </h1>
-          <SearchBox q={q} filter={filter.key} autoFocus={buscar === "1"} />
-          {picks.length > 0 && (
-            <>
-              <h2 className="text-[13px] font-semibold tracking-[0.06em] text-muted uppercase">El agente te sugiere</h2>
-              <ul className="grid grid-cols-3 gap-3">
-                {picks.map((match) => (
-                  <li key={match.id}>
-                    <PanelLink matchId={match.id} className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-2.5">
-                      <span className="relative h-24 overflow-hidden rounded-[6px] bg-elevated">
-                        <Image src={match.cover} alt="" fill sizes="220px" className="object-cover" />
-                      </span>
-                      <span className="truncate text-[15px] font-semibold">{match.title}</span>
-                      <span className="text-[13px] text-muted">
-                        {formatDay(match.startsAt, now)} · {formatTime(match.startsAt)} · {match.price}
-                      </span>
-                    </PanelLink>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </section>
+        <ChatSearch greeting={greeting} chips={GREETING_CHIPS} today={todayCards} heading={todayHeading} />
       ) : (
         <div className="hidden flex-col gap-2 lg:flex">
           <SearchBox q={q} filter={filter.key} compact autoFocus={buscar === "1"} />
