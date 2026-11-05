@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Form from "next/form";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { AgentMark } from "@/components/agent-mark";
@@ -8,7 +9,9 @@ import { createClient } from "@/lib/supabase/server";
 import { formatDay, formatTime, isThisWeekend, relativeDay } from "@/lib/time";
 import { dismissNotice } from "../../avisos/actions";
 import { MatchCard, type Match } from "./match-card";
+import { MatchPanel } from "./match-panel";
 import { NearMeList } from "./near-me-list";
+import { PanelLink } from "./panel-link";
 import { coverSrc } from "@/lib/covers";
 
 export const metadata: Metadata = { title: "Explorar · Retta" };
@@ -60,6 +63,16 @@ function toMatch(row: MatchRow): Match {
   };
 }
 
+function normalize(text: string) {
+  return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim();
+}
+
+/** Text search on desktop: title, field or area. */
+function matchesQuery(match: Match, query: string) {
+  if (!query) return true;
+  return normalize(`${match.title} ${match.fieldName}`).includes(query);
+}
+
 function matchesFilter(match: Match, filter: FilterKey, now: Date) {
   switch (filter) {
     case "hoy":
@@ -85,8 +98,13 @@ function progressNote(match: Match) {
   return left === 1 ? "queda 1 lugar" : `quedan ${left} lugares`;
 }
 
-export default async function Explorar({ searchParams }: { searchParams: Promise<{ f?: string }> }) {
-  const { f } = await searchParams;
+export default async function Explorar({
+  searchParams,
+}: {
+  searchParams: Promise<{ f?: string; q?: string; buscar?: string; reta?: string }>;
+}) {
+  const { f, q = "", buscar, reta } = await searchParams;
+  const query = normalize(q);
   const filter = FILTERS.find((item) => item.key === f) ?? FILTERS[0];
   const now = new Date();
 
@@ -132,14 +150,22 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
 
   const featuredId = (featured as { id: string } | null)?.id;
   const highlight = filter.key === undefined ? upcoming.find((match) => match.id === featuredId) : undefined;
-  const list = upcoming.filter((match) => match !== highlight && matchesFilter(match, filter.key, now));
+  const list = upcoming.filter((match) => match !== highlight && matchesFilter(match, filter.key, now) && matchesQuery(match, query));
+  // Desktop (option E): a start page with the big search box until the person searches or filters.
+  const hero = filter.key === undefined && !query;
+  const suggestionMatch = suggestion?.match ? upcoming.find((match) => match.id === suggestion.match!.id) : undefined;
+  const picks = [...new Set([suggestionMatch, highlight, ...upcoming].filter((m): m is Match => Boolean(m) && m!.active < m!.max))].slice(0, 3);
+  const params = new URLSearchParams();
+  if (filter.key) params.set("f", filter.key);
+  if (q) params.set("q", q);
+  const closeHref = params.size ? `/explorar?${params}` : "/explorar";
 
   const firstName = profile?.full_name?.split(/\s+/)[0];
   const balance = Math.max(balanceCents ?? 0, 0) / 100;
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-28">
-      <div className="flex flex-col gap-0.5">
+      <div className="flex flex-col gap-0.5 lg:hidden">
         <div className="flex items-center justify-between gap-3">
           <span className="text-[15px] text-muted">Hola{firstName ? `, ${firstName}` : ""}</span>
           <span className="flex items-center gap-2">
@@ -155,9 +181,50 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
         <h1 className="font-display text-[32px] leading-none font-medium">Retas cerca de ti</h1>
       </div>
 
-      {suggestion && <AgentBubble notice={suggestion} now={now} />}
+      {suggestion && (
+        <div className="lg:hidden">
+          <AgentBubble notice={suggestion} now={now} />
+        </div>
+      )}
 
-      <nav aria-label="Filtrar retas" className="-mx-4 overflow-x-auto px-4 [scrollbar-width:none]">
+      {hero ? (
+        <section className="hidden min-h-[calc(100dvh-160px)] flex-col justify-center gap-[22px] lg:flex">
+          <h1 className="text-center font-display text-[40px] leading-none font-medium">
+            ¿Dónde juegas hoy{firstName ? `, ${firstName}` : ""}?
+          </h1>
+          <SearchBox q={q} filter={filter.key} autoFocus={buscar === "1"} />
+          {picks.length > 0 && (
+            <>
+              <h2 className="text-[13px] font-semibold tracking-[0.06em] text-muted uppercase">El agente te sugiere</h2>
+              <ul className="grid grid-cols-3 gap-3">
+                {picks.map((match) => (
+                  <li key={match.id}>
+                    <PanelLink matchId={match.id} className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-2.5">
+                      <span className="relative h-24 overflow-hidden rounded-[10px] bg-elevated">
+                        <Image src={match.cover} alt="" fill sizes="220px" className="object-cover" />
+                      </span>
+                      <span className="truncate text-[15px] font-semibold">{match.title}</span>
+                      <span className="text-[13px] text-muted">
+                        {formatDay(match.startsAt, now)} · {formatTime(match.startsAt)} · {match.price}
+                      </span>
+                    </PanelLink>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </section>
+      ) : (
+        <div className="hidden flex-col gap-2 lg:flex">
+          <SearchBox q={q} filter={filter.key} compact autoFocus={buscar === "1"} />
+          <span className="text-[14px] text-muted">
+            {list.length === 1 ? "1 reta" : `${list.length} retas`}
+            {query ? ` para “${q}”` : ""}
+          </span>
+        </div>
+      )}
+
+      <nav aria-label="Filtrar retas" className="-mx-4 overflow-x-auto px-4 [scrollbar-width:none] lg:hidden">
         <ul className="flex w-max gap-2">
           {FILTERS.map((item) => {
             const active = item.key === filter.key;
@@ -183,6 +250,7 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
         </ul>
       </nav>
 
+      <div className={hero ? "contents lg:hidden" : "contents"}>
       {highlight && (
         <Link
           href={`/retas/${highlight.id}`}
@@ -227,8 +295,70 @@ export default async function Explorar({ searchParams }: { searchParams: Promise
           ))}
         </ul>
       )}
+      </div>
 
+      {reta && <MatchPanel supabase={supabase} userId={user!.id} matchId={reta} closeHref={closeHref} />}
     </main>
+  );
+}
+
+/**
+ * The desktop search box (option E): large on the start page, compact above
+ * the results. Filter chips sit inside it; an active one shows ✕ to remove it.
+ */
+function SearchBox({ q, filter, compact = false, autoFocus = false }: { q: string; filter: FilterKey; compact?: boolean; autoFocus?: boolean }) {
+  const chipHref = (key: FilterKey) => {
+    const params = new URLSearchParams();
+    if (key && key !== filter) params.set("f", key);
+    if (q) params.set("q", q);
+    return params.size ? `/explorar?${params}` : "/explorar";
+  };
+  const chips = FILTERS.filter((item) => item.key && item.key !== "cerca");
+  return (
+    <Form
+      action="/explorar"
+      role="search"
+      className={`flex flex-col gap-3.5 rounded-[26px] border border-line bg-surface ${compact ? "px-4 py-3" : "px-5 pt-4 pb-3.5 shadow-[0_10px_30px_rgb(0_0_0/0.35)]"}`}
+    >
+      {filter && <input type="hidden" name="f" value={filter} />}
+      <label className="flex items-center gap-3">
+        <span className="sr-only">Buscar retas</span>
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="shrink-0 text-muted">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-4-4" />
+        </svg>
+        <input
+          id="buscar"
+          name="q"
+          type="search"
+          defaultValue={q}
+          autoFocus={autoFocus}
+          placeholder="Busca por cancha, zona u hora…"
+          className={`min-w-0 flex-1 bg-transparent text-ink placeholder:text-muted focus:outline-none ${compact ? "text-[16px]" : "text-[18px]"}`}
+        />
+        <button type="submit" aria-label="Buscar" className="flex size-10 shrink-0 items-center justify-center rounded-full bg-action text-on-action">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </button>
+      </label>
+      <div className="flex flex-wrap gap-2">
+        {chips.map((item) => {
+          const active = item.key === filter;
+          return (
+            <Link
+              key={item.label}
+              href={chipHref(item.key)}
+              aria-current={active ? "page" : undefined}
+              className={`flex h-8 items-center gap-1.5 rounded-full px-3 text-sm font-semibold ${active ? "bg-action text-on-action" : "border border-line text-muted hover:text-ink"}`}
+            >
+              {item.label}
+              {active && <span aria-label="Quitar filtro">✕</span>}
+            </Link>
+          );
+        })}
+      </div>
+    </Form>
   );
 }
 

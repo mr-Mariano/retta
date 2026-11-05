@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Coords } from "@/lib/location";
 import { formatDay, formatTime } from "@/lib/time";
+import { PanelLink } from "./panel-link";
 
 export interface Match {
   id: string;
@@ -52,8 +52,8 @@ export function MatchCard({ match, now, detail }: { match: Match; now: Date; det
     );
   }
   return (
-    <Link href={`/retas/${match.id}`} className={className}>
+    <PanelLink matchId={match.id} className={className}>
       {content}
-    </Link>
+    </PanelLink>
   );
 }

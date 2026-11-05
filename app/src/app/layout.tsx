@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Alegreya_Sans } from "next/font/google";
 import { Suspense } from "react";
+import { DesktopSidebar } from "@/components/desktop-sidebar";
 import { NavigationProgress } from "@/components/navigation-progress";
 import "./globals.css";
 
@@ -31,6 +32,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <NavigationProgress />
         </Suspense>
+        <DesktopSidebar />
         {children}
       </body>
     </html>
