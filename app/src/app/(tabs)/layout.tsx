@@ -1,4 +1,6 @@
 import { BottomNav } from "@/components/bottom-nav";
+import { cookies } from "next/headers";
+import { canOrganize, MODE_COOKIE, parseMode } from "@/lib/mode";
 import { createClient } from "@/lib/supabase/server";
 
 /** Sections reached from the bottom nav; the nav stays put while pages change. Admins get their own nav. */
@@ -14,7 +16,11 @@ export default async function TabsLayout({ children }: { children: React.ReactNo
   return (
     <>
       {children}
-      <BottomNav admin={profile?.role === "admin"} />
+      <BottomNav
+        admin={profile?.role === "admin"}
+        organizer={canOrganize(profile?.role) ? (profile?.role as "organizer" | "field_manager") : null}
+        initialMode={parseMode((await cookies()).get(MODE_COOKIE)?.value)}
+      />
     </>
   );
 }

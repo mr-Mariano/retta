@@ -44,9 +44,18 @@ export function PublishForm({ fieldId }: { fieldId: string }) {
   const toggle = <T,>(list: T[], value: T) => (list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
   // Upper bound: the server skips past times and the ones that already exist.
   const count = weekdays.length * hours.length * weeks;
+  // Desktop summary of what will be created (2026-11-06).
+  const summary = [
+    DURATIONS.find((d) => d.value === duration)?.label,
+    WEEKDAYS.filter((d) => weekdays.includes(d.value)).map((d) => d.name).join(", "),
+    [...hours].sort().map((h) => h.replace(/^0/, "")).join(", "),
+    PERIODS.find((p) => p.value === weeks)?.label,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
-    <form action={action} className="flex flex-1 flex-col gap-5">
+    <form action={action} className="flex flex-1 flex-col gap-5 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-x-11 lg:gap-y-0 lg:[&>div]:col-start-1">
       <Group label="Días de la semana">
         <div className="grid grid-cols-7 gap-1.5">
           {WEEKDAYS.map((day) => (
@@ -94,8 +103,12 @@ export function PublishForm({ fieldId }: { fieldId: string }) {
       <input type="hidden" name="duration" value={duration} />
       <input type="hidden" name="weeks" value={weeks} />
 
-      <div className="mt-auto flex flex-col gap-2.5 pt-2">
-        <p className="rounded-[6px] border border-line bg-surface px-3.5 py-3 text-[15px]">
+      <div className="mt-auto flex flex-col gap-2.5 pt-2 lg:sticky lg:top-10 lg:col-start-2! lg:row-span-4 lg:row-start-1 lg:mt-0 lg:gap-3.5 lg:rounded-[4px] lg:bg-surface lg:p-[22px]">
+        <span className="hidden text-xs font-bold tracking-[0.04em] text-muted uppercase lg:block">Se publicarán hasta</span>
+        <span className="hidden text-[52px] leading-none font-extrabold tracking-[-0.03em] lg:block">{count}</span>
+        <span className="hidden text-sm text-muted lg:block">{count > 0 ? `horarios de ${summary}` : "Elige al menos un día y una hora"}</span>
+        <span className="hidden text-[13px] text-muted lg:block">Se saltan los que ya pasaron o ya existen.</span>
+        <p className="rounded-[6px] lg:hidden border border-line bg-surface px-3.5 py-3 text-[15px]">
           <span className="font-semibold">Hasta {count} horarios</span>
           <span className="text-muted"> · se saltan los que ya pasaron o ya existen</span>
         </p>
@@ -108,7 +121,7 @@ export function PublishForm({ fieldId }: { fieldId: string }) {
 
 function Group({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 lg:gap-3 lg:border-b lg:border-line lg:py-[18px]">
       <span className="text-[13px] font-semibold text-muted">{label}</span>
       {children}
     </div>

@@ -15,6 +15,7 @@ interface SlotRow {
   starts_at: string;
   ends_at: string;
   matches: {
+    id: string;
     status: string;
     title: string | null;
     max_players: number;
@@ -44,7 +45,7 @@ export default async function Agenda({
 
   const { data: slots } = await supabase
     .from("slots")
-    .select("id, starts_at, ends_at, matches(status, title, max_players, organizer:profiles!matches_organizer_id_fkey(full_name), registrations(count))")
+    .select("id, starts_at, ends_at, matches(id, status, title, max_players, organizer:profiles!matches_organizer_id_fkey(full_name), registrations(count))")
     .eq("field_id", field.id)
     .gte("starts_at", new Date(Math.max(now.getTime(), mxDate(days[0]!, "00:00").getTime())).toISOString())
     .lt("starts_at", mxDate(days.at(-1)!, "23:59").toISOString())
@@ -54,6 +55,7 @@ export default async function Agenda({
 
   const all = slots ?? [];
   const daysWithSlots = new Set(all.map((slot) => dayKey(new Date(slot.starts_at))));
+  const perDay = (key: string) => all.filter((slot) => dayKey(new Date(slot.starts_at)) === key).length;
   const today = all.filter((slot) => dayKey(new Date(slot.starts_at)) === day);
   const matchOf = (slot: SlotRow) => slot.matches.find((m) => m.status !== "cancelled");
   const booked = today.filter((slot) => matchOf(slot)).length;
@@ -62,7 +64,76 @@ export default async function Agenda({
     mxDate(key, "12:00").toLocaleDateString("es-MX", { timeZone: TIME_ZONE, ...opts }).replace(".", "");
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-32">
+    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-32 lg:max-w-[1000px]! lg:pt-10 lg:pb-12">
+      {/* Desktop (2026-11-06, option B): days on the left, that day's slots on the right. */}
+      <div className="hidden flex-col gap-[18px] lg:flex">
+        <div className="flex items-end justify-between">
+          <span className="flex flex-col gap-1">
+            <Link href="/perfil/canchas" className="text-sm text-muted hover:text-ink">
+              Tus canchas
+            </Link>
+            <h1 className="text-[40px] leading-none font-extrabold tracking-tight">{field.name}</h1>
+          </span>
+          <Link href={`/canchas/${field.id}/publicar`} className="flex h-[38px] items-center rounded-[4px] bg-action px-4 text-sm font-semibold text-on-action">
+            + Publicar horarios
+          </Link>
+        </div>
+        <div className="flex gap-10">
+          <nav aria-label="Día" className="flex w-[220px] shrink-0 flex-col gap-0.5">
+            {days.map((key) => (
+              <Link
+                key={key}
+                href={`/canchas/${field.id}?dia=${key}`}
+                scroll={false}
+                aria-current={key === day ? "date" : undefined}
+                className={`flex justify-between rounded-[4px] px-3.5 py-3 text-[15px] ${key === day ? "bg-surface font-bold" : "text-[#C9CBD0] hover:bg-surface"}`}
+              >
+                <span className="capitalize">{label(key, { weekday: "short", day: "numeric" })}</span>
+                <span className="text-muted">{perDay(key) || ""}</span>
+              </Link>
+            ))}
+          </nav>
+          <div className="flex min-w-0 flex-1 flex-col">
+            <span className="text-xs font-bold tracking-[0.04em] text-muted uppercase">{formatLongDay(mxDate(day, "12:00"))}</span>
+            {today.length === 0 ? (
+              <p className="py-6 text-[15px] text-muted">No hay horarios este día.</p>
+            ) : (
+              today.map((slot) => {
+                const match = matchOf(slot);
+                return (
+                  <div key={slot.id} className="flex items-center gap-[18px] border-b border-line px-1 py-4">
+                    <span className="w-[72px] text-[20px] font-extrabold">{formatTime(new Date(slot.starts_at))}</span>
+                    {match ? (
+                      <>
+                        <span className="min-w-0 flex-1 truncate text-[15px] font-semibold">
+                          {match.title ?? `Reta en ${field.name}`} · {match.organizer.full_name} · {match.registrations[0]?.count ?? 0}/{match.max_players}
+                        </span>
+                        <Link href={`/retas/${match.id}`} className="flex h-[38px] items-center rounded-[4px] border border-line px-4 text-sm font-semibold">
+                          Ver reta
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <span className="flex-1 text-[15px] font-semibold text-muted">Libre</span>
+                        <Link
+                          href={`/canchas/${field.id}?dia=${day}&quitar=${slot.id}`}
+                          scroll={false}
+                          className="flex h-[38px] items-center rounded-[4px] border border-line px-4 text-sm font-semibold"
+                        >
+                          Quitar
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                );
+              })
+            )}
+            <p className="pt-4 text-[13px] text-muted">Solo puedes quitar horarios libres. Si una reta se cancela, su horario vuelve a quedar libre.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="contents lg:hidden">
       <Link href="/perfil/canchas" className="flex items-center gap-3 self-start text-[15px] font-semibold text-muted">
         <span className="flex size-10 items-center justify-center rounded-full border border-line bg-surface text-ink">
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -153,8 +224,9 @@ export default async function Agenda({
         </ul>
       )}
       <p className="text-[13px] text-muted">Solo puedes quitar horarios libres. Si una reta se cancela, su horario vuelve a quedar libre.</p>
+      </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-10 mx-auto max-w-md bg-gradient-to-t from-base from-60% px-4 pt-6 pb-8">
+      <div className="fixed inset-x-0 bottom-0 z-10 mx-auto max-w-md lg:hidden bg-gradient-to-t from-base from-60% px-4 pt-6 pb-8">
         <Link
           href={`/canchas/${field.id}/publicar`}
           className="flex h-[52px] items-center justify-center gap-2 rounded-[6px] bg-action text-[17px] font-semibold text-on-action"

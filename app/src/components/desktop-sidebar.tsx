@@ -1,8 +1,10 @@
+import { cookies } from "next/headers";
+import { canOrganize, MODE_COOKIE, parseMode } from "@/lib/mode";
 import { joinHref, loadNotices, type Notice } from "@/lib/notices";
 import { createClient } from "@/lib/supabase/server";
 import { formatDay, formatTime } from "@/lib/time";
 import type { PopoverInvite, PopoverLine } from "./avisos-popover";
-import { SidebarNav, type SidebarItem, type UpcomingItem } from "./sidebar-nav";
+import { SidebarNav, type OrganizeNav, type SidebarItem, type UpcomingItem } from "./sidebar-nav";
 
 interface UpcomingRow {
   match: { id: string; title: string | null; status: string; slot: { starts_at: string; field: { name: string } } };
@@ -93,6 +95,26 @@ export async function DesktopSidebar() {
         { href: "/avisos", label: "Avisos", icon: "avisos", badge },
         { href: "/saldo", label: "Saldo", icon: "saldo", note: `$${balance}` },
       ];
+  // Organizer mode B (2026-11-06): the sidebar for organizing, behind the Jugar / Organizar switch.
+  const role = profile.role;
+  const organize: OrganizeNav | null = canOrganize(role)
+    ? {
+        role,
+        initial: parseMode((await cookies()).get(MODE_COOKIE)?.value),
+        items:
+          role === "organizer"
+            ? [
+                { href: "/organizar", label: "Inicio", icon: "inicio" },
+                { href: "/perfil/organizar", label: "Tus retas", icon: "retas" },
+                { href: "/avisos", label: "Avisos", icon: "avisos", badge },
+              ]
+            : [
+                { href: "/perfil/canchas", label: "Tus canchas", icon: "canchas" },
+                { href: "/avisos", label: "Avisos", icon: "avisos", badge },
+              ],
+        action: role === "organizer" ? { href: "/organizar/nueva", label: "Nueva reta" } : null,
+      }
+    : null;
   const next: UpcomingItem[] = (upcoming ?? [])
     .map(({ match }) => ({
       href: `/retas/${match.id}`,
@@ -125,6 +147,7 @@ export async function DesktopSidebar() {
     <SidebarNav
       avisos={{ unread: unread ?? 0, invite, lines }}
       items={items}
+      organize={organize}
       upcoming={next}
       name={profile.full_name ?? ""}
       roleLabel={ROLE_LABELS[profile.role] ?? ""}

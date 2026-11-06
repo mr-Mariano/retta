@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import type { Mode } from "@/lib/mode";
+import { ModeSwitch, useMode } from "./mode-switch";
 import { AvisosPopover, type PopoverInvite, type PopoverLine } from "./avisos-popover";
 
 const ICONS = {
@@ -61,6 +63,13 @@ export interface SidebarItem {
   note?: string;
 }
 
+export interface OrganizeNav {
+  role: "organizer" | "field_manager";
+  initial: Mode;
+  items: SidebarItem[];
+  action: { href: string; label: string } | null;
+}
+
 export interface UpcomingItem {
   href: string;
   title: string;
@@ -68,14 +77,15 @@ export interface UpcomingItem {
 }
 
 function isActive(pathname: string, href: string) {
-  if (href === "/admin") return pathname === "/admin";
+  if (href === "/admin" || href === "/organizar") return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 /** Client half of the desktop sidebar: active section and the ⌘K shortcut. */
 export function SidebarNav({
   avisos,
-  items,
+  items: playItems,
+  organize,
   upcoming,
   name,
   roleLabel,
@@ -83,6 +93,7 @@ export function SidebarNav({
 }: {
   avisos: { unread: number; invite: PopoverInvite | null; lines: PopoverLine[] };
   items: SidebarItem[];
+  organize: OrganizeNav | null;
   upcoming: UpcomingItem[];
   name: string;
   roleLabel: string;
@@ -90,6 +101,9 @@ export function SidebarNav({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const mode = useMode(organize?.initial ?? "jugar");
+  const organizing = organize !== null && mode === "organizar";
+  const items = organizing ? organize.items : playItems;
 
   // ⌘K / Ctrl+K focuses the search box, opening Explorar if it isn't on screen.
   useEffect(() => {
@@ -120,7 +134,8 @@ export function SidebarNav({
       <Link href={items[0]!.href} className="flex h-10 items-center px-2.5 font-display text-[24px] font-bold tracking-tight">
         Retta
       </Link>
-      {searchHref && (
+      {organize && <ModeSwitch role={organize.role} initial={organize.initial} className="mx-1 mt-1.5 mb-2" />}
+      {searchHref && !organizing && (
         <Link href={searchHref} className="mt-1.5 mb-2.5 flex h-10 items-center gap-2.5 rounded-xl border border-line px-3 text-[15px] font-semibold">
           <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <circle cx="11" cy="11" r="7" />
@@ -168,7 +183,18 @@ export function SidebarNav({
           );
         })}
       </nav>
-      {upcoming.length > 0 && (
+      {organizing && organize.action && (
+        <Link
+          href={organize.action.href}
+          className="mx-1 mt-3 flex h-[42px] items-center justify-center gap-2 rounded-[4px] bg-action text-[15px] font-bold text-on-action"
+        >
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          {organize.action.label}
+        </Link>
+      )}
+      {upcoming.length > 0 && !organizing && (
         <>
           <span className="mx-2.5 mt-[18px] mb-1 text-xs font-semibold tracking-[0.06em] text-muted uppercase">Tus próximas</span>
           <ul className="flex flex-col">

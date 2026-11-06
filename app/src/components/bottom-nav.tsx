@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { organizeHome, type Mode } from "@/lib/mode";
+import { useMode } from "./mode-switch";
 
 const ICON_PATHS = {
   explorar: (
@@ -113,10 +115,27 @@ function useHideOnScrollDown() {
 }
 
 /** Floating nav (session 4): the active section expands into a labeled pill. */
-export function BottomNav({ admin = false }: { admin?: boolean }) {
+export function BottomNav({
+  admin = false,
+  organizer = null,
+  initialMode = "jugar",
+}: {
+  admin?: boolean;
+  organizer?: "organizer" | "field_manager" | null;
+  initialMode?: Mode;
+}) {
   const pathname = usePathname();
   const hidden = useHideOnScrollDown();
-  const sections = admin ? ADMIN_SECTIONS : PLAYER_SECTIONS;
+  const mode = useMode(initialMode);
+  // Organizer mode B (2026-11-06): same nav; the first tab opens the organizing home.
+  const sections = admin
+    ? ADMIN_SECTIONS
+    : organizer && mode === "organizar"
+      ? [
+          { href: organizeHome(organizer), label: organizer === "organizer" ? "Inicio" : "Tus canchas", icon: ICON_PATHS.inicio },
+          ...PLAYER_SECTIONS.slice(1),
+        ]
+      : PLAYER_SECTIONS;
   const active = sectionOf(sections.map((section) => section.href), pathname);
 
   return (

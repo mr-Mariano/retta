@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { AgentMark } from "@/components/agent-mark";
 import { BellLink } from "@/components/bell-link";
+import { ModeSwitch } from "@/components/mode-switch";
 import { joinHref, loadNotices, type Notice } from "@/lib/notices";
 import { createClient } from "@/lib/supabase/server";
 import { formatDay, formatTime, isThisWeekend, relativeDay } from "@/lib/time";
@@ -120,7 +121,7 @@ export default async function Explorar({
   } = await supabase.auth.getUser();
 
   const [{ data: profile }, { data: balanceCents }, { data: featured }, { data: rows }, { count: unread }, notices] = await Promise.all([
-    supabase.from("profiles").select("full_name").eq("id", user!.id).maybeSingle(),
+    supabase.from("profiles").select("full_name, role").eq("id", user!.id).maybeSingle(),
     supabase.rpc("my_balance"),
     supabase.rpc("featured_match"),
     supabase
@@ -195,6 +196,10 @@ export default async function Explorar({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-28">
+      {/* Organizer mode B (2026-11-06): on phones the switch sits on top of Explorar. */}
+      {(profile?.role === "organizer" || profile?.role === "field_manager") && (
+        <ModeSwitch role={profile.role} initial="jugar" className="lg:hidden" />
+      )}
       <div className="flex flex-col gap-0.5 lg:hidden">
         <div className="flex items-center justify-between gap-3">
           <span className="text-[15px] text-muted">Hola{firstName ? `, ${firstName}` : ""}</span>
