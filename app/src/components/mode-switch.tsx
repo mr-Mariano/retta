@@ -33,7 +33,7 @@ export function useMode(initial: Mode): Mode {
 }
 
 /** Jugar / Organizar (organizer mode B): changes the whole nav and opens that mode's home. */
-export function ModeSwitch({ role, initial, className = "" }: { role: "organizer" | "field_manager"; initial: Mode; className?: string }) {
+export function ModeSwitch({ role, initial, className = "" }: { role: "player" | "field_manager"; initial: Mode; className?: string }) {
   const mode = useMode(initial);
   const router = useRouter();
   const go = (next: Mode) => {

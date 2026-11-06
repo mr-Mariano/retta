@@ -18,7 +18,7 @@ export default async function TabsLayout({ children }: { children: React.ReactNo
       {children}
       <BottomNav
         admin={profile?.role === "admin"}
-        organizer={canOrganize(profile?.role) ? (profile?.role as "organizer" | "field_manager") : null}
+        organizer={canOrganize(profile?.role) ? (profile?.role as "player" | "field_manager") : null}
         initialMode={parseMode((await cookies()).get(MODE_COOKIE)?.value)}
       />
     </>

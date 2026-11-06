@@ -39,7 +39,6 @@ function lineFor(notice: Notice, now: Date): PopoverLine | null {
 
 const ROLE_LABELS: Record<string, string> = {
   admin: "Admin",
-  organizer: "Organizador",
   field_manager: "Responsable de cancha",
   player: "Jugador",
 };
@@ -102,7 +101,7 @@ export async function DesktopSidebar() {
         role,
         initial: parseMode((await cookies()).get(MODE_COOKIE)?.value),
         items:
-          role === "organizer"
+          role === "player"
             ? [
                 { href: "/organizar", label: "Inicio", icon: "inicio" },
                 { href: "/perfil/organizar", label: "Tus retas", icon: "retas" },
@@ -112,7 +111,7 @@ export async function DesktopSidebar() {
                 { href: "/perfil/canchas", label: "Tus canchas", icon: "canchas" },
                 { href: "/avisos", label: "Avisos", icon: "avisos", badge },
               ],
-        action: role === "organizer" ? { href: "/organizar/nueva", label: "Nueva reta" } : null,
+        action: role === "player" ? { href: "/organizar/nueva", label: "Nueva reta" } : null,
       }
     : null;
   const next: UpcomingItem[] = (upcoming ?? [])

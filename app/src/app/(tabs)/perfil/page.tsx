@@ -182,7 +182,7 @@ export default async function Perfil({
             {current === "herramientas" && (
               <>
                 <DeskTitle>Herramientas</DeskTitle>
-                {(role === "organizer" || role === "admin") && (
+                {(role === "player" || role === "admin") && (
                   <DeskRow
                     label="Organizar retas"
                     value="Tus retas"
@@ -278,7 +278,7 @@ export default async function Perfil({
 
         {profile?.role && profile.role !== "player" && (
           <Section title="Herramientas">
-            {(profile.role === "organizer" || profile.role === "admin") && (
+            {(profile.role === "player" || profile.role === "admin") && (
               <Row
                 href="/perfil/organizar"
                 label="Organizar retas"

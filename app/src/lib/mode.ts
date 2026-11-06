@@ -1,5 +1,5 @@
 /**
- * Organizer mode B (2026-11-06): organizers and field managers switch
+ * Organizer mode B (2026-11-06): players and field managers switch
  * between playing and organizing. The choice lives in a cookie; pages that
  * belong to one mode (Explorar, Tus retas, Tus canchas…) set it on their own.
  */
@@ -19,12 +19,12 @@ export function modeFor(pathname: string, chosen: Mode): Mode {
   return chosen;
 }
 
-export function canOrganize(role: string | null | undefined): role is "organizer" | "field_manager" {
-  return role === "organizer" || role === "field_manager";
+export function canOrganize(role: string | null | undefined): role is "player" | "field_manager" {
+  return role === "player" || role === "field_manager";
 }
 
 /** Where "Organizar" opens: the organizer home, or the field manager's fields. */
-export function organizeHome(role: "organizer" | "field_manager") {
+export function organizeHome(role: "player" | "field_manager") {
   return role === "field_manager" ? "/perfil/canchas" : "/organizar";
 }
 

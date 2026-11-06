@@ -18,7 +18,7 @@ export default async function Organizar({
 }) {
   const { tab, aviso } = await searchParams;
   const past = tab === "pasadas";
-  const { supabase, user } = await requireRole(["organizer", "admin"]);
+  const { supabase, user } = await requireRole(["player", "admin"]);
   const now = new Date();
 
   const { data: rows } = await supabase

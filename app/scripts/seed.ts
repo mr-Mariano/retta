@@ -14,7 +14,7 @@
 import { createClient } from "@supabase/supabase-js";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-type Role = "player" | "organizer" | "field_manager" | "admin";
+type Role = "player" | "field_manager" | "admin";
 
 interface Account {
   key: string;
@@ -47,8 +47,8 @@ const DAYS = 7;
 
 const ACCOUNTS: Account[] = [
   { key: "admin", fullName: "Daniela Ramírez", role: "admin" },
-  { key: "organizador1", fullName: "Jorge Hernández", role: "organizer" },
-  { key: "organizador2", fullName: "Fernanda López", role: "organizer" },
+  { key: "organizador1", fullName: "Jorge Hernández", role: "player" },
+  { key: "organizador2", fullName: "Fernanda López", role: "player" },
   { key: "cancha1", fullName: "Ricardo Gómez", role: "field_manager" },
   { key: "cancha2", fullName: "Patricia Ruiz", role: "field_manager" },
   ...[

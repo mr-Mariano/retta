@@ -2,7 +2,7 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { createClient } from "./supabase/server";
 
-export type Role = "player" | "organizer" | "field_manager" | "admin";
+export type Role = "player" | "field_manager" | "admin";
 
 /** Signed-in user with one of `roles`; anyone else goes back to their profile. */
 export async function requireRole(roles: Role[]) {

@@ -22,7 +22,7 @@ export interface OrganizerMatch {
 
 /** The match with its active sign-ups, only for its organizer (or an admin). */
 export async function loadOrganizerMatch(id: string) {
-  const { supabase, user, role } = await requireRole(["organizer", "admin"]);
+  const { supabase, user, role } = await requireRole(["player", "admin"]);
   const { data: match } = await supabase
     .from("matches")
     .select(

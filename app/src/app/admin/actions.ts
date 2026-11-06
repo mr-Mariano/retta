@@ -49,7 +49,7 @@ export async function createField(_prev: CreateFieldState, formData: FormData): 
   redirect("/admin/canchas");
 }
 
-const ROLES = ["player", "organizer", "field_manager", "admin"];
+const ROLES = ["player", "field_manager", "admin"];
 
 /** Role sheet in Usuarios: tapping a role saves it at once (set_user_role checks admin and self). */
 export async function setRole(userId: string, role: string): Promise<{ error?: string }> {

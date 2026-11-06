@@ -64,7 +64,7 @@ export interface SidebarItem {
 }
 
 export interface OrganizeNav {
-  role: "organizer" | "field_manager";
+  role: "player" | "field_manager";
   initial: Mode;
   items: SidebarItem[];
   action: { href: string; label: string } | null;

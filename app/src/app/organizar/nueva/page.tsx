@@ -17,7 +17,7 @@ interface SlotRow {
 }
 
 export default async function NuevaReta() {
-  const { supabase } = await requireRole(["organizer", "admin"]);
+  const { supabase } = await requireRole(["player", "admin"]);
   const now = Date.now();
 
   const [{ data: fields }, { data: slots }] = await Promise.all([

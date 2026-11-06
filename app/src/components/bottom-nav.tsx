@@ -121,7 +121,7 @@ export function BottomNav({
   initialMode = "jugar",
 }: {
   admin?: boolean;
-  organizer?: "organizer" | "field_manager" | null;
+  organizer?: "player" | "field_manager" | null;
   initialMode?: Mode;
 }) {
   const pathname = usePathname();
@@ -132,7 +132,7 @@ export function BottomNav({
     ? ADMIN_SECTIONS
     : organizer && mode === "organizar"
       ? [
-          { href: organizeHome(organizer), label: organizer === "organizer" ? "Inicio" : "Tus canchas", icon: ICON_PATHS.inicio },
+          { href: organizeHome(organizer), label: organizer === "player" ? "Inicio" : "Tus canchas", icon: ICON_PATHS.inicio },
           ...PLAYER_SECTIONS.slice(1),
         ]
       : PLAYER_SECTIONS;

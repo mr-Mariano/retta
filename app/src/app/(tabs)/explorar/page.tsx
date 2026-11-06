@@ -197,7 +197,7 @@ export default async function Explorar({
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-28">
       {/* Organizer mode B (2026-11-06): on phones the switch sits on top of Explorar. */}
-      {(profile?.role === "organizer" || profile?.role === "field_manager") && (
+      {(profile?.role === "player" || profile?.role === "field_manager") && (
         <ModeSwitch role={profile.role} initial="jugar" className="lg:hidden" />
       )}
       <div className="flex flex-col gap-0.5 lg:hidden">

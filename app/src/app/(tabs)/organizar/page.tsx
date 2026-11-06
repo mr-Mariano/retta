@@ -14,7 +14,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 /** Organizer home (organizer mode B, 2026-11-06): the week at a glance and what needs attention. */
 export default async function OrganizerHome() {
-  const { supabase, user, role } = await requireRole(["organizer", "admin"]);
+  const { supabase, user, role } = await requireRole(["player", "admin"]);
   const now = new Date();
   const [{ data: profile }, { data: rows }] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
@@ -45,7 +45,7 @@ export default async function OrganizerHome() {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-5 px-4 pt-14 pb-36 lg:max-w-[1000px]! lg:gap-[22px] lg:pt-10 lg:pb-12">
-      {role === "organizer" && <ModeSwitch role="organizer" initial={mode} className="lg:hidden" />}
+      {role === "player" && <ModeSwitch role="player" initial={mode} className="lg:hidden" />}
       <div className="flex items-end justify-between gap-4">
         <span className="flex flex-col gap-1.5">
           {firstName && <span className="text-[15px] text-muted">Hola, {firstName}</span>}
