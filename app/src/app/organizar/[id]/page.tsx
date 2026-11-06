@@ -104,7 +104,7 @@ export default async function GestionarReta({
         : ["Cancelada", ""];
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-10">
+    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-10 lg:grid lg:max-w-[1000px]! lg:grid-cols-[minmax(0,1fr)_360px] lg:content-start lg:items-start lg:gap-x-10 lg:pt-10 lg:[&>*]:col-start-1">
       <Link href="/perfil/organizar" className="flex items-center gap-3 self-start text-[15px] font-semibold text-muted">
         <span className="flex size-10 items-center justify-center rounded-full border border-line bg-surface text-ink">
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -138,7 +138,9 @@ export default async function GestionarReta({
       )}
 
       {match.status !== "cancelled" && !started && (run || match.status === "pending") && (
-        <AgentCard matchId={match.id} run={run} enabled={match.agent_enabled} proposal={proposal} />
+        <div className="lg:sticky lg:top-10 lg:col-start-2! lg:row-span-[12] lg:row-start-1">
+          <AgentCard matchId={match.id} run={run} enabled={match.agent_enabled} proposal={proposal} />
+        </div>
       )}
 
       {attendanceOpen && (
@@ -201,7 +203,7 @@ export default async function GestionarReta({
       )}
 
       {canCancel && (
-        <div className="mt-auto flex flex-col gap-2 pt-4">
+        <div className="mt-auto flex flex-col gap-2 pt-4 lg:max-w-[280px]">
           {active > 0 && <span className="text-center text-[13px] text-muted">Ya hay inscritos: no se puede editar, solo cancelar.</span>}
           <Link
             href={`/organizar/${match.id}?cancelar=1`}

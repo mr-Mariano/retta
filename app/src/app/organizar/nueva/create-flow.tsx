@@ -25,6 +25,7 @@ export interface SlotOption {
 }
 
 const STEPS = ["horario", "jugadores", "precio", "tipo", "revisar"] as const;
+const STEP_LABELS = ["Horario", "Jugadores", "Precio", "Cómo se juega", "Revisar y publicar"];
 const FORMATS = [
   { value: "fut5", label: "Fut 5" },
   { value: "fut7", label: "Fut 7" },
@@ -87,7 +88,32 @@ export function CreateFlow({ fields, slots }: { fields: FieldOption[]; slots: Sl
   const when = slot ? `${formatDay(new Date(slot.startsAt))} ${formatTime(new Date(slot.startsAt))}` : "";
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-14 pb-8">
+    <main className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-14 pb-8 lg:grid lg:max-w-[1000px]! lg:grid-cols-[240px_minmax(0,1fr)] lg:content-start lg:gap-x-[60px] lg:pt-10 lg:[&>*]:col-start-2">
+      {/* Desktop (2026-11-06): the same steps, listed on the left. */}
+      <aside className="hidden flex-col lg:col-start-1! lg:row-span-3 lg:row-start-1 lg:flex">
+        <h1 className="text-[30px] leading-none font-extrabold tracking-tight">Nueva reta</h1>
+        <ol className="flex flex-col pt-5">
+          {STEP_LABELS.map((label, i) => (
+            <li key={label}>
+              <button
+                type="button"
+                disabled={i >= step}
+                onClick={() => go(i)}
+                className="flex w-full items-center gap-3 py-3 text-left disabled:cursor-default"
+              >
+                <span
+                  className={`flex size-[26px] shrink-0 items-center justify-center rounded-full text-[13px] font-extrabold ${
+                    i < step ? "bg-action text-on-action" : i === step ? "bg-ink text-(--color-bg-base)" : "border border-line text-muted"
+                  }`}
+                >
+                  {i + 1}
+                </span>
+                <span className={`text-[15px] ${i === step ? "font-bold" : i < step ? "font-medium" : "font-medium text-muted"}`}>{label}</span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </aside>
       <div className="flex items-center gap-3">
         {step === 0 ? (
           <Link href="/perfil/organizar" aria-label="Regresar" className="flex size-10 shrink-0 items-center justify-center rounded-full border border-line bg-surface text-ink">
