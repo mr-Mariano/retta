@@ -154,9 +154,21 @@ body {
     var(--color-bg-surface);
   border: 1px solid rgb(61 107 255 / 0.35);
 }
+/* The agent is a soft orb (2026-11-06, style 4); it changes shape while it works. */
 .agent-mark {
-  background: linear-gradient(135deg, #3d6bff, #7a5cff);
-  color: #fff;
+  background: radial-gradient(circle at 30% 30%, #b9a6ff, #5b6bff 45%, #1b2a9c 80%);
+  box-shadow: 0 0 12px rgb(91 107 255 / 0.4);
+  color: transparent;
+}
+.agent-mark svg {
+  display: none;
+}
+@keyframes agent-morph {
+  0%, 100% { border-radius: 42% 58% 55% 45% / 48% 42% 58% 52%; transform: rotate(0); }
+  50% { border-radius: 58% 42% 45% 55% / 52% 58% 42% 48%; transform: rotate(180deg); }
+}
+.agent-mark.agent-pulse {
+  animation: agent-morph 2.6s ease-in-out infinite;
 }
 
 /* Opening Avisos: the bell rings and presses, the page recedes and blurs,
@@ -296,7 +308,8 @@ body {
     inset: 0 auto 0 0;
     z-index: 20;
     width: 260px;
-    overflow-y: auto;
+    /* Visible so the Avisos window can sit beside it; the lists inside are short. */
+    overflow: visible;
   }
   body:has(.desktop-sidebar) {
     padding-left: 260px;

@@ -65,15 +65,15 @@ function MapSheet({ field, onClose }: { field: Field; onClose: () => void }) {
   }, [userCoords, field.coords]);
 
   return (
-    <div className="fixed inset-0 z-30 mx-auto max-w-md">
+    <div className="fixed inset-0 z-30 mx-auto max-w-md lg:max-w-none!">
       <button type="button" aria-label="Cerrar mapa" onClick={onClose} className="absolute inset-0 animate-fade-in bg-black/60" />
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="mapa-titulo"
-        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col overflow-y-auto gap-4 rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col overflow-y-auto gap-4 rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:left-1/2 lg:w-[480px] lg:-translate-x-1/2 lg:-translate-y-1/2 lg:animate-fade-in lg:rounded-[8px] lg:border lg:border-line lg:pb-6 lg:shadow-[0_30px_60px_rgb(0_0_0/0.6)]"
       >
-        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line" />
+        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line lg:hidden" />
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-0.5">
             <h2 id="mapa-titulo" className="font-display text-[28px] leading-none font-extrabold tracking-tight">

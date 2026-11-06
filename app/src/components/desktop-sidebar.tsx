@@ -1,9 +1,38 @@
+import { joinHref, loadNotices, type Notice } from "@/lib/notices";
 import { createClient } from "@/lib/supabase/server";
 import { formatDay, formatTime } from "@/lib/time";
+import type { PopoverInvite, PopoverLine } from "./avisos-popover";
 import { SidebarNav, type SidebarItem, type UpcomingItem } from "./sidebar-nav";
 
 interface UpcomingRow {
   match: { id: string; title: string | null; status: string; slot: { starts_at: string; field: { name: string } } };
+}
+
+function ago(createdAt: string, now: Date) {
+  const minutes = Math.floor((now.getTime() - new Date(createdAt).getTime()) / 60_000);
+  if (minutes < 60) return `${Math.max(minutes, 1)} min`;
+  if (minutes < 24 * 60) return `${Math.floor(minutes / 60)} h`;
+  return `${Math.floor(minutes / (24 * 60))} d`;
+}
+
+/** One line per notice that asks for nothing (same wording as the Avisos page). */
+function lineFor(notice: Notice, now: Date): PopoverLine | null {
+  const match = notice.match;
+  if (!match) return null;
+  const base = { id: notice.id, when: ago(notice.createdAt, now), href: `/retas/${match.id}`, unread: notice.unread };
+  const when = `${formatDay(new Date(match.startsAt), now)} ${formatTime(new Date(match.startsAt))}`;
+  switch (notice.kind) {
+    case "match_confirmed":
+      return { ...base, icon: "check", text: `Se armó ${match.title}` };
+    case "match_cancelled":
+      return { ...base, icon: "coin", text: notice.creditCents ? `+$${notice.creditCents / 100} de saldo · ${match.title}` : `Se canceló ${match.title}` };
+    case "match_moved":
+      return { ...base, icon: "agent", text: `${match.title} pasó a ${when}` };
+    case "reactivation":
+      return notice.open ? { ...base, icon: "agent", text: `Una reta para volver · ${when}` } : null;
+    case "invite":
+      return notice.joined ? { ...base, icon: "check", text: `Te uniste a ${match.title}` } : null;
+  }
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -26,7 +55,7 @@ export async function DesktopSidebar() {
   if (!user) return null;
 
   const now = new Date();
-  const [{ data: profile }, { count: unread }, { data: balanceCents }, { data: upcoming }] = await Promise.all([
+  const [{ data: profile }, { count: unread }, { data: balanceCents }, { data: upcoming }, notices] = await Promise.all([
     supabase.from("profiles").select("full_name, role, phone").eq("id", user.id).maybeSingle(),
     supabase
       .from("notices")
@@ -43,6 +72,7 @@ export async function DesktopSidebar() {
       .neq("match.status", "cancelled")
       .gt("match.slot.starts_at", now.toISOString())
       .returns<UpcomingRow[]>(),
+    loadNotices(supabase, user.id, 12),
   ]);
   if (!profile?.phone) return null;
 
@@ -73,8 +103,27 @@ export async function DesktopSidebar() {
     .sort((a, b) => a.at.localeCompare(b.at))
     .slice(0, 6);
 
+  const openInvite = notices.find((notice) => notice.kind === "invite" && notice.open && notice.match);
+  const invite: PopoverInvite | null = openInvite?.match
+    ? (() => {
+        const match = openInvite.match;
+        const missing = match.min - match.active;
+        const minutes = Math.floor((new Date(match.deadline).getTime() - now.getTime()) / 60_000);
+        return {
+          id: openInvite.id,
+          href: joinHref(match),
+          cover: match.cover,
+          title: `${missing > 0 ? `Faltan ${missing}` : `Quedan ${match.max - match.active}`} · ${match.fieldName}`,
+          sub: `${formatDay(new Date(match.startsAt), now)} ${formatTime(new Date(match.startsAt))} · ${match.pricePesos > 0 ? `$${match.pricePesos}` : "Gratis"}`,
+          closesIn: match.pending && minutes > 0 && minutes < 24 * 60 ? (minutes < 90 ? `${minutes} min` : `${Math.round(minutes / 60)} h`) : null,
+        };
+      })()
+    : null;
+  const lines = notices.map((notice) => lineFor(notice, now)).filter((line): line is PopoverLine => line !== null).slice(0, 6);
+
   return (
     <SidebarNav
+      avisos={{ unread: unread ?? 0, invite, lines }}
       items={items}
       upcoming={next}
       name={profile.full_name ?? ""}

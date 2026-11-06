@@ -214,15 +214,15 @@ export default async function GestionarReta({
       )}
 
       {cancelar === "1" && canCancel && (
-        <div className="fixed inset-0 z-30 mx-auto max-w-md">
+        <div className="fixed inset-0 z-30 mx-auto max-w-md lg:max-w-none!">
           <Link href={`/organizar/${match.id}`} scroll={false} aria-label="Cerrar" className="absolute inset-0 animate-fade-in bg-black/60" />
           <section
             role="dialog"
             aria-modal="true"
             aria-labelledby="cancelar-titulo"
-            className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col gap-4 overflow-y-auto rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8"
+            className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col gap-4 overflow-y-auto rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:left-1/2 lg:w-[480px] lg:-translate-x-1/2 lg:-translate-y-1/2 lg:animate-fade-in lg:rounded-[8px] lg:border lg:border-line lg:pb-6 lg:shadow-[0_30px_60px_rgb(0_0_0/0.6)]"
           >
-            <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line" />
+            <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line lg:hidden" />
             <div className="flex flex-col gap-1">
               <h2 id="cancelar-titulo" className="font-display text-[28px] leading-none font-extrabold tracking-tight">
                 ¿Cancelar la reta?
@@ -299,15 +299,15 @@ function ProposalSheet({
 }) {
   const to = new Date(proposal.starts_at);
   return (
-    <div className="fixed inset-0 z-30 mx-auto max-w-md">
+    <div className="fixed inset-0 z-30 mx-auto max-w-md lg:max-w-none!">
       <Link href={`/organizar/${matchId}`} scroll={false} aria-label="Cerrar" className="absolute inset-0 animate-fade-in bg-black/60" />
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="propuesta-titulo"
-        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col gap-4 overflow-y-auto rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col gap-4 overflow-y-auto rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:left-1/2 lg:w-[480px] lg:-translate-x-1/2 lg:-translate-y-1/2 lg:animate-fade-in lg:rounded-[8px] lg:border lg:border-line lg:pb-6 lg:shadow-[0_30px_60px_rgb(0_0_0/0.6)]"
       >
-        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line" />
+        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line lg:hidden" />
         <span className="flex items-center gap-1.5 text-[13px] text-muted">
           <AgentMark size={20} />
           <span className="font-semibold text-ink">Agente Retta</span>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { AvisosPopover, type PopoverInvite, type PopoverLine } from "./avisos-popover";
 
 const ICONS = {
   explorar: (
@@ -73,12 +74,14 @@ function isActive(pathname: string, href: string) {
 
 /** Client half of the desktop sidebar: active section and the ⌘K shortcut. */
 export function SidebarNav({
+  avisos,
   items,
   upcoming,
   name,
   roleLabel,
   searchHref,
 }: {
+  avisos: { unread: number; invite: PopoverInvite | null; lines: PopoverLine[] };
   items: SidebarItem[];
   upcoming: UpcomingItem[];
   name: string;
@@ -130,6 +133,22 @@ export function SidebarNav({
       <nav aria-label="Secciones" className="flex flex-col gap-0.5">
         {items.map((item) => {
           const active = isActive(pathname, item.href);
+          if (item.icon === "avisos") {
+            return (
+              <AvisosPopover
+                key={item.href}
+                active={active}
+                unread={avisos.unread}
+                invite={avisos.invite}
+                lines={avisos.lines}
+                icon={
+                  <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    {ICONS.avisos}
+                  </svg>
+                }
+              />
+            );
+          }
           return (
             <Link
               key={item.href}

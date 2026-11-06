@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 import { dayKey, formatDay, formatLongDay, formatTime } from "@/lib/time";
 import { MapButton } from "./map-sheet";
 import { PlayersSheet, type MatchPlayer } from "./players-sheet";
+import { ToastStack } from "@/components/toast-stack";
 import { CloseButton } from "./close-button";
 import { ShareButton } from "./share-button";
 import { SignUpForm } from "./sign-up-form";
@@ -82,9 +83,9 @@ export default async function MatchDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ pago?: string; baja?: string; jugadores?: string; jugador?: string }>;
+  searchParams: Promise<{ pago?: string; baja?: string; jugadores?: string; jugador?: string; aviso?: string; saldo?: string; cobro?: string; armada?: string }>;
 }) {
-  const [{ id }, { pago, baja, jugadores, jugador }] = await Promise.all([params, searchParams]);
+  const [{ id }, { pago, baja, jugadores, jugador, aviso, saldo, cobro, armada }] = await Promise.all([params, searchParams]);
   const supabase = await createClient();
   const {
     data: { user },
@@ -295,6 +296,14 @@ export default async function MatchDetailPage({
         />
       )}
 
+      {aviso === "dentro" && (
+        <ToastStack
+          key={`${saldo}-${cobro}`}
+          toasts={[{ id: "dentro", message: joinedMessage(saldo, cobro, armada) }]}
+          clearParams={["aviso", "saldo", "cobro", "armada"]}
+        />
+      )}
+
       {showSheet && (
         <PaymentSheet
           matchId={match.id}
@@ -313,6 +322,17 @@ const PRIMARY_BUTTON =
   "flex h-[52px] w-full items-center justify-center rounded-[6px] bg-action text-[17px] font-bold text-on-action";
 
 type ActionState = "open" | "full" | "signedUp" | "locked" | "closed";
+
+/** Toast after paying on desktop (success A): what was used to pay, or that the match got made. */
+function joinedMessage(saldo?: string, cobro?: string, armada?: string) {
+  const credit = Number(saldo) || 0;
+  const charged = Number(cobro) || 0;
+  if (armada === "1") return "¡Estás dentro y se armó la reta!";
+  if (credit && charged) return `Estás dentro · $${credit} de saldo y $${charged} con tarjeta`;
+  if (credit) return `Estás dentro · usaste $${credit} de saldo`;
+  if (charged) return `Estás dentro · pagaste $${charged}`;
+  return "Estás dentro";
+}
 
 /** Desktop (detail A): price, capacity and the action in a card that stays in view on the right. */
 function DesktopActionCard({
@@ -354,9 +374,16 @@ function DesktopActionCard({
         <span className="text-[15px] text-muted">Esta reta ya no acepta inscripciones.</span>
       ) : state === "signedUp" || state === "locked" ? (
         <>
-          <span className="flex flex-col">
-            <span className="text-[16px] font-bold">Estás inscrito</span>
-            <span className="text-[13px] text-muted">{state === "locked" ? "Tu lugar está fijo" : `Baja con saldo hasta las ${deadline}`}</span>
+          <span className="flex items-center gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-(--color-bg-base)">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12.5l4.5 4.5L19 7.5" />
+              </svg>
+            </span>
+            <span className="flex flex-col">
+              <span className="text-[20px] font-extrabold tracking-tight">¡Estás dentro!</span>
+              <span className="text-[13px] text-muted">{state === "locked" ? "Tu lugar está fijo" : `Baja con saldo hasta las ${deadline}`}</span>
+            </span>
           </span>
           {state === "signedUp" && (
             <Link href={`/retas/${matchId}?baja=1`} scroll={false} className="flex h-12 items-center justify-center rounded-[6px] border border-line text-[16px] font-semibold">
@@ -457,15 +484,15 @@ function PaymentSheet({
 }) {
   const total = (priceCents - creditCents) / 100;
   return (
-    <div className="fixed inset-0 z-20 mx-auto max-w-md">
+    <div className="fixed inset-0 z-30 mx-auto max-w-md lg:max-w-none!">
       <Link href={`/retas/${matchId}`} scroll={false} aria-label="Cerrar" className="absolute inset-0 animate-fade-in bg-black/60" />
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="pago-titulo"
-        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col overflow-y-auto gap-[18px] rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8"
+        className="absolute inset-x-0 bottom-0 flex max-h-[90dvh] animate-sheet-up flex-col overflow-y-auto gap-[18px] rounded-t-[10px] border-t border-line bg-surface px-5 pt-3 pb-8 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:left-1/2 lg:w-[480px] lg:-translate-x-1/2 lg:-translate-y-1/2 lg:animate-fade-in lg:rounded-[8px] lg:border lg:border-line lg:pb-6 lg:shadow-[0_30px_60px_rgb(0_0_0/0.6)]"
       >
-        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line" />
+        <span aria-hidden="true" className="h-[5px] w-10 self-center rounded-[6px] bg-line lg:hidden" />
         <h2 id="pago-titulo" className="font-display text-[28px] leading-none font-extrabold tracking-tight">
           Confirma tu inscripción
         </h2>

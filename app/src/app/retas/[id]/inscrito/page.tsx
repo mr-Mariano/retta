@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { formatLongDay, formatTime, relativeDay } from "@/lib/time";
+import { DesktopReturn } from "./desktop-return";
 
 export const metadata: Metadata = { title: "¡Estás dentro! · Retta" };
 
@@ -60,7 +61,8 @@ export default async function SignedUp({
   const meetUp = `Nos vemos ${whenPhrase(startsAt)} a las ${formatTime(startsAt)} en ${match.slot.field.name}.`;
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center gap-[18px] px-6 pt-[72px] pb-8 text-center">
+    <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center gap-[18px] px-6 pt-[72px] pb-8 text-center lg:invisible">
+      <DesktopReturn href={`/retas/${id}?aviso=dentro&saldo=${credit}&cobro=${charged}${justConfirmed ? "&armada=1" : ""}`} />
       <Image src="/mascota/celebra.png" alt="" width={230} height={230} priority />
       <h1 className="font-display text-[45px] leading-none font-extrabold tracking-tight">
         {justConfirmed ? "¡Ya se armó la reta!" : "¡Estás dentro!"}
