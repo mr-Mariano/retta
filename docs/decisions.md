@@ -212,6 +212,7 @@ Canvas: Claude Design "Retta · Jugador · Diseño final", page Direcciones visu
 | 2026-11-06 | Desktop payment is a centred window (Pago B); every phone bottom sheet (drop-out, players, map, cancel, move proposal) opens as a centred window on desktop. After joining on desktop (Éxito A) the person stays on the match: the card says "¡Estás dentro!" and a toast says how they paid; the full-screen success stays on phones | Phones unchanged |
 | 2026-11-06 | Desktop Avisos: "Avisos" in the sidebar opens a small window beside it (E1): Todos / Sin leer, the agent's open invitation on top with photo, countdown, Unirme / Ahora no, the rest one line each, "Ver todos →". /avisos on desktop is an inbox (D): list grouped by Hoy / Antes with filters, the selected notice open on the right with its actions | Opening the window marks everything read |
 | 2026-11-06 | The agent is drawn as a soft blue-violet orb (style 4 of 8) everywhere; while it works the orb changes shape | Replaces the sparkle mark |
+| 2026-11-06 | Desktop Saldo (B): balance card with "Buscar una reta" and how credit works on the left, movements grouped by month on the right (credits in green). Desktop Perfil (A): name and stats on top, a section menu on the left (Cuenta, Redes, Herramientas for staff, Agente Retta for admin, Sesión) and rows with Editar on the right; editing opens the same forms as centred windows | Phones unchanged |
 
 ### Open items
 - Apply the new style to the remaining canvas screens (sign-up, sign-in, payment, success, my matches, drop-out, balance, profile, empty state)
