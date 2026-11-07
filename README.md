@@ -34,12 +34,14 @@ All accounts use the same password, which is shared with the teacher separately.
 
 ## Structure
 
+`AGENTS.md` maps every feature to the file that implements it, for AI agents and reviewers.
+
 - `app/`: Next.js 15 web app (App Router, TypeScript, Tailwind 4), deployed on Vercel.
 - `supabase/migrations/`: database schema, row-level security, functions and scheduled jobs (Postgres on Supabase).
 - `docs/decisions.md`: decision log; defines what the MVP builds and what is out of scope.
 - `docs/vision/`: product vision and scope document (Spanish).
 - `docs/investigacion/`: background research. Context only.
-- `design/`: brand assets (logo, mascot, cover photos).
+- `design/`: brand explorations (logo and mascot). The photos the app uses are in `app/public/fotos/`.
 
 ## Running locally
 

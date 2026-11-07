@@ -1,0 +1,34 @@
+# Retta
+
+> Web app to find and join pickup football (fútbol) matches on your own in Guadalajara. Field managers publish time slots, any player can organize a match on a free slot, and an AI agent (Agente Retta) helps matches reach their minimum players. The interface is in Spanish. Course project for Diseño de Software, ITESO (MVP, November 2026). Payments are simulated.
+
+## Roles
+
+- Player (jugador): finds matches, joins and pays with test money or credit, sees upcoming matches, history and notices. Any player can also organize through the Jugar / Organizar switch.
+- Field manager (responsable de cancha): publishes time slots for their fields and reviews the agenda.
+- Admin: creates fields, changes user roles and can cancel any match.
+
+## Pages
+
+- [Welcome](https://retta-chi.vercel.app/): sign up or sign in.
+- [Sign in](https://retta-chi.vercel.app/entrar): form with fields #email and #password.
+- [Explorar](https://retta-chi.vercel.app/explorar): chat with the agent to find matches ("fut 7 mañana en la noche"), or browse by day.
+- Match detail at /retas/{id}: capacity, minimum, price, deadline; "Inscribirme" opens a test payment.
+- [Mis retas](https://retta-chi.vercel.app/mis-retas): upcoming matches and history.
+- [Avisos](https://retta-chi.vercel.app/avisos): invites and confirmations.
+- [Saldo](https://retta-chi.vercel.app/saldo): credit and transactions.
+- [Organizar](https://retta-chi.vercel.app/organizar): organizer home, this week's numbers and matches that need attention.
+- [Nueva reta](https://retta-chi.vercel.app/organizar/nueva): create a match in steps (time slot, players, price, type, review).
+- [Tus retas](https://retta-chi.vercel.app/perfil/organizar): organizer's matches with what the agent is doing on each.
+- [Tus canchas](https://retta-chi.vercel.app/perfil/canchas): field manager's fields; agenda at /canchas/{id}, publish slots at /canchas/{id}/publicar.
+- [Admin](https://retta-chi.vercel.app/admin): fields, users and matches.
+
+## Rules
+
+- At the confirmation deadline a match is confirmed if it reached its minimum players; otherwise it is cancelled and every player gets their money back as credit that never expires.
+- One hour before the deadline of a match short of players, the agent invites compatible players, can extend the deadline or propose moving the match, and shows each step to the organizer. It runs every 5 minutes.
+
+## Source
+
+- [Repository](https://github.com/mr-Mariano/retta): code, decision log and Vision and Scope document.
+- [Guide for AI agents](https://github.com/mr-Mariano/retta/blob/main/AGENTS.md): map of features to files and how to verify them.
