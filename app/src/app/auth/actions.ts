@@ -2,11 +2,12 @@
 
 import { authReturn } from "@/lib/auth-return";
 
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { parsePhone } from "@/lib/phone-validation";
+import { RECOVERY_COOKIE, RECOVERY_REQUEST_PATH } from "@/lib/password-recovery";
 
 const MIN_PASSWORD_LENGTH = 8;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -103,6 +104,48 @@ export async function signInWithEmail(_prev: SignInState, formData: FormData): P
   // Data changed: drop the browser's cached pages.
   revalidatePath("/", "layout");
   redirect(!phone ? "/completa-perfil" : authReturn(formData.get("next")) || (role === "admin" ? "/admin" : "/explorar"));
+}
+
+export interface RecoveryState {
+  error?: string;
+  sent?: boolean;
+}
+
+export async function requestPasswordRecovery(_prev: RecoveryState, formData: FormData): Promise<RecoveryState> {
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!EMAIL_PATTERN.test(email)) return { error: "Escribe un correo válido." };
+
+  const supabase = await createClient();
+  // Reuse the existing allow-listed callback. The PKCE exchange identifies a recovery.
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${await requestOrigin()}/auth/callback`,
+  });
+  if (error) console.warn("[auth] recovery request failed", error.code ?? error.status);
+  // Give the same response for known and unknown accounts.
+  return { sent: true };
+}
+
+export async function resetRecoveredPassword(_prev: RecoveryState, formData: FormData): Promise<RecoveryState> {
+  const password = String(formData.get("password") ?? "");
+  if (password.length < MIN_PASSWORD_LENGTH) return { error: "Usa al menos 8 caracteres." };
+  if (password !== formData.get("confirm_password")) return { error: "Las contraseñas no coinciden." };
+
+  const cookieStore = await cookies();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || cookieStore.get(RECOVERY_COOKIE)?.value !== user.id) {
+    redirect(`${RECOVERY_REQUEST_PATH}?error=link`);
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error?.code === "same_password") return { error: "Elige una contraseña distinta a la anterior." };
+  if (error?.code === "weak_password") return { error: "La contraseña no cumple los requisitos de seguridad. Prueba con una más larga." };
+  if (error) return { error: "No pudimos guardar tu contraseña. Inténtalo de nuevo o solicita otro enlace." };
+
+  cookieStore.delete(RECOVERY_COOKIE);
+  await supabase.auth.signOut({ scope: "global" });
+  revalidatePath("/", "layout");
+  redirect("/entrar?restablecida=1");
 }
 
 export async function completeProfile(_prev: ProfileState, formData: FormData): Promise<ProfileState> {

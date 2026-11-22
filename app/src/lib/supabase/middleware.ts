@@ -1,3 +1,4 @@
+import { RECOVERY_COOKIE, RECOVERY_REQUEST_PATH, RECOVERY_RESET_PATH } from "@/lib/password-recovery";
 import { authReturn } from "@/lib/auth-return";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
@@ -43,6 +44,13 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
   // Auth callbacks and API routes (they check their own authorization).
   if (path.startsWith("/auth/") || path.startsWith("/api/")) return response;
+
+  if (path === RECOVERY_REQUEST_PATH) return response;
+  if (path === RECOVERY_RESET_PATH) {
+    return user && request.cookies.get(RECOVERY_COOKIE)?.value === user.id
+      ? response
+      : redirectKeepingCookies(request, response, RECOVERY_REQUEST_PATH);
+  }
 
   const isPublic = PUBLIC_ROUTES.includes(path);
 

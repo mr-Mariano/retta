@@ -1,24 +1,39 @@
+import { RECOVERY_COOKIE, RECOVERY_RESET_PATH } from "@/lib/password-recovery";
 import { authReturn } from "@/lib/auth-return";
-import { NextResponse, type NextRequest } from "next/server";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import type { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 /** Email confirmation return URL: trades the code for a session cookie. */
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = request.nextUrl;
+  const { searchParams } = request.nextUrl;
   const code = searchParams.get("code");
 
   if (!code) {
-    return NextResponse.redirect(`${origin}/entrar?error=link`);
+    redirect("/entrar?error=link");
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+  const flowId = searchParams.get("sb_flow_id");
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code, flowId ? { flowId } : undefined);
 
   if (error || !data.user) {
-    return NextResponse.redirect(`${origin}/entrar?error=link`);
+    redirect("/entrar?error=link");
+  }
+
+  if ("redirectType" in data && data.redirectType === "recovery") {
+    (await cookies()).set(RECOVERY_COOKIE, data.user.id, {
+      path: "/",
+      httpOnly: true,
+      secure: request.nextUrl.protocol === "https:",
+      sameSite: "lax",
+      maxAge: 15 * 60,
+    });
+    redirect(RECOVERY_RESET_PATH);
   }
 
   const { data: phone } = await supabase.rpc("my_profile_phone");
 
-  return NextResponse.redirect(`${origin}${phone ? authReturn(searchParams.get("next")) || "/explorar" : "/completa-perfil"}`);
+  redirect(phone ? authReturn(searchParams.get("next")) || "/explorar" : "/completa-perfil");
 }

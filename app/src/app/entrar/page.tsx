@@ -1,4 +1,5 @@
 import { authHref, authReturn } from "@/lib/auth-return";
+import { RECOVERY_REQUEST_PATH } from "@/lib/password-recovery";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -10,9 +11,9 @@ export const metadata: Metadata = { title: "Inicia sesión · Retta" };
 export default async function Entrar({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; next?: string }>;
+  searchParams: Promise<{ error?: string; next?: string; restablecida?: string }>;
 }) {
-  const { error, next } = await searchParams;
+  const { error, next, restablecida } = await searchParams;
   const destination = authReturn(next);
 
   return (
@@ -39,6 +40,9 @@ export default async function Entrar({
             Entra para ver tus retas y tu saldo.
           </p>
         </div>
+        {restablecida === "1" && (
+          <p role="status" className="text-sm text-ink">Contraseña actualizada. Ya puedes iniciar sesión.</p>
+        )}
         <EntrarForm destination={destination}
           initialError={
             error === "link"
@@ -46,6 +50,9 @@ export default async function Entrar({
               : undefined
           }
         />
+        <Link href={RECOVERY_REQUEST_PATH} className="self-center text-sm font-semibold text-ink underline underline-offset-4">
+          Olvidé mi contraseña
+        </Link>
         <p className="text-center text-[15px] text-muted">
           ¿Aún no tienes cuenta?{" "}
           <Link href={authHref("/registro", destination)} className="font-semibold text-ink">
