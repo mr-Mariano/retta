@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { ReactNode } from "react";
 
-const DESKTOP = "(min-width: 1024px)";
+const DESKTOP = "(min-width: 768px)";
 
 /**
  * Link to a match. On phones it opens the match page; on desktop it opens the

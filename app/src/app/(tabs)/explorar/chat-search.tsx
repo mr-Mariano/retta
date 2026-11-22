@@ -58,7 +58,7 @@ export function ChatSearch({ greeting, chips, today, heading }: { greeting: stri
 
   if (turns.length === 0) {
     return (
-      <section className="hidden min-h-[calc(100dvh-120px)] flex-col justify-center gap-6 lg:flex">
+      <section className="hidden min-h-[calc(100dvh-120px)] flex-col justify-center gap-6 md:flex">
         <div className="flex items-start gap-3">
           <AgentMark size={36} />
           <div className="flex flex-1 flex-col gap-3 pt-1">
@@ -94,7 +94,7 @@ export function ChatSearch({ greeting, chips, today, heading }: { greeting: stri
   }
 
   return (
-    <section className="hidden min-h-[calc(100dvh-120px)] flex-col lg:flex">
+    <section className="hidden min-h-[calc(100dvh-120px)] flex-col md:flex">
       <div className="flex flex-1 flex-col gap-6 pb-6">
         {turns.map((turn, i) =>
           turn.role === "me" ? (

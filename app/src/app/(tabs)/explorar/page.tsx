@@ -195,24 +195,22 @@ export default async function Explorar({
   const balance = Math.max(balanceCents ?? 0, 0) / 100;
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-28">
+    <main className="explore-layout mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-8 pb-28 md:max-w-[720px] md:pt-10 md:pb-12">
       {!user && (
         <nav aria-label="Cuenta" className="flex flex-wrap items-center justify-between gap-3 text-sm font-semibold">
           <Link href="/">Retta</Link>
-          <div className="flex flex-wrap gap-4">
-            <Link href="/organizar/nueva">Crear reta</Link>
-            <Link href="/entrar">Iniciar sesión</Link>
-            <Link href="/registro">Crear cuenta</Link>
-          </div>
+          <Link href="/entrar" className="inline-flex min-h-11 items-center rounded-[6px] border border-line bg-surface px-4">
+            Iniciar sesión
+          </Link>
         </nav>
       )}
       {/* Organizer mode B (2026-11-06): on phones the switch sits on top of Explorar. */}
       {(profile?.role === "player" || profile?.role === "field_manager") && (
-        <ModeSwitch role={profile.role} initial="jugar" className="lg:hidden" />
+        <ModeSwitch role={profile.role} initial="jugar" className="md:hidden" />
       )}
-      <div className="flex flex-col gap-0.5 lg:hidden">
+      <div className="flex flex-col gap-0.5 md:hidden">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-[15px] text-muted">Hola{firstName ? `, ${firstName}` : ""}</span>
+          {user && <span className="text-[15px] text-muted">Hola{firstName ? `, ${firstName}` : ""}</span>}
           {user && <span className="flex items-center gap-2">
             <Link
               href="/saldo"
@@ -227,7 +225,7 @@ export default async function Explorar({
       </div>
 
       {suggestion && (
-        <div className="lg:hidden">
+        <div className="md:hidden">
           <AgentBubble notice={suggestion} now={now} />
         </div>
       )}
@@ -235,7 +233,7 @@ export default async function Explorar({
       {hero ? (
         <ChatSearch greeting={greeting} chips={GREETING_CHIPS} today={todayCards} heading={todayHeading} />
       ) : (
-        <div className="hidden flex-col gap-2 lg:flex">
+        <div className="hidden flex-col gap-2 md:flex">
           <SearchBox q={q} filter={filter.key} compact autoFocus={buscar === "1"} />
           <span className="text-[14px] text-muted">
             {list.length === 1 ? "1 reta" : `${list.length} retas`}
@@ -244,7 +242,7 @@ export default async function Explorar({
         </div>
       )}
 
-      <nav aria-label="Filtrar retas" className="-mx-4 overflow-x-auto px-4 [scrollbar-width:none] lg:hidden">
+      <nav aria-label="Filtrar retas" className="-mx-4 overflow-x-auto px-4 [scrollbar-width:none] md:hidden">
         <ul className="flex w-max gap-2">
           {FILTERS.map((item) => {
             const active = item.key === filter.key;
@@ -270,7 +268,7 @@ export default async function Explorar({
         </ul>
       </nav>
 
-      <div className={hero ? "contents lg:hidden" : "contents"}>
+      <div className={hero ? "contents md:hidden" : "contents"}>
       {highlight && (
         <Link
           href={`/retas/${highlight.id}`}

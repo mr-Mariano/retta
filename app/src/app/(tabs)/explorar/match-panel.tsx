@@ -72,7 +72,7 @@ export async function MatchPanel({
   return (
     <aside
       aria-label={title}
-      className="fixed inset-y-0 right-0 z-30 hidden w-[460px] animate-slide-from-right flex-col gap-3.5 overflow-y-auto border-l border-line bg-surface px-[22px] pt-[18px] pb-[22px] shadow-[-20px_0_40px_rgb(0_0_0/0.45)] lg:flex"
+      className="fixed inset-y-0 right-0 z-30 hidden w-[460px] animate-slide-from-right flex-col gap-3.5 overflow-y-auto border-l border-line bg-surface px-[22px] pt-[18px] pb-[22px] shadow-[-20px_0_40px_rgb(0_0_0/0.45)] md:flex"
     >
       <ClosePanel href={closeHref} />
       <div className="relative h-[210px] shrink-0 overflow-hidden rounded-[6px] text-white">
