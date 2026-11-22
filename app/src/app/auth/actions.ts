@@ -1,5 +1,7 @@
 "use server";
 
+import { authReturn } from "@/lib/auth-return";
+
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -35,6 +37,7 @@ async function requestOrigin() {
 }
 
 export async function signUpWithEmail(_prev: SignUpState, formData: FormData): Promise<SignUpState> {
+  const destination = authReturn(formData.get("next"));
   const fullName = String(formData.get("full_name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const rawPhone = String(formData.get("phone") ?? "");
@@ -56,7 +59,7 @@ export async function signUpWithEmail(_prev: SignUpState, formData: FormData): P
     password,
     options: {
       data: { full_name: fullName, phone: phone.e164 },
-      emailRedirectTo: `${await requestOrigin()}/auth/callback`,
+      emailRedirectTo: `${await requestOrigin()}/auth/callback${destination ? `?${new URLSearchParams({ next: destination })}` : ""}`,
     },
   });
 
@@ -78,7 +81,7 @@ export async function signUpWithEmail(_prev: SignUpState, formData: FormData): P
   if (!data.session) return { checkEmail: true, values };
   // Data changed: drop the browser's cached pages.
   revalidatePath("/", "layout");
-  redirect("/explorar");
+  redirect(destination || "/explorar");
 }
 
 export async function signInWithEmail(_prev: SignInState, formData: FormData): Promise<SignInState> {
@@ -93,14 +96,13 @@ export async function signInWithEmail(_prev: SignInState, formData: FormData): P
   }
   if (error) return { error: "Correo o contraseña incorrectos.", email };
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("phone, role")
-    .eq("id", data.user.id)
-    .maybeSingle();
+  const [{ data: profile }, { data: phone }] = await Promise.all([
+    supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle(),
+    supabase.rpc("my_profile_phone"),
+  ]);
   // Data changed: drop the browser's cached pages.
   revalidatePath("/", "layout");
-  redirect(!profile?.phone ? "/completa-perfil" : profile.role === "admin" ? "/admin" : "/explorar");
+  redirect(!phone ? "/completa-perfil" : authReturn(formData.get("next")) || (profile?.role === "admin" ? "/admin" : "/explorar"));
 }
 
 export async function completeProfile(_prev: ProfileState, formData: FormData): Promise<ProfileState> {

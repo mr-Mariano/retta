@@ -39,15 +39,17 @@ export default async function Perfil({
 
   const [
     { data: profile },
+    { data: profilePhone },
     { data: socials },
     { data: balanceCents },
     { data: played },
   ] = await Promise.all([
     supabase
       .from("profiles")
-      .select("full_name, phone, created_at, role")
+      .select("full_name, created_at, role")
       .eq("id", user!.id)
       .single(),
+    supabase.rpc("my_profile_phone"),
     supabase.rpc("my_socials"),
     supabase.rpc("my_balance"),
     supabase
@@ -79,7 +81,7 @@ export default async function Perfil({
         year: "numeric",
       })
     : "";
-  const phone = splitPhone(profile?.phone ?? null);
+  const phone = splitPhone(typeof profilePhone === "string" ? profilePhone : null);
 
   // Desktop (Perfil A, 2026-11-06): settings with a section menu on the left.
   const role = profile?.role ?? "player";
@@ -147,7 +149,7 @@ export default async function Perfil({
                 />
                 <DeskRow
                   label="Teléfono"
-                  value={formatPhone(profile?.phone ?? null) || "Agregar"}
+                  value={formatPhone(typeof profilePhone === "string" ? profilePhone : null) || "Agregar"}
                   href="/perfil?editar=telefono"
                 />
                 <DeskRow label="Correo" value={user!.email ?? ""} />
@@ -259,7 +261,7 @@ export default async function Perfil({
           <Row
             href="/perfil?editar=telefono"
             label="Teléfono"
-            value={formatPhone(profile?.phone ?? null) || "Agregar"}
+            value={formatPhone(typeof profilePhone === "string" ? profilePhone : null) || "Agregar"}
           />
           <Row label="Correo" value={user!.email ?? ""} />
         </Section>

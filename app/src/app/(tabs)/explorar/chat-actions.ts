@@ -40,7 +40,7 @@ export async function askAgent(message: string, previous: Criteria | null): Prom
     ? await supabase.from("registrations").select("match_id").eq("player_id", user.id).eq("status", "active")
     : { data: [] };
   const joined = new Set((mine ?? []).map((row) => row.match_id as string));
-  const { data } = await supabase
+  const { data } = user ? await supabase
     .from("matches")
     .select(
       "id, title, price_cents, min_players, max_players, status, confirmation_deadline, format, level, type, slot:slots!inner(starts_at, field:fields!inner(name, area, cover_image)), registrations(count)",
@@ -48,9 +48,9 @@ export async function askAgent(message: string, previous: Criteria | null): Prom
     .neq("status", "cancelled")
     .gt("slots.starts_at", now.toISOString())
     .eq("registrations.status", "active")
-    .returns<Row[]>();
+    .returns<Row[]>() : await supabase.rpc("browse_matches");
 
-  const all: SearchMatch[] = (data ?? [])
+  const all: SearchMatch[] = (Array.isArray(data) ? (data as Row[]) : [])
     .filter((row) => !joined.has(row.id) && !(row.status === "pending" && new Date(row.confirmation_deadline) <= now))
     .map((row) => ({
       id: row.id,

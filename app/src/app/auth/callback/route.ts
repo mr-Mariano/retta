@@ -1,3 +1,4 @@
+import { authReturn } from "@/lib/auth-return";
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
@@ -17,11 +18,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/entrar?error=link`);
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("phone")
-    .eq("id", data.user.id)
-    .maybeSingle();
+  const { data: phone } = await supabase.rpc("my_profile_phone");
 
-  return NextResponse.redirect(`${origin}${profile?.phone ? "/explorar" : "/completa-perfil"}`);
+  return NextResponse.redirect(`${origin}${phone ? authReturn(searchParams.get("next")) || "/explorar" : "/completa-perfil"}`);
 }

@@ -1,3 +1,4 @@
+import { authHref, authReturn } from "@/lib/auth-return";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -9,17 +10,18 @@ export const metadata: Metadata = { title: "Inicia sesión · Retta" };
 export default async function Entrar({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; next?: string }>;
 }) {
-  const { error } = await searchParams;
+  const { error, next } = await searchParams;
+  const destination = authReturn(next);
 
   return (
     <AuthSplit>
-      <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-7 px-5 pt-14 pb-8 lg:w-full lg:py-10">
+      <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-7 px-5 pt-14 pb-8 md:w-full md:py-10">
         <Link
           href="/"
           aria-label="Retta, volver al inicio"
-          className="self-start lg:hidden"
+          className="self-start md:hidden"
         >
           <Image
             src="/retta-wordmark.svg"
@@ -37,7 +39,7 @@ export default async function Entrar({
             Entra para ver tus retas y tu saldo.
           </p>
         </div>
-        <EntrarForm
+        <EntrarForm destination={destination}
           initialError={
             error === "link"
               ? "El enlace ya no es válido. Inicia sesión con tu correo."
@@ -46,7 +48,7 @@ export default async function Entrar({
         />
         <p className="text-center text-[15px] text-muted">
           ¿Aún no tienes cuenta?{" "}
-          <Link href="/registro" className="font-semibold text-ink">
+          <Link href={authHref("/registro", destination)} className="font-semibold text-ink">
             Crea una
           </Link>
         </p>

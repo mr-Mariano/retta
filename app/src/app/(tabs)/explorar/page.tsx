@@ -121,10 +121,10 @@ export default async function Explorar({
   } = await supabase.auth.getUser();
 
   const [{ data: profile }, { data: balanceCents }, { data: featured }, { data: rows }, { count: unread }, notices] = await Promise.all([
-    supabase.from("profiles").select("full_name, role").eq("id", user!.id).maybeSingle(),
-    supabase.rpc("my_balance"),
+    user ? supabase.from("profiles").select("full_name, role").eq("id", user.id).maybeSingle() : { data: null },
+    user ? supabase.rpc("my_balance") : { data: 0 },
     supabase.rpc("featured_match"),
-    supabase
+    user ? supabase
       .from("matches")
       .select(
         "id, title, price_cents, min_players, max_players, status, confirmation_deadline, slot:slots!inner(starts_at, field:fields!inner(name, area, cover_image, latitude, longitude)), registrations(count)",
@@ -132,14 +132,14 @@ export default async function Explorar({
       .neq("status", "cancelled")
       .gt("slots.starts_at", now.toISOString())
       .eq("registrations.status", "active")
-      .returns<MatchRow[]>(),
-    supabase
+      .returns<MatchRow[]>() : supabase.rpc("browse_matches"),
+    user ? supabase
       .from("notices")
       .select("id", { count: "exact", head: true })
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .is("read_at", null)
-      .is("dismissed_at", null),
-    loadNotices(supabase, user!.id, 10),
+      .is("dismissed_at", null) : { count: 0 },
+    user ? loadNotices(supabase, user.id, 10) : [],
   ]);
   const suggestion = notices.find(
     (notice) =>
@@ -150,7 +150,7 @@ export default async function Explorar({
 
   // Cancelled and played matches are hidden; so is a pending match past its
   // deadline, which the deadline job is about to cancel.
-  const upcoming = (rows ?? [])
+  const upcoming = (Array.isArray(rows) ? (rows as MatchRow[]) : [])
     .filter((row) => !(row.status === "pending" && new Date(row.confirmation_deadline) <= now))
     .map(toMatch)
     .sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
@@ -196,6 +196,16 @@ export default async function Explorar({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-28">
+      {!user && (
+        <nav aria-label="Cuenta" className="flex flex-wrap items-center justify-between gap-3 text-sm font-semibold">
+          <Link href="/">Retta</Link>
+          <div className="flex flex-wrap gap-4">
+            <Link href="/organizar/nueva">Crear reta</Link>
+            <Link href="/entrar">Iniciar sesión</Link>
+            <Link href="/registro">Crear cuenta</Link>
+          </div>
+        </nav>
+      )}
       {/* Organizer mode B (2026-11-06): on phones the switch sits on top of Explorar. */}
       {(profile?.role === "player" || profile?.role === "field_manager") && (
         <ModeSwitch role={profile.role} initial="jugar" className="lg:hidden" />
@@ -203,7 +213,7 @@ export default async function Explorar({
       <div className="flex flex-col gap-0.5 lg:hidden">
         <div className="flex items-center justify-between gap-3">
           <span className="text-[15px] text-muted">Hola{firstName ? `, ${firstName}` : ""}</span>
-          <span className="flex items-center gap-2">
+          {user && <span className="flex items-center gap-2">
             <Link
               href="/saldo"
               className="flex h-9 shrink-0 items-center rounded-[6px] border border-line bg-surface px-2.5 text-[13px] font-bold text-ink"
@@ -211,7 +221,7 @@ export default async function Explorar({
               Saldo ${balance}
             </Link>
             <BellLink unread={unread ?? 0} />
-          </span>
+          </span>}
         </div>
         <h1 className="font-display text-[32px] leading-none font-extrabold tracking-tight">Retas cerca de ti</h1>
       </div>
@@ -307,7 +317,7 @@ export default async function Explorar({
       )}
       </div>
 
-      {reta && <MatchPanel supabase={supabase} userId={user!.id} matchId={reta} closeHref={closeHref} />}
+      {reta && <MatchPanel supabase={supabase} userId={user?.id} matchId={reta} closeHref={closeHref} />}
     </main>
   );
 }

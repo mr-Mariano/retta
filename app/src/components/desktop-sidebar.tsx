@@ -56,8 +56,9 @@ export async function DesktopSidebar() {
   if (!user) return null;
 
   const now = new Date();
-  const [{ data: profile }, { count: unread }, { data: balanceCents }, { data: upcoming }, notices] = await Promise.all([
-    supabase.from("profiles").select("full_name, role, phone").eq("id", user.id).maybeSingle(),
+  const [{ data: profile }, { data: phone }, { count: unread }, { data: balanceCents }, { data: upcoming }, notices] = await Promise.all([
+    supabase.from("profiles").select("full_name, role").eq("id", user.id).maybeSingle(),
+    supabase.rpc("my_profile_phone"),
     supabase
       .from("notices")
       .select("id", { count: "exact", head: true })
@@ -75,7 +76,7 @@ export async function DesktopSidebar() {
       .returns<UpcomingRow[]>(),
     loadNotices(supabase, user.id, 12),
   ]);
-  if (!profile?.phone) return null;
+  if (!profile || !phone) return null;
 
   const admin = profile.role === "admin";
   const balance = Math.max(balanceCents ?? 0, 0) / 100;

@@ -1,3 +1,4 @@
+import { authHref } from "@/lib/auth-return";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -91,7 +92,7 @@ export default async function MatchDetailPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: match } = await supabase
+  const { data: match } = user ? await supabase
     .from("matches")
     .select(
       "id, title, description, min_players, max_players, price_cents, status, confirmation_deadline, format, level, type, organizer:profiles!matches_organizer_id_fkey(full_name), slot:slots!inner(starts_at, ends_at, field:fields!inner(name, area, address, has_changing_rooms, cover_image, latitude, longitude)), registrations(player_id, created_at, player:profiles!registrations_player_id_fkey(full_name))",
@@ -100,7 +101,8 @@ export default async function MatchDetailPage({
     .eq("registrations.status", "active")
     .order("created_at", { referencedTable: "registrations" })
     .returns<MatchDetail[]>()
-    .maybeSingle();
+    .maybeSingle() : await supabase.rpc("browse_matches", { p_match_id: id })
+      .returns<(Omit<MatchDetail, "registrations" | "organizer"> & { registrations: { count: number }[] })[]>().maybeSingle();
 
   if (!match) notFound();
 
@@ -110,8 +112,10 @@ export default async function MatchDetailPage({
   const endsAt = new Date(match.slot.ends_at);
   const deadline = new Date(match.confirmation_deadline);
   const title = match.title ?? `Reta en ${field.name}`;
-  const active = match.registrations.length;
-  const isSignedUp = match.registrations.some((registration) => registration.player_id === user?.id);
+  const privateMatch = "organizer" in match ? match : null;
+  const first = match.registrations[0];
+  const active = first && "count" in first ? first.count : match.registrations.length;
+  const isSignedUp = privateMatch?.registrations.some((registration) => registration.player_id === user?.id);
   const isFull = active >= match.max_players;
   const isCancelled = match.status === "cancelled";
   const isPast = startsAt <= now;
@@ -134,7 +138,7 @@ export default async function MatchDetailPage({
             ? "closed"
             : "open";
   // Payment sheet (J04) over the detail; free matches skip it (session 5).
-  const showSheet = pago === "1" && actionState === "open" && pesos > 0;
+  const showSheet = user && pago === "1" && actionState === "open" && pesos > 0;
   const { data: balanceCents } = showSheet ? await supabase.rpc("my_balance") : { data: 0 };
   // Drop-out sheet (J07): only while the player can still drop out.
   const showDropOut = baja === "1" && actionState === "signedUp";
@@ -149,7 +153,7 @@ export default async function MatchDetailPage({
         .maybeSingle()
     : { data: null };
   // Sign-up list and player card (session 7).
-  const showPlayers = jugadores === "1" || Boolean(jugador);
+  const showPlayers = user && (jugadores === "1" || Boolean(jugador));
   const { data: players } = showPlayers ? await supabase.rpc("match_players", { p_match_id: match.id }) : { data: null };
   const paidCents = (myRegistration?.transactions ?? [])
     .filter((t) => t.type === "charge" || t.type === "credit_used")
@@ -231,21 +235,21 @@ export default async function MatchDetailPage({
           </div>
         )}
 
-        <div className="flex items-center gap-3">
+        {privateMatch && <div className="flex items-center gap-3">
           <span aria-hidden="true" className="flex size-10 items-center justify-center rounded-full bg-elevated text-sm font-bold">
-            {initials(match.organizer.full_name)}
+            {initials(privateMatch.organizer.full_name)}
           </span>
           <div className="flex flex-col gap-0.5">
-            <span className="text-[15px] font-semibold">Organiza {match.organizer.full_name}</span>
-            {match.registrations.some((r) => r.player_id !== user?.id) ? (
+            <span className="text-[15px] font-semibold">Organiza {privateMatch.organizer.full_name}</span>
+            {privateMatch.registrations.some((r) => r.player_id !== user?.id) ? (
               <Link href={`/retas/${match.id}?jugadores=1`} scroll={false} className="text-sm text-muted underline decoration-line underline-offset-4">
-                {signUpsLine(match.registrations.map((r) => r.player.full_name))}
+                {signUpsLine(privateMatch.registrations.map((r) => r.player.full_name))}
               </Link>
             ) : (
-              <span className="text-sm text-muted">{signUpsLine(match.registrations.map((r) => r.player.full_name))}</span>
+              <span className="text-sm text-muted">{signUpsLine(privateMatch.registrations.map((r) => r.player.full_name))}</span>
             )}
           </div>
-        </div>
+        </div>}
 
         <div className="flex flex-col gap-2.5">
           <ul className="flex flex-wrap gap-2">
@@ -265,14 +269,14 @@ export default async function MatchDetailPage({
         </div>
       </div>
 
-      <ActionBar matchId={match.id} deadline={formatTime(deadline)} price={priceLabel} isFree={pesos === 0} state={actionState} />
+      <ActionBar matchId={match.id} deadline={formatTime(deadline)} price={priceLabel} isFree={pesos === 0} state={actionState === "open" && !user ? "guest" : actionState} />
       <DesktopActionCard
         matchId={match.id}
         title={title}
         deadline={formatTime(deadline)}
         price={priceLabel}
         isFree={pesos === 0}
-        state={actionState}
+        state={actionState === "open" && !user ? "guest" : actionState}
         capacity={isCancelled ? null : { lead: capacityLead, rest: capacityRest, active, min: match.min_players, max: match.max_players }}
         pendingNote={!isPast && match.status === "pending"}
       />
@@ -321,7 +325,7 @@ export default async function MatchDetailPage({
 const PRIMARY_BUTTON =
   "flex h-[52px] w-full items-center justify-center rounded-[6px] bg-action text-[17px] font-bold text-on-action";
 
-type ActionState = "open" | "full" | "signedUp" | "locked" | "closed";
+type ActionState = "guest" | "open" | "full" | "signedUp" | "locked" | "closed";
 
 /** Toast after paying on desktop (success A): what was used to pay, or that the match got made. */
 function joinedMessage(saldo?: string, cobro?: string, armada?: string) {
@@ -393,6 +397,8 @@ function DesktopActionCard({
         </>
       ) : state === "full" ? (
         <span className="flex h-12 items-center justify-center rounded-[6px] bg-elevated text-[16px] font-bold text-muted">Llena</span>
+      ) : state === "guest" ? (
+        <Link href={authHref("/entrar", `/retas/${matchId}`)} className={`flex-1 ${PRIMARY_BUTTON}`}>Inscribirme</Link>
       ) : isFree ? (
         <SignUpForm matchId={matchId} label="Inscribirme" className={PRIMARY_BUTTON} />
       ) : (
@@ -450,6 +456,10 @@ function ActionBar({
             <span aria-disabled="true" className="flex h-[52px] flex-1 items-center justify-center rounded-[6px] bg-elevated text-[17px] font-bold text-muted">
               Llena
             </span>
+          ) : state === "guest" ? (
+            <Link href={authHref("/entrar", `/retas/${matchId}`)} className={`flex-1 ${PRIMARY_BUTTON}`}>
+              Inscribirme
+            </Link>
           ) : isFree ? (
             <SignUpForm matchId={matchId} label="Inscribirme" className={PRIMARY_BUTTON} formClassName="flex-1" />
           ) : (

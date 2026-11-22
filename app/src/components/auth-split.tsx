@@ -77,22 +77,22 @@ export function LiveMatchCard({ match }: { match: FeaturedMatch }) {
 export async function AuthSplit({ children }: { children: ReactNode }) {
   const match = await loadFeaturedMatch();
   return (
-    <div className="lg:grid lg:min-h-dvh lg:grid-cols-[minmax(0,1fr)_480px]">
-      <section className="relative hidden overflow-hidden lg:block">
+    <div className="md:grid md:min-h-dvh md:grid-cols-[minmax(0,1fr)_minmax(340px,45%)] lg:grid-cols-[minmax(0,1fr)_480px]">
+      <section className="relative hidden overflow-hidden md:block">
         <Image src="/fotos/portada.jpg" alt="" fill priority sizes="60vw" className="object-cover" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(10_10_10/0.25),rgb(10_10_10/0.85))]" />
-        <Image src="/retta-wordmark.svg" alt="Retta" width={73} height={32} className="absolute top-10 left-12 h-8 w-auto" />
-        <div className="absolute inset-x-12 bottom-14 flex max-w-[560px] flex-col gap-[22px] text-white">
+        <Image src="/retta-wordmark.svg" alt="Retta" width={73} height={32} className="absolute top-10 left-6 lg:left-12 h-8 w-auto" />
+        <div className="absolute inset-x-6 bottom-10 lg:inset-x-12 lg:bottom-14 flex max-w-[560px] flex-col gap-[22px] text-white">
           {match && (
-            <div className="w-[440px]">
+            <div className="w-full max-w-[440px]">
               <LiveMatchCard match={match} />
             </div>
           )}
-          <h2 className="font-display text-[56px] leading-none font-extrabold tracking-tight">{headline(match)}</h2>
+          <h2 className="font-display text-[40px] lg:text-[56px] leading-none font-extrabold tracking-tight">{headline(match)}</h2>
           <p className="text-[18px] opacity-85">Encuentra una reta cerca y únete solo, en un minuto.</p>
         </div>
       </section>
-      <div className="lg:flex lg:flex-col lg:justify-center lg:px-8 lg:[&>main]:min-h-0">{children}</div>
+      <div className="md:flex md:flex-col md:justify-center md:px-4 lg:px-8 md:[&>main]:min-h-0">{children}</div>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { authReturn } from "@/lib/auth-return";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -9,7 +10,7 @@ const ADMIN_HOME_ROUTE = "/admin";
 
 /**
  * Refreshes the Supabase session cookie and routes by auth state:
- * signed out → welcome, signed in without phone → complete profile,
+ * guests can browse, signed in without phone → complete profile,
  * signed in with phone → never back to the public or profile screens.
  */
 export async function updateSession(request: NextRequest) {
@@ -46,33 +47,34 @@ export async function updateSession(request: NextRequest) {
   const isPublic = PUBLIC_ROUTES.includes(path);
 
   if (!user) {
-    return isPublic ? response : redirectKeepingCookies(request, response, "/");
+    const canBrowse = path === HOME_ROUTE || /^\/retas\/[\da-f-]{36}$/i.test(path);
+    return isPublic || canBrowse ? response : redirectKeepingCookies(request, response, "/entrar", authReturn(path));
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("phone, role")
-    .eq("id", user.id)
-    .maybeSingle();
+  const [{ data: profile }, { data: phone }] = await Promise.all([
+    supabase.from("profiles").select("role").eq("id", user.id).maybeSingle(),
+    supabase.rpc("my_profile_phone"),
+  ]);
 
-  if (!profile?.phone) {
+  if (!phone) {
     return path === PROFILE_ROUTE
       ? response
       : redirectKeepingCookies(request, response, PROFILE_ROUTE);
   }
 
   if (isPublic || path === PROFILE_ROUTE) {
-    return redirectKeepingCookies(request, response, profile.role === "admin" ? ADMIN_HOME_ROUTE : HOME_ROUTE);
+    return redirectKeepingCookies(request, response, profile?.role === "admin" ? ADMIN_HOME_ROUTE : HOME_ROUTE);
   }
 
   return response;
 }
 
 /** A redirect that carries over any refreshed session cookies. */
-function redirectKeepingCookies(request: NextRequest, from: NextResponse, pathname: string) {
+function redirectKeepingCookies(request: NextRequest, from: NextResponse, pathname: string, next = "") {
   const url = request.nextUrl.clone();
   url.pathname = pathname;
   url.search = "";
+  if (next) url.searchParams.set("next", next);
   const redirect = NextResponse.redirect(url);
   from.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
   return redirect;

@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { authHref } from "@/lib/auth-return";
 import { useActionState } from "react";
 import { signUpWithEmail, type SignUpState } from "@/app/auth/actions";
 import { FormMessage, SubmitButton, TextField } from "@/components/form";
 import { PhoneField } from "@/components/phone-field";
 
-export function RegistroForm() {
+export function RegistroForm({ destination }: { destination: string }) {
   const [state, action] = useActionState<SignUpState, FormData>(signUpWithEmail, {});
   const { errors, values } = state;
 
@@ -23,6 +24,7 @@ export function RegistroForm() {
 
   return (
     <form action={action} className="flex flex-col gap-3.5" noValidate>
+      <input type="hidden" name="next" value={destination} />
       <TextField id="full_name" name="full_name" label="Nombre completo" autoComplete="name" defaultValue={values?.fullName} error={errors?.fullName} />
       <TextField
         id="email"
@@ -35,7 +37,7 @@ export function RegistroForm() {
           errors?.email === "Ya hay una cuenta con este correo." ? (
             <>
               {errors.email}{" "}
-              <Link href="/entrar" className="font-semibold text-ink">
+              <Link href={authHref("/entrar", destination)} className="font-semibold text-ink">
                 Inicia sesión
               </Link>
             </>

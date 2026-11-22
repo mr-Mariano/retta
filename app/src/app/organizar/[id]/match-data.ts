@@ -26,13 +26,28 @@ export async function loadOrganizerMatch(id: string) {
   const { data: match } = await supabase
     .from("matches")
     .select(
-      "id, title, status, min_players, max_players, confirmation_deadline, organizer_id, agent_enabled, slot:slots!inner(starts_at, ends_at, field:fields!inner(name)), registrations(id, created_at, attendance, player:profiles!registrations_player_id_fkey(full_name, phone))",
+      "id, title, status, min_players, max_players, confirmation_deadline, organizer_id, agent_enabled, slot:slots!inner(starts_at, ends_at, field:fields!inner(name)), registrations(id, created_at, attendance, player:profiles!registrations_player_id_fkey(full_name))",
     )
     .eq("id", id)
     .eq("registrations.status", "active")
     .order("created_at", { referencedTable: "registrations" })
-    .returns<OrganizerMatch[]>()
+    .returns<(Omit<OrganizerMatch, "registrations"> & {
+      registrations: (Omit<OrganizerMatch["registrations"][number], "player"> & { player: { full_name: string } })[];
+    })[]>()
     .maybeSingle();
   if (!match || (match.organizer_id !== user.id && role !== "admin")) notFound();
-  return match;
+  const { data: contacts } = match.organizer_id === user.id
+    ? await supabase.rpc("organizer_match_phones", { p_match_id: id })
+    : { data: [] };
+  const phones = new Map<string, string | null>();
+  for (const contact of Array.isArray(contacts) ? contacts : []) {
+    phones.set(contact.registration_id, contact.phone);
+  }
+  return {
+    ...match,
+    registrations: match.registrations.map((registration) => ({
+      ...registration,
+      player: { ...registration.player, phone: phones.get(registration.id) ?? null },
+    })),
+  };
 }

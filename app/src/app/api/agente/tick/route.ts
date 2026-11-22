@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
 import { reactivationTick } from "@/lib/agent/reactivation";
@@ -15,11 +16,13 @@ export const dynamic = "force-dynamic";
 
 async function handle(request: NextRequest) {
   const secret = process.env.AGENT_CRON_SECRET;
-  if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {
+  const provided = Buffer.from(request.headers.get("authorization") ?? "");
+  const expected = Buffer.from(`Bearer ${secret ?? ""}`);
+  if (!secret || provided.length !== expected.length || !timingSafeEqual(provided, expected)) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const params = request.nextUrl.searchParams;
+  const params = process.env.NODE_ENV === "production" ? new URLSearchParams() : request.nextUrl.searchParams;
   const db = createAdminClient();
   const now = new Date();
   const rescue = await rescueTick(db, now, params.get("reta") ?? undefined);
@@ -29,5 +32,4 @@ async function handle(request: NextRequest) {
   return NextResponse.json({ rescue, reactivation });
 }
 
-export const GET = handle;
 export const POST = handle;

@@ -1,3 +1,4 @@
+import { authHref } from "@/lib/auth-return";
 import Image from "next/image";
 import Link from "next/link";
 import { CapacityDots } from "@/components/capacity-dots";
@@ -40,11 +41,11 @@ export async function MatchPanel({
   closeHref,
 }: {
   supabase: Awaited<ReturnType<typeof createClient>>;
-  userId: string;
+  userId?: string;
   matchId: string;
   closeHref: string;
 }) {
-  const { data: match } = await supabase
+  const { data: match } = userId ? await supabase
     .from("matches")
     .select(
       "id, title, description, min_players, max_players, price_cents, status, confirmation_deadline, format, level, type, slot:slots!inner(starts_at, ends_at, field:fields!inner(name, area, address, has_changing_rooms, cover_image)), registrations(player_id)",
@@ -52,15 +53,17 @@ export async function MatchPanel({
     .eq("id", matchId)
     .eq("registrations.status", "active")
     .returns<PanelMatch[]>()
-    .maybeSingle();
+    .maybeSingle() : await supabase.rpc("browse_matches", { p_match_id: matchId })
+      .returns<(Omit<PanelMatch, "registrations"> & { registrations: { count: number }[] })[]>().maybeSingle();
   if (!match) return null;
 
   const now = new Date();
   const field = match.slot.field;
   const startsAt = new Date(match.slot.starts_at);
   const title = match.title ?? `Reta en ${field.name}`;
-  const active = match.registrations.length;
-  const signedUp = match.registrations.some((r) => r.player_id === userId);
+  const first = match.registrations[0];
+  const active = first && "count" in first ? first.count : match.registrations.length;
+  const signedUp = match.registrations.some((r) => "player_id" in r && r.player_id === userId);
   const full = active >= match.max_players;
   const closed = match.status === "cancelled" || startsAt <= now || (match.status === "pending" && new Date(match.confirmation_deadline) <= now);
   const pesos = match.price_cents / 100;
@@ -126,7 +129,9 @@ export async function MatchPanel({
               <span className="text-[16px] font-semibold">{pesos === 0 ? "Gratis" : `$${pesos} · de tu saldo`}</span>
               <span className="text-[13px] text-muted">Si no se arma, te regresamos todo</span>
             </span>
-            {pesos === 0 ? (
+            {!userId ? (
+              <Link href={authHref("/entrar", `/retas/${matchId}`)} className={PRIMARY}>Inscribirme</Link>
+            ) : pesos === 0 ? (
               <SignUpForm matchId={match.id} label="Inscribirme" className={PRIMARY} />
             ) : (
               <Link href={`/retas/${match.id}?pago=1`} className={PRIMARY}>
