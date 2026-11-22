@@ -56,8 +56,9 @@ export async function DesktopSidebar() {
   if (!user) return null;
 
   const now = new Date();
-  const [{ data: profile }, { data: phone }, { count: unread }, { data: balanceCents }, { data: upcoming }, notices] = await Promise.all([
-    supabase.from("profiles").select("full_name, role").eq("id", user.id).maybeSingle(),
+  const [{ data: profile }, { data: role }, { data: phone }, { count: unread }, { data: balanceCents }, { data: upcoming }, notices] = await Promise.all([
+    supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
+    supabase.rpc("my_role"),
     supabase.rpc("my_profile_phone"),
     supabase
       .from("notices")
@@ -78,7 +79,7 @@ export async function DesktopSidebar() {
   ]);
   if (!profile || !phone) return null;
 
-  const admin = profile.role === "admin";
+  const admin = role === "admin";
   const balance = Math.max(balanceCents ?? 0, 0) / 100;
   const badge = unread ? String(unread) : undefined;
   const items: SidebarItem[] = admin
@@ -96,7 +97,6 @@ export async function DesktopSidebar() {
         { href: "/saldo", label: "Saldo", icon: "saldo", note: `$${balance}` },
       ];
   // Organizer mode B (2026-11-06): the sidebar for organizing, behind the Jugar / Organizar switch.
-  const role = profile.role;
   const organize: OrganizeNav | null = canOrganize(role)
     ? {
         role,
@@ -150,7 +150,7 @@ export async function DesktopSidebar() {
       organize={organize}
       upcoming={next}
       name={profile.full_name ?? ""}
-      roleLabel={ROLE_LABELS[profile.role] ?? ""}
+      roleLabel={ROLE_LABELS[String(role)] ?? ""}
       searchHref={admin ? null : "/explorar?buscar=1"}
     />
   );

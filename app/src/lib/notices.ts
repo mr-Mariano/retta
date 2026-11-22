@@ -58,11 +58,10 @@ export async function loadNotices(supabase: SupabaseClient, userId: string, limi
     supabase
       .from("notices")
       .select(
-        "id, kind, data, created_at, read_at, match:matches(id, title, status, min_players, max_players, price_cents, confirmation_deadline, slot:slots!inner(starts_at, field:fields!inner(name, area, cover_image)), registrations(count))",
+        "id, kind, data, created_at, read_at, match:matches(id, title, status, min_players, max_players, price_cents, confirmation_deadline, slot:slots!inner(starts_at, field:fields!inner(name, area, cover_image)), registrations:match_capacity(count))",
       )
       .eq("user_id", userId)
       .is("dismissed_at", null)
-      .eq("match.registrations.status", "active")
       .order("created_at", { ascending: false })
       .limit(limit)
       .returns<NoticeRow[]>(),

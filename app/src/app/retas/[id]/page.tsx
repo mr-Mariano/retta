@@ -30,7 +30,9 @@ interface MatchDetail {
   format: "fut5" | "fut7" | "fut11";
   level: "beginner" | "intermediate" | "advanced";
   type: "men" | "women" | "mixed";
-  organizer: { full_name: string };
+  organizer?: { full_name: string };
+  organizer_id?: string;
+  mine?: { player_id: string }[];
   slot: {
     starts_at: string;
     ends_at: string;
@@ -44,7 +46,7 @@ interface MatchDetail {
       longitude: number | null;
     };
   };
-  registrations: { player_id: string; created_at: string; player: { full_name: string } }[];
+  registrations: { count: number }[];
 }
 
 const FORMAT_LABEL = { fut5: "Fut 5", fut7: "Fut 7", fut11: "Fut 11" };
@@ -69,16 +71,6 @@ function initials(name: string) {
     .join("");
 }
 
-/** "Van Ana, Luis, Carlos y 5 más" */
-function signUpsLine(names: string[]) {
-  if (names.length === 0) return "Aún no hay inscritos";
-  const first = names.map((name) => name.split(/\s+/)[0]);
-  if (first.length <= 3) {
-    return `Van ${first.length === 1 ? first[0] : `${first.slice(0, -1).join(", ")} y ${first.at(-1)}`}`;
-  }
-  return `Van ${first.slice(0, 3).join(", ")} y ${first.length - 3} más`;
-}
-
 export default async function MatchDetailPage({
   params,
   searchParams,
@@ -95,14 +87,14 @@ export default async function MatchDetailPage({
   const { data: match } = user ? await supabase
     .from("matches")
     .select(
-      "id, title, description, min_players, max_players, price_cents, status, confirmation_deadline, format, level, type, organizer:profiles!matches_organizer_id_fkey(full_name), slot:slots!inner(starts_at, ends_at, field:fields!inner(name, area, address, has_changing_rooms, cover_image, latitude, longitude)), registrations(player_id, created_at, player:profiles!registrations_player_id_fkey(full_name))",
+      "id, title, description, min_players, max_players, price_cents, status, confirmation_deadline, format, level, type, organizer_id, organizer:profiles!matches_organizer_id_fkey(full_name), slot:slots!inner(starts_at, ends_at, field:fields!inner(name, area, address, has_changing_rooms, cover_image, latitude, longitude)), registrations:match_capacity(count), mine:registrations(player_id)",
     )
     .eq("id", id)
-    .eq("registrations.status", "active")
-    .order("created_at", { referencedTable: "registrations" })
+    .eq("mine.status", "active")
+    .eq("mine.player_id", user.id)
     .returns<MatchDetail[]>()
     .maybeSingle() : await supabase.rpc("browse_matches", { p_match_id: id })
-      .returns<(Omit<MatchDetail, "registrations" | "organizer"> & { registrations: { count: number }[] })[]>().maybeSingle();
+      .returns<MatchDetail[]>().maybeSingle();
 
   if (!match) notFound();
 
@@ -112,10 +104,9 @@ export default async function MatchDetailPage({
   const endsAt = new Date(match.slot.ends_at);
   const deadline = new Date(match.confirmation_deadline);
   const title = match.title ?? `Reta en ${field.name}`;
-  const privateMatch = "organizer" in match ? match : null;
-  const first = match.registrations[0];
-  const active = first && "count" in first ? first.count : match.registrations.length;
-  const isSignedUp = privateMatch?.registrations.some((registration) => registration.player_id === user?.id);
+  const active = match.registrations[0]?.count ?? 0;
+  const isSignedUp = Boolean(match.mine?.length);
+  const canSeePlayers = user && (isSignedUp || match.organizer_id === user.id);
   const isFull = active >= match.max_players;
   const isCancelled = match.status === "cancelled";
   const isPast = startsAt <= now;
@@ -153,7 +144,7 @@ export default async function MatchDetailPage({
         .maybeSingle()
     : { data: null };
   // Sign-up list and player card (session 7).
-  const showPlayers = user && (jugadores === "1" || Boolean(jugador));
+  const showPlayers = canSeePlayers && (jugadores === "1" || Boolean(jugador));
   const { data: players } = showPlayers ? await supabase.rpc("match_players", { p_match_id: match.id }) : { data: null };
   const paidCents = (myRegistration?.transactions ?? [])
     .filter((t) => t.type === "charge" || t.type === "credit_used")
@@ -235,19 +226,17 @@ export default async function MatchDetailPage({
           </div>
         )}
 
-        {privateMatch && <div className="flex items-center gap-3">
+        {match.organizer && <div className="flex items-center gap-3">
           <span aria-hidden="true" className="flex size-10 items-center justify-center rounded-full bg-elevated text-sm font-bold">
-            {initials(privateMatch.organizer.full_name)}
+            {initials(match.organizer.full_name)}
           </span>
           <div className="flex flex-col gap-0.5">
-            <span className="text-[15px] font-semibold">Organiza {privateMatch.organizer.full_name}</span>
-            {privateMatch.registrations.some((r) => r.player_id !== user?.id) ? (
+            <span className="text-[15px] font-semibold">Organiza {match.organizer.full_name}</span>
+            {canSeePlayers && active > Number(isSignedUp) ? (
               <Link href={`/retas/${match.id}?jugadores=1`} scroll={false} className="text-sm text-muted underline decoration-line underline-offset-4">
-                {signUpsLine(privateMatch.registrations.map((r) => r.player.full_name))}
+                Ver jugadores
               </Link>
-            ) : (
-              <span className="text-sm text-muted">{signUpsLine(privateMatch.registrations.map((r) => r.player.full_name))}</span>
-            )}
+            ) : null}
           </div>
         </div>}
 

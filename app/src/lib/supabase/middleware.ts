@@ -51,8 +51,8 @@ export async function updateSession(request: NextRequest) {
     return isPublic || canBrowse ? response : redirectKeepingCookies(request, response, "/entrar", authReturn(path));
   }
 
-  const [{ data: profile }, { data: phone }] = await Promise.all([
-    supabase.from("profiles").select("role").eq("id", user.id).maybeSingle(),
+  const [{ data: role }, { data: phone }] = await Promise.all([
+    supabase.rpc("my_role"),
     supabase.rpc("my_profile_phone"),
   ]);
 
@@ -63,7 +63,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (isPublic || path === PROFILE_ROUTE) {
-    return redirectKeepingCookies(request, response, profile?.role === "admin" ? ADMIN_HOME_ROUTE : HOME_ROUTE);
+    return redirectKeepingCookies(request, response, role === "admin" ? ADMIN_HOME_ROUTE : HOME_ROUTE);
   }
 
   return response;

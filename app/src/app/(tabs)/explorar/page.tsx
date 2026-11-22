@@ -120,18 +120,18 @@ export default async function Explorar({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: profile }, { data: balanceCents }, { data: featured }, { data: rows }, { count: unread }, notices] = await Promise.all([
-    user ? supabase.from("profiles").select("full_name, role").eq("id", user.id).maybeSingle() : { data: null },
+  const [{ data: profile }, { data: role }, { data: balanceCents }, { data: featured }, { data: rows }, { count: unread }, notices] = await Promise.all([
+    user ? supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle() : { data: null },
+    user ? supabase.rpc("my_role") : { data: null },
     user ? supabase.rpc("my_balance") : { data: 0 },
     supabase.rpc("featured_match"),
     user ? supabase
       .from("matches")
       .select(
-        "id, title, price_cents, min_players, max_players, status, confirmation_deadline, slot:slots!inner(starts_at, field:fields!inner(name, area, cover_image, latitude, longitude)), registrations(count)",
+        "id, title, price_cents, min_players, max_players, status, confirmation_deadline, slot:slots!inner(starts_at, field:fields!inner(name, area, cover_image, latitude, longitude)), registrations:match_capacity(count)",
       )
       .neq("status", "cancelled")
       .gt("slots.starts_at", now.toISOString())
-      .eq("registrations.status", "active")
       .returns<MatchRow[]>() : supabase.rpc("browse_matches"),
     user ? supabase
       .from("notices")
@@ -205,8 +205,8 @@ export default async function Explorar({
         </nav>
       )}
       {/* Organizer mode B (2026-11-06): on phones the switch sits on top of Explorar. */}
-      {(profile?.role === "player" || profile?.role === "field_manager") && (
-        <ModeSwitch role={profile.role} initial="jugar" className="md:hidden" />
+      {(role === "player" || role === "field_manager") && (
+        <ModeSwitch role={role} initial="jugar" className="md:hidden" />
       )}
       <div className="flex flex-col gap-0.5 md:hidden">
         <div className="flex items-center justify-between gap-3">

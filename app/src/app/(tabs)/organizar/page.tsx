@@ -18,7 +18,7 @@ export default async function OrganizerHome() {
   const now = new Date();
   const [{ data: profile }, { data: rows }] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
-    supabase.from("matches").select(ORGANIZED_SELECT).eq("organizer_id", user.id).eq("registrations.status", "active").returns<OrganizedRow[]>(),
+    supabase.from("matches").select(ORGANIZED_SELECT).eq("organizer_id", user.id).returns<OrganizedRow[]>(),
   ]);
 
   const all = (rows ?? []).filter((row) => row.status !== "cancelled");

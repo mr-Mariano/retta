@@ -34,10 +34,9 @@ export default async function AdminRetas({ searchParams }: { searchParams: Promi
   const now = new Date();
   const { data } = await supabase
     .from("matches")
-    .select("id, title, status, min_players, max_players, slot:slots!inner(starts_at, field:fields!inner(name)), registrations(count)")
+    .select("id, title, status, min_players, max_players, slot:slots!inner(starts_at, field:fields!inner(name)), registrations:match_capacity(count)")
     .neq("status", "cancelled")
     .gt("slot.starts_at", now.toISOString())
-    .eq("registrations.status", "active")
     .returns<MatchRow[]>();
   const matches = (data ?? []).sort((a, b) => a.slot.starts_at.localeCompare(b.slot.starts_at));
 

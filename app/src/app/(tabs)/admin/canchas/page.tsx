@@ -14,9 +14,9 @@ export default async function AdminCanchas() {
   const { supabase } = await requireRole(["admin"]);
   const [{ data: fields }, { data: managers }] = await Promise.all([
     supabase.from("fields").select("id, name, cover_image, manager_id").order("name"),
-    supabase.from("profiles").select("id, full_name").eq("role", "field_manager"),
+    supabase.rpc("admin_profiles", { p_role: "field_manager" }),
   ]);
-  const managerName = new Map((managers ?? []).map((m) => [m.id as string, m.full_name as string]));
+  const managerName = new Map((Array.isArray(managers) ? managers : []).map((m) => [m.id as string, m.full_name as string]));
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-[18px] px-4 pt-14 pb-32">

@@ -21,7 +21,8 @@ interface PanelMatch {
   level: "beginner" | "intermediate" | "advanced";
   type: "men" | "women" | "mixed";
   slot: { starts_at: string; ends_at: string; field: { name: string; area: string | null; address: string; has_changing_rooms: boolean; cover_image: string } };
-  registrations: { player_id: string }[];
+  registrations: { count: number }[];
+  mine?: { player_id: string }[];
 }
 
 const FORMAT = { fut5: "Fut 5", fut7: "Fut 7", fut11: "Fut 11" };
@@ -48,22 +49,22 @@ export async function MatchPanel({
   const { data: match } = userId ? await supabase
     .from("matches")
     .select(
-      "id, title, description, min_players, max_players, price_cents, status, confirmation_deadline, format, level, type, slot:slots!inner(starts_at, ends_at, field:fields!inner(name, area, address, has_changing_rooms, cover_image)), registrations(player_id)",
+      "id, title, description, min_players, max_players, price_cents, status, confirmation_deadline, format, level, type, slot:slots!inner(starts_at, ends_at, field:fields!inner(name, area, address, has_changing_rooms, cover_image)), registrations:match_capacity(count), mine:registrations(player_id)",
     )
     .eq("id", matchId)
-    .eq("registrations.status", "active")
+    .eq("mine.status", "active")
+    .eq("mine.player_id", userId)
     .returns<PanelMatch[]>()
     .maybeSingle() : await supabase.rpc("browse_matches", { p_match_id: matchId })
-      .returns<(Omit<PanelMatch, "registrations"> & { registrations: { count: number }[] })[]>().maybeSingle();
+      .returns<PanelMatch[]>().maybeSingle();
   if (!match) return null;
 
   const now = new Date();
   const field = match.slot.field;
   const startsAt = new Date(match.slot.starts_at);
   const title = match.title ?? `Reta en ${field.name}`;
-  const first = match.registrations[0];
-  const active = first && "count" in first ? first.count : match.registrations.length;
-  const signedUp = match.registrations.some((r) => "player_id" in r && r.player_id === userId);
+  const active = match.registrations[0]?.count ?? 0;
+  const signedUp = Boolean(match.mine?.length);
   const full = active >= match.max_players;
   const closed = match.status === "cancelled" || startsAt <= now || (match.status === "pending" && new Date(match.confirmation_deadline) <= now);
   const pesos = match.price_cents / 100;

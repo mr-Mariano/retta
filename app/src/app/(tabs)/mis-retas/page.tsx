@@ -122,10 +122,9 @@ export default async function MisRetas({
   const { data: rows } = await supabase
     .from("registrations")
     .select(
-      "id, status, attendance, created_at, transactions(type, amount_cents), match:matches!inner(id, title, status, min_players, max_players, confirmation_deadline, slot:slots!inner(starts_at, field:fields!inner(name, cover_image)), registrations(count))",
+      "id, status, attendance, created_at, transactions(type, amount_cents), match:matches!inner(id, title, status, min_players, max_players, confirmation_deadline, slot:slots!inner(starts_at, field:fields!inner(name, cover_image)), registrations:match_capacity(count))",
     )
     .eq("player_id", user!.id)
-    .eq("match.registrations.status", "active")
     .returns<RegistrationRow[]>();
 
   const items = (rows ?? []).map((row) => toItem(row, now));

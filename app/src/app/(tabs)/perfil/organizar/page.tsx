@@ -25,7 +25,6 @@ export default async function Organizar({
     .from("matches")
     .select(ORGANIZED_SELECT)
     .eq("organizer_id", user.id)
-    .eq("registrations.status", "active")
     .returns<OrganizedRow[]>();
 
   // A match stays under "Próximas" until its attendance window closes, 24 h after it starts.

@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 /** A match as its organizer sees it (Tus retas, organizer home). */
 export const ORGANIZED_SELECT =
-  "id, title, status, min_players, max_players, confirmation_deadline, agent_enabled, slot:slots!inner(starts_at, ends_at, field:fields!inner(name)), registrations(count)";
+  "id, title, status, min_players, max_players, confirmation_deadline, agent_enabled, slot:slots!inner(starts_at, ends_at, field:fields!inner(name)), registrations:match_capacity(count)";
 
 export interface OrganizedRow {
   id: string;

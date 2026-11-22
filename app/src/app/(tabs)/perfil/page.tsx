@@ -40,16 +40,18 @@ export default async function Perfil({
   const [
     { data: profile },
     { data: profilePhone },
+    { data: profileRole },
     { data: socials },
     { data: balanceCents },
     { data: played },
   ] = await Promise.all([
     supabase
       .from("profiles")
-      .select("full_name, created_at, role")
+      .select("full_name, created_at")
       .eq("id", user!.id)
       .single(),
     supabase.rpc("my_profile_phone"),
+    supabase.rpc("my_role"),
     supabase.rpc("my_socials"),
     supabase.rpc("my_balance"),
     supabase
@@ -84,7 +86,7 @@ export default async function Perfil({
   const phone = splitPhone(typeof profilePhone === "string" ? profilePhone : null);
 
   // Desktop (Perfil A, 2026-11-06): settings with a section menu on the left.
-  const role = profile?.role ?? "player";
+  const role = String(profileRole ?? "player");
   const sections = [
     { key: "cuenta", label: "Cuenta" },
     { key: "redes", label: "Redes" },
@@ -278,23 +280,23 @@ export default async function Perfil({
           <SocialRow icon={<FacebookIcon />} name="Facebook" value={facebook} />
         </Section>
 
-        {profile?.role && profile.role !== "player" && (
+        {role !== "player" && (
           <Section title="Herramientas">
-            {(profile.role === "player" || profile.role === "admin") && (
+            {(role === "player" || role === "admin") && (
               <Row
                 href="/perfil/organizar"
                 label="Organizar retas"
                 value="Tus retas"
               />
             )}
-            {(profile.role === "field_manager" || profile.role === "admin") && (
+            {(role === "field_manager" || role === "admin") && (
               <Row
                 href="/perfil/canchas"
                 label="Horarios de cancha"
                 value="Tus canchas"
               />
             )}
-            {profile.role === "admin" && (
+            {role === "admin" && (
               <Row href="/perfil/agente" label="Agente Retta" value="Impacto" />
             )}
           </Section>

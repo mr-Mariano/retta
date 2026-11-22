@@ -2,83 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { requireRole } from "@/lib/roles";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { loadImpact } from "@/lib/agent/impact";
+import { createImpactRepository } from "@/lib/agent/impact-repository";
 
 export const metadata: Metadata = { title: "Agente Retta · Retta" };
 
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-
-interface MatchMinutes {
-  id: string;
-  status: string;
-  slot: { starts_at: string; ends_at: string };
-  registrations: { player_id: string; attendance: "unrecorded" | "present" | "absent"; created_at: string }[];
-}
-
-/**
- * The agent's impact this week (ODS 3), approved variant A: the mascot says
- * how many matches it saved, then minutes of football that were played
- * (confirmed attendance, or sign-ups while attendance is not taken yet, ×
- * duration) and two lines.
- */
 export default async function AgenteImpacto() {
-  await requireRole(["admin"]);
-  // Counts span every player's notices, which RLS keeps private to each one.
-  const db = createAdminClient();
-  const now = Date.now();
-  const since = new Date(now - WEEK_MS).toISOString();
-
-  const [{ data: runs }, { data: suggestions }] = await Promise.all([
-    db.from("agent_runs").select("match_id, outcome").eq("kind", "rescue").gt("started_at", since),
-    db.from("notices").select("user_id, match_id, created_at").eq("kind", "reactivation").gt("created_at", since),
-  ]);
-  const rescued = (runs ?? []).filter((run) => run.outcome === "rescued").map((run) => run.match_id as string);
-  const notRescued = (runs ?? []).filter((run) => run.outcome === "not_rescued").length;
-
-  // Players who signed up again after a suggestion.
-  const back = new Set<string>();
-  const comebackMatches = new Map<string, Set<string>>();
-  for (const notice of suggestions ?? []) {
-    const { data: joined } = await db
-      .from("registrations")
-      .select("match_id")
-      .eq("player_id", notice.user_id)
-      .eq("status", "active")
-      .gt("created_at", notice.created_at);
-    for (const row of joined ?? []) {
-      back.add(notice.user_id as string);
-      const players = comebackMatches.get(row.match_id as string) ?? new Set<string>();
-      players.add(notice.user_id as string);
-      comebackMatches.set(row.match_id as string, players);
-    }
-  }
-
-  const ids = [...new Set([...rescued, ...comebackMatches.keys()])];
-  const { data: matches } = ids.length
-    ? await db
-        .from("matches")
-        .select("id, status, slot:slots!inner(starts_at, ends_at), registrations(player_id, attendance, created_at)")
-        .in("id", ids)
-        .eq("registrations.status", "active")
-        .returns<MatchMinutes[]>()
-    : { data: [] as MatchMinutes[] };
-
-  let played = 0;
-  let scheduled = 0;
-  for (const match of matches ?? []) {
-    if (match.status !== "confirmed") continue;
-    const minutes = (new Date(match.slot.ends_at).getTime() - new Date(match.slot.starts_at).getTime()) / 60_000;
-    // A rescued match counts everyone; otherwise only the players who came back.
-    const counted = rescued.includes(match.id)
-      ? match.registrations
-      : match.registrations.filter((r) => comebackMatches.get(match.id)?.has(r.player_id));
-    const taken = counted.some((r) => r.attendance !== "unrecorded");
-    const players = taken ? counted.filter((r) => r.attendance === "present").length : counted.length;
-    if (new Date(match.slot.starts_at).getTime() <= now) played += players * minutes;
-    else scheduled += players * minutes;
-  }
-
-  const saved = rescued.length;
+  const { supabase } = await requireRole(["admin"]);
+  const { saved, notRescued, returning, played, scheduled } = await loadImpact(createImpactRepository(supabase), new Date());
   const line = "flex items-center gap-3 border-b border-line py-3.5";
 
   return (
@@ -112,8 +43,8 @@ export default async function AgenteImpacto() {
 
       <div className="flex flex-col">
         <div className={line}>
-          <span className="w-14 font-display text-[28px] leading-none font-extrabold tracking-tight text-action">{back.size}</span>
-          <span className="flex-1 text-[16px]">{back.size === 1 ? "jugador volvió a jugar" : "jugadores volvieron a jugar"}</span>
+          <span className="w-14 font-display text-[28px] leading-none font-extrabold tracking-tight text-action">{returning}</span>
+          <span className="flex-1 text-[16px]">{returning === 1 ? "jugador volvió a jugar" : "jugadores volvieron a jugar"}</span>
         </div>
         <div className={line}>
           <span className="w-14 font-display text-[28px] leading-none font-extrabold tracking-tight text-danger">{notRescued}</span>

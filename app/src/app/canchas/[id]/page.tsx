@@ -45,11 +45,10 @@ export default async function Agenda({
 
   const { data: slots } = await supabase
     .from("slots")
-    .select("id, starts_at, ends_at, matches(id, status, title, max_players, organizer:profiles!matches_organizer_id_fkey(full_name), registrations(count))")
+    .select("id, starts_at, ends_at, matches(id, status, title, max_players, organizer:profiles!matches_organizer_id_fkey(full_name), registrations:match_capacity(count))")
     .eq("field_id", field.id)
     .gte("starts_at", new Date(Math.max(now.getTime(), mxDate(days[0]!, "00:00").getTime())).toISOString())
     .lt("starts_at", mxDate(days.at(-1)!, "23:59").toISOString())
-    .eq("matches.registrations.status", "active")
     .order("starts_at")
     .returns<SlotRow[]>();
 

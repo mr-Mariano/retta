@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Usuarios · Retta" };
 /** Admin users, flow B (2026-11-04): search + list; tapping a person opens a sheet where tapping a role saves it. */
 export default async function AdminUsuarios({ searchParams }: { searchParams: Promise<{ usuario?: string }> }) {
   const [{ supabase, user: me }, { usuario }] = await Promise.all([requireRole(["admin"]), searchParams]);
-  const { data } = await supabase.from("profiles").select("id, full_name, role").order("full_name");
+  const { data } = await supabase.rpc("admin_profiles");
   const users = (data ?? []) as UserRow[];
   const selected = usuario ? users.find((u) => u.id === usuario) : undefined;
 

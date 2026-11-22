@@ -43,11 +43,10 @@ export async function askAgent(message: string, previous: Criteria | null): Prom
   const { data } = user ? await supabase
     .from("matches")
     .select(
-      "id, title, price_cents, min_players, max_players, status, confirmation_deadline, format, level, type, slot:slots!inner(starts_at, field:fields!inner(name, area, cover_image)), registrations(count)",
+      "id, title, price_cents, min_players, max_players, status, confirmation_deadline, format, level, type, slot:slots!inner(starts_at, field:fields!inner(name, area, cover_image)), registrations:match_capacity(count)",
     )
     .neq("status", "cancelled")
     .gt("slots.starts_at", now.toISOString())
-    .eq("registrations.status", "active")
     .returns<Row[]>() : await supabase.rpc("browse_matches");
 
   const all: SearchMatch[] = (Array.isArray(data) ? (data as Row[]) : [])

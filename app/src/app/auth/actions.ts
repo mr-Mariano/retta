@@ -89,20 +89,20 @@ export async function signInWithEmail(_prev: SignInState, formData: FormData): P
   const password = String(formData.get("password") ?? "");
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error?.code === "email_not_confirmed") {
     return { error: "Confirma tu correo antes de entrar. Revisa tu bandeja.", email };
   }
   if (error) return { error: "Correo o contraseña incorrectos.", email };
 
-  const [{ data: profile }, { data: phone }] = await Promise.all([
-    supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle(),
+  const [{ data: role }, { data: phone }] = await Promise.all([
+    supabase.rpc("my_role"),
     supabase.rpc("my_profile_phone"),
   ]);
   // Data changed: drop the browser's cached pages.
   revalidatePath("/", "layout");
-  redirect(!phone ? "/completa-perfil" : authReturn(formData.get("next")) || (profile?.role === "admin" ? "/admin" : "/explorar"));
+  redirect(!phone ? "/completa-perfil" : authReturn(formData.get("next")) || (role === "admin" ? "/admin" : "/explorar"));
 }
 
 export async function completeProfile(_prev: ProfileState, formData: FormData): Promise<ProfileState> {

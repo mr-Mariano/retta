@@ -9,16 +9,16 @@ export default async function TabsLayout({ children }: { children: React.ReactNo
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { data: profile } = user
-    ? await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle()
+  const { data: role } = user
+    ? await supabase.rpc("my_role")
     : { data: null };
 
   return (
     <>
       {children}
       {user && <BottomNav
-        admin={profile?.role === "admin"}
-        organizer={canOrganize(profile?.role) ? (profile?.role as "player" | "field_manager") : null}
+        admin={role === "admin"}
+        organizer={canOrganize(role) ? (role as "player" | "field_manager") : null}
         initialMode={parseMode((await cookies()).get(MODE_COOKIE)?.value)}
       />}
     </>

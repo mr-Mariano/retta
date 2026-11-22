@@ -2,15 +2,11 @@ import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
 import { reactivationTick } from "@/lib/agent/reactivation";
+import { plan } from "@/lib/agent/rescue-planner";
 import { rescueTick } from "@/lib/agent/rescue";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAgentRepository } from "@/lib/agent/supabase-repository";
 
-/**
- * Wakes the agent. pg_cron calls it every 5 minutes (private.agent_tick).
- * For demos: ?reta=<match id> runs that match's next pass right away, and
- * ?reactivar=1 sends this week's suggestions again.
- */
-
+/** Wakes the agent every five minutes through private.agent_tick. */
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
@@ -22,11 +18,10 @@ async function handle(request: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const params = process.env.NODE_ENV === "production" ? new URLSearchParams() : request.nextUrl.searchParams;
-  const db = createAdminClient();
+  const repository = createAgentRepository(secret);
   const now = new Date();
-  const rescue = await rescueTick(db, now, params.get("reta") ?? undefined);
-  const reactivation = await reactivationTick(db, now, params.get("reactivar") === "1");
+  const rescue = await rescueTick(repository, now, plan);
+  const reactivation = await reactivationTick(repository, now);
 
   revalidatePath("/", "layout");
   return NextResponse.json({ rescue, reactivation });
