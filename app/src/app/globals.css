@@ -5,13 +5,13 @@
   Dark is the primary mode; light applies when the OS prefers it.
 */
 :root {
-  --color-bg-base: #000000;
-  --color-bg-surface: #0e0e0e;
-  --color-bg-elevated: #1a1a1a;
-  --color-bg-sidebar: #000000;
-  --color-border-default: #262626;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #a6a6a6;
+  --color-bg-base: #12151a;
+  --color-bg-surface: #1a1f26;
+  --color-bg-elevated: #222831;
+  --color-bg-sidebar: #0f1216;
+  --color-border-default: #2a3038;
+  --color-text-primary: #f2f4f7;
+  --color-text-secondary: #a0a8b5;
   --color-action-bg: #3d6bff;
   --color-action-fg: #ffffff;
   --color-overlay-scrim: rgb(10 10 10 / 0.6);
